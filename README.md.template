@@ -1,0 +1,14 @@
+{{JINJA_TREE_MARKDOWN_HTML_GENERATED_COMMENT}}
+
+# jinja-tree
+
+CLI to process jinja (jinja2) templates in a directory tree
+
+```
+{{ "jinja-tree --help"|shell() }}
+```
+
+
+```
+{{ "jinja-stdin --help"|shell() }}
+```

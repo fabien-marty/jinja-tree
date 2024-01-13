@@ -1,0 +1,95 @@
+[tool.poetry]
+name = "jinja-tree"
+version = "0.1.0"
+description = "CLI to process jinja (jinja2) templates in a directory tree"
+authors = ["Fabien MARTY <fabien.marty@botify.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "jinja_tree" }]
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+jinja2 = "^3.1.2"
+typer = "^0.9.0"
+stlog = "^0.2.0"
+tomli = "^2.0.1"
+python-dotenv = "^1.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.11"
+mypy = "^1.8.0"
+pytest = "^7.4.4"
+rich = "^13.7.0"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+jinja-tree = "jinja_tree.infra.controllers.cli_tree:app"
+jinja-stdin = "jinja_tree.infra.controllers.cli_stdin:app"
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.8
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["UP", "E", "F", "W", "PL", "I", "RUF"]
+ignore = ["PLR0913", "E501", "PLR0912", "PLR2004", "RUF005"]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
