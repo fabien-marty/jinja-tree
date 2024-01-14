@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jinja-tree"
-version = "0.1.0"
+version = "0.0.0"
 description = "CLI to process jinja (jinja2) templates in a directory tree"
 authors = ["Fabien MARTY <fabien.marty@botify.com>"]
 license = "MIT"

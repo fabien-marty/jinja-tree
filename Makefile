@@ -5,6 +5,8 @@ RUFF=ruff
 MYPY=mypy
 PYTEST=pytest
 PYTHON=python3
+VERSION=0.0.0
+PYPI_TOKEN=
 
 default: help
 
@@ -30,6 +32,21 @@ endif
 .PHONY: doc
 doc: ## Generate documentation
 	$(PYTHON) jinja_tree/infra/controllers/cli_tree.py .
+
+.PHONY: clean
+clean: ## Clean generated files
+	rm -Rf .*_cache build
+	find . -type d -name __pycache__ -exec rm -Rf {} \; 2>/dev/null || true
+
+.PHONY: publish
+publish: ## Publish to PyPI
+	@if test "${VERSION}" = "0.0.0"; then echo "ERROR: Cannot publish a dev version"; exit 1; fi
+	@if test "${PYPI_TOKEN}" = ""; then echo "ERROR: PYPI_TOKEN is not set"; exit 1; fi
+	cp -f pyproject.toml pyproject.toml.dev 
+	poetry version "$(VERSION)"
+    poetry config pypi-token.pypi "$(PYPI_TOKEN)"
+    poetry build
+    poetry publish
 
 .PHONY: help
 help::
