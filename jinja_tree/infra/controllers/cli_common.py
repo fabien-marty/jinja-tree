@@ -6,7 +6,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 try:
-    from typing import Annotated
+    from typing import Annotated  # type: ignore
 except ImportError:
     from typing_extensions import Annotated  # type: ignore
 
