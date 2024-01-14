@@ -24,7 +24,7 @@ def import_class_from_string(class_path: str) -> Type:
     return klass
 
 
-def make_context_adapter_from_class_path_string(config: Config) -> ContextPort:
+def make_context_adapter_from_config(config: Config) -> ContextPort:
     class_path = config.context_plugin_config.get("plugin", CONTEXT_PLUGIN_DEFAULT)
     context_adapter_class = import_class_from_string(class_path)
     context_adapter = context_adapter_class(config=config)
@@ -35,7 +35,7 @@ def make_context_adapter_from_class_path_string(config: Config) -> ContextPort:
     return context_adapter
 
 
-def make_file_action_adapter_from_class_path_string(config: Config) -> FileActionPort:
+def make_file_action_adapter_from_config(config: Config) -> FileActionPort:
     class_path = config.file_action_plugin_config.get(
         "plugin", FILE_ACTION_PLUGIN_DEFAULT
     )

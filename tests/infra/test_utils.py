@@ -8,21 +8,21 @@ from jinja_tree.app.file_action import FileActionPort
 from jinja_tree.infra.utils import (
     get_config_file_path,
     is_fnmatch_ignored,
-    make_context_adapter_from_class_path_string,
-    make_file_action_adapter_from_class_path_string,
+    make_context_adapter_from_config,
+    make_file_action_adapter_from_config,
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(SCRIPT_DIR, "data")
 
 
-def test_make_context_adapter_from_class_path_string():
-    adapter = make_context_adapter_from_class_path_string(config=Config())
+def test_make_context_adapter_from_config():
+    adapter = make_context_adapter_from_config(config=Config())
     assert isinstance(adapter, ContextPort)
 
 
-def test_make_file_action_adapter_from_class_path_string():
-    adapter = make_file_action_adapter_from_class_path_string(config=Config())
+def test_make_file_action_adapter_from_config():
+    adapter = make_file_action_adapter_from_config(config=Config())
     assert isinstance(adapter, FileActionPort)
 
 

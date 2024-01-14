@@ -19,7 +19,7 @@ from jinja_tree.infra.controllers.cli_common import (
     setup_logger,
 )
 from jinja_tree.infra.utils import (
-    make_context_adapter_from_class_path_string,
+    make_context_adapter_from_config,
 )
 
 # disable rich usage in typer
@@ -50,7 +50,7 @@ def pipe(
     )
     if log_level == "DEBUG":
         config_dump(config)
-    context_adapter = make_context_adapter_from_class_path_string(config)
+    context_adapter = make_context_adapter_from_config(config)
     context_service = ContextService(config=config, adapter=context_adapter)
     jinja_service = JinjaService(config=config, context_service=context_service)
     print(jinja_service.render_string(sys.stdin.read()))

@@ -26,8 +26,8 @@ from jinja_tree.infra.controllers.cli_common import (
     setup_logger,
 )
 from jinja_tree.infra.utils import (
-    make_context_adapter_from_class_path_string,
-    make_file_action_adapter_from_class_path_string,
+    make_context_adapter_from_config,
+    make_file_action_adapter_from_config,
 )
 
 # disable rich usage in typer
@@ -71,8 +71,8 @@ def tree(
     if log_level == "DEBUG":
         config_dump(config)
     setup_logger(log_level)
-    context_adapter = make_context_adapter_from_class_path_string(config)
-    file_action_adapter = make_file_action_adapter_from_class_path_string(config)
+    context_adapter = make_context_adapter_from_config(config)
+    file_action_adapter = make_file_action_adapter_from_config(config)
     context_service = ContextService(config=config, adapter=context_adapter)
     file_action_service = FileActionService(config=config, adapter=file_action_adapter)
     jinja_service = JinjaService(config=config, context_service=context_service)
