@@ -77,7 +77,12 @@ class ContextService:
         self, context: Dict[str, Any], absolute_path: Optional[str] = None
     ):
         context["JINJA_TREE"] = "1"
-        utcnow = datetime.datetime.now(datetime.UTC).isoformat()[0:19] + "Z"
+        try:
+            utcnow = datetime.datetime.now(datetime.UTC).isoformat()[0:19] + "Z"  # type: ignore
+        except AttributeError:
+            # for python <= 3.10
+            utcnow = datetime.datetime.utcnow().isoformat()[0:19] + "Z"  # type: ignore
+
         context["JINJA_DT"] = utcnow
         if absolute_path:
             context["JINJA_TREE_FILEPATH"] = absolute_path

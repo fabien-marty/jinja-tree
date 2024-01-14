@@ -1,7 +1,7 @@
 import fnmatch
 import os
 from importlib import import_module
-from typing import Optional, Type
+from typing import List, Optional, Type
 
 import stlog
 
@@ -78,5 +78,5 @@ def get_config_file_path(
     return get_config_file_path(cwd=parent_path)
 
 
-def is_fnmatch_ignored(key: str, ignores: list[str]) -> bool:
+def is_fnmatch_ignored(key: str, ignores: List[str]) -> bool:
     return any(fnmatch.fnmatch(key, x) for x in ignores)

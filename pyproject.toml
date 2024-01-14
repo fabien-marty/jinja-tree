@@ -73,7 +73,7 @@ target-version = "py38"
 
 [tool.ruff.lint]
 select = ["UP", "E", "F", "W", "PL", "I", "RUF"]
-ignore = ["PLR0913", "E501", "PLR0912", "PLR2004", "RUF005"]
+ignore = ["PLR0913", "E501", "PLR0912", "PLR2004", "RUF005", "UP007"]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
