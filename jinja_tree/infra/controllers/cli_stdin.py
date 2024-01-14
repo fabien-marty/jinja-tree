@@ -17,10 +17,13 @@ from jinja_tree.infra.controllers.cli_common import (
     get_config,
     setup_logger,
 )
+import typer.core
+
 from jinja_tree.infra.utils import (
     make_context_adapter_from_class_path_string,
 )
 
+typer.core.rich = None  # disable rich usage in typer
 app = typer.Typer(add_completion=False)
 
 

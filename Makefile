@@ -44,9 +44,9 @@ publish: ## Publish to PyPI
 	@if test "${PYPI_TOKEN}" = ""; then echo "ERROR: PYPI_TOKEN is not set"; exit 1; fi
 	cp -f pyproject.toml pyproject.toml.dev 
 	poetry version "$(VERSION)"
-    poetry config pypi-token.pypi "$(PYPI_TOKEN)"
-    poetry build
-    poetry publish
+	poetry config pypi-token.pypi "$(PYPI_TOKEN)"
+	poetry build
+	poetry publish
 
 .PHONY: help
 help::

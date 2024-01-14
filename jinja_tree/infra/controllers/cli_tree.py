@@ -1,5 +1,6 @@
 import stlog
 import typer
+import typer.core
 
 from jinja_tree.app.context import ContextService
 from jinja_tree.app.file_action import FileActionService
@@ -29,6 +30,7 @@ from jinja_tree.infra.utils import (
     make_file_action_adapter_from_class_path_string,
 )
 
+typer.core.rich = None  # disable rich usage in typer
 app = typer.Typer(add_completion=False)
 
 
