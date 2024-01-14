@@ -2,7 +2,13 @@ import json
 import sys
 from dataclasses import asdict
 from pathlib import Path
-from typing import Annotated, List, Optional
+
+try:
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated  # type: ignore
+
+from typing import List, Optional
 
 import stlog
 import tomli

@@ -1,5 +1,5 @@
 import os
-from typing import Any, List, cast
+from typing import Any, Dict, List, cast
 
 from dotenv import dotenv_values
 
@@ -26,7 +26,7 @@ class EnvContextAdapter(ContextPort):
         assert self.dotenv_ignores is not None
         self.config = config
 
-    def get_plugin_configuration_context(self) -> dict[str, Any]:
+    def get_plugin_configuration_context(self) -> Dict[str, Any]:
         if self.plugin_configuration_ignores == ["*"]:
             return {}
         return {
@@ -35,7 +35,7 @@ class EnvContextAdapter(ContextPort):
             if not is_fnmatch_ignored(x, self.plugin_configuration_ignores)
         }
 
-    def get_dotenv_context(self) -> dict[str, Any]:
+    def get_dotenv_context(self) -> Dict[str, Any]:
         if not self.dotenv_path:
             return {}
         if not os.path.isfile(self.dotenv_path):
@@ -48,7 +48,7 @@ class EnvContextAdapter(ContextPort):
             if not is_fnmatch_ignored(x, self.dotenv_ignores)
         }
 
-    def get_env_context(self) -> dict[str, Any]:
+    def get_env_context(self) -> Dict[str, Any]:
         if self.env_ignores == ["*"]:
             return {}
         return {
@@ -57,7 +57,7 @@ class EnvContextAdapter(ContextPort):
             if not is_fnmatch_ignored(x, self.env_ignores)
         }
 
-    def get_context(self) -> dict[str, Any]:
+    def get_context(self) -> Dict[str, Any]:
         plugin_context = self.get_plugin_configuration_context()
         env_context = self.get_env_context()
         dotenv_context = self.get_dotenv_context()

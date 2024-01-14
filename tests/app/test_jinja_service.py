@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 import pytest
 from jinja2 import UndefinedError
@@ -12,7 +12,7 @@ class MockContextAdapter(ContextPort):
     def __init__(self, config: Config):
         pass
 
-    def get_context(self, absolute_path: Optional[str] = None) -> dict[str, Any]:
+    def get_context(self, absolute_path: Optional[str] = None) -> Dict[str, Any]:
         return {"foo": "bar"}
 
 

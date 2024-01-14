@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 
 from jinja_tree.app.config import (
     DIRNAME_IGNORES_DEFAULT,
@@ -10,7 +10,7 @@ from jinja_tree.infra.adapters.context import EnvContextAdapter
 
 
 class CustomEnvContextAdapter(EnvContextAdapter):
-    def get_context(self) -> dict[str, Any]:
+    def get_context(self) -> Dict[str, Any]:
         tmp = super().get_context()
         tmp["default_config"] = Config()
         tmp["dirname_ignores_default"] = DIRNAME_IGNORES_DEFAULT

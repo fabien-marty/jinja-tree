@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import Any, Dict, List
 
 CONTEXT_PLUGIN_DEFAULT = "jinja_tree.infra.adapters.context.EnvContextAdapter"
 FILE_ACTION_PLUGIN_DEFAULT = (
@@ -27,7 +27,7 @@ EMBEDDED_EXTENSIONS = [
 JINJA_TREE_URL = "https://github.com/fabien-marty/jinja-tree"
 
 
-def make_default_context_plugin_config() -> dict[str, Any]:
+def make_default_context_plugin_config() -> Dict[str, Any]:
     tmp = {
         "plugin": CONTEXT_PLUGIN_DEFAULT,
         "generated_comment_line1": "*** GENERATED FILE - DO NOT EDIT ***",
@@ -44,7 +44,7 @@ def make_default_context_plugin_config() -> dict[str, Any]:
     return tmp
 
 
-def make_default_file_action_plugin_config() -> dict[str, Any]:
+def make_default_file_action_plugin_config() -> Dict[str, Any]:
     return {"plugin": FILE_ACTION_PLUGIN_DEFAULT, "extensions": [".template"]}
 
 
@@ -68,10 +68,10 @@ class Config:
     dirname_ignores: List[str] = field(default_factory=lambda: DIRNAME_IGNORES_DEFAULT)
 
     # Plugin config
-    context_plugin_config: dict[str, Any] = field(
+    context_plugin_config: Dict[str, Any] = field(
         default_factory=make_default_context_plugin_config
     )
-    file_action_plugin_config: dict[str, Any] = field(
+    file_action_plugin_config: Dict[str, Any] = field(
         default_factory=make_default_file_action_plugin_config
     )
 

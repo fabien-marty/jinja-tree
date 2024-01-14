@@ -1,7 +1,7 @@
 import datetime
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from jinja2 import Template
 
@@ -22,14 +22,14 @@ class ContextPort(ABC):
         pass
 
     @abstractmethod
-    def get_context(self) -> dict[str, Any]:
+    def get_context(self) -> Dict[str, Any]:
         """
         Retrieve the Jinja context to apply.
 
         Note: it can depends on the current working directory (CWD).
 
         Returns:
-            dict[str, Any]: The context dictionary.
+            The context dictionary.
 
         """
         pass
@@ -74,7 +74,7 @@ class ContextService:
         )
 
     def add_extra_keys_to_context(
-        self, context: dict[str, Any], absolute_path: Optional[str] = None
+        self, context: Dict[str, Any], absolute_path: Optional[str] = None
     ):
         context["JINJA_TREE"] = "1"
         utcnow = datetime.datetime.now(datetime.UTC).isoformat()[0:19] + "Z"
@@ -113,7 +113,7 @@ class ContextService:
                     [f"// {x}" for x in (comment_line1, comment_line2) if x]
                 )
 
-    def get_context(self, absolute_path: Optional[str] = None) -> dict[str, Any]:
+    def get_context(self, absolute_path: Optional[str] = None) -> Dict[str, Any]:
         res = self.adapter.get_context()
         self.add_extra_keys_to_context(res, absolute_path=absolute_path)
         return res

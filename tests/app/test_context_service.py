@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from jinja_tree.app.config import Config
 from jinja_tree.app.context import ContextPort, ContextService
@@ -8,7 +8,7 @@ class MockContextAdapter(ContextPort):
     def __init__(self, config: Config):
         pass
 
-    def get_context(self, absolute_path: Optional[str] = None) -> dict[str, Any]:
+    def get_context(self, absolute_path: Optional[str] = None) -> Dict[str, Any]:
         return {"foo": "bar"}
 
 
