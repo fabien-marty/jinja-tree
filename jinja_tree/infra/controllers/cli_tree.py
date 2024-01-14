@@ -30,7 +30,8 @@ from jinja_tree.infra.utils import (
     make_file_action_adapter_from_class_path_string,
 )
 
-typer.core.rich = None  # disable rich usage in typer
+# disable rich usage in typer
+typer.core.rich = None  # type: ignore
 app = typer.Typer(add_completion=False)
 
 

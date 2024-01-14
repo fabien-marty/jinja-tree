@@ -1,6 +1,7 @@
 import sys
 
 import typer
+import typer.core
 
 from jinja_tree.app.context import ContextService
 from jinja_tree.app.jinja import JinjaService
@@ -17,13 +18,12 @@ from jinja_tree.infra.controllers.cli_common import (
     get_config,
     setup_logger,
 )
-import typer.core
-
 from jinja_tree.infra.utils import (
     make_context_adapter_from_class_path_string,
 )
 
-typer.core.rich = None  # disable rich usage in typer
+# disable rich usage in typer
+typer.core.rich = None  # type: ignore
 app = typer.Typer(add_completion=False)
 
 

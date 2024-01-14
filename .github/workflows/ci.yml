@@ -59,13 +59,13 @@ jobs:
           poetry install
       - name: Run lint
         run: |
-          make FIX=0 lint
+          poetry run make FIX=0 lint
       - name: Run tests / coverage
         run: |
-          make test
+          poetry run make test
       - name: Run doc
         run: |
-          make doc
+          poetry run make doc
       - name: Check modified files
         run: |
           git diff --exit-code
@@ -110,4 +110,4 @@ jobs:
           poetry install
       - name: Publish on Pypi
         run: |
-          make publish
+          poetry run make publish
