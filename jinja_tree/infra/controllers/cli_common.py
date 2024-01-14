@@ -4,13 +4,7 @@ import json
 import sys
 from dataclasses import asdict
 from pathlib import Path
-
-try:
-    from typing import Annotated  # type: ignore
-except ImportError:
-    from typing_extensions import Annotated  # type: ignore
-
-from typing import List, Optional
+from typing import Annotated, List, Optional
 
 import stlog
 import tomli

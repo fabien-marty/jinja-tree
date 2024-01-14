@@ -7,6 +7,7 @@ PYTEST=pytest
 PYTHON=python3
 VERSION=0.0.0
 PYPI_TOKEN=
+IS_PYTHON_38=$(shell python --version |grep '^Python 3\.8\.' |wc -l)
 
 default: help
 
@@ -19,7 +20,11 @@ else
 	$(RUFF) format .
 	$(RUFF) --fix .
 endif
+ifeq ($(IS_PYTHON_38), 1)
+	@echo "WARNING: mypy is skipped with Python 3.8 because of problems with Annotated types"
+else
 	$(MYPY) --check-untyped-defs .
+endif
 
 .PHONY: test
 test: ## Test the code
