@@ -1,5 +1,5 @@
-<-- *** GENERATED FILE - DO NOT EDIT *** -->
-<-- To modify this file, edit README.md.template and launch 'make doc' -->
+<!-- *** GENERATED FILE - DO NOT EDIT *** -->
+<!-- To modify this file, edit README.md.template and launch 'make doc' -->
 
 # jinja-tree
 

@@ -108,13 +108,13 @@ class ContextService:
                 comment_line2 = make_generated_comment(
                     self.comment_line2_template, **make_generated_comment_kwargs
                 )
-                context["JINJA_TREE_MARKDOWN_HTML_GENERATED_COMMENT"] = "\n".join(
-                    [f"<-- {x} -->" for x in (comment_line1, comment_line2) if x]
+                context["JINJA_TREE_STYLE1_GENERATED_COMMENT"] = "\n".join(
+                    [f"<!-- {x} -->" for x in (comment_line1, comment_line2) if x]
                 )
-                context["JINJA_TREE_MARKDOWN_PYTHON_GENERATED_COMMENT"] = "\n".join(
+                context["JINJA_TREE_STYLE2_GENERATED_COMMENT"] = "\n".join(
                     [f"# {x}" for x in (comment_line1, comment_line2) if x]
                 )
-                context["JINJA_TREE_MARKDOWN_GO_GENERATED_COMMENT"] = "\n".join(
+                context["JINJA_TREE_STYLE3_GENERATED_COMMENT"] = "\n".join(
                     [f"// {x}" for x in (comment_line1, comment_line2) if x]
                 )
 
