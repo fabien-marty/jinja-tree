@@ -1,10 +1,13 @@
-from __future__ import annotations
-
 import json
 import sys
 from dataclasses import asdict
 from pathlib import Path
-from typing import Annotated, List, Optional
+from typing import List, Optional
+
+try:
+    from typing import Annotated
+except ImportError:
+    from typing_extensions import Annotated  # type: ignore
 
 import stlog
 import tomli
