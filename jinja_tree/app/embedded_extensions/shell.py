@@ -5,7 +5,7 @@ from jinja2.ext import Extension
 
 
 @eval_context
-def shell(eval_ctx, value, die_on_error=False, encoding="utf8", **kwargs):
+def shell(eval_ctx, value, die_on_error=True, encoding="utf8", **kwargs):
     if die_on_error:
         cmd = value
     else:

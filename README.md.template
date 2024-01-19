@@ -61,7 +61,7 @@ A docker image will also be available soon 🕒
 
 ```
 $ jinja-tree --help 
-"python3 jinja_tree/infra/controller/cli_tree.py --help"|shell()
+{{ "python3 jinja_tree/infra/controllers/cli_tree.py --help"|shell() }}
 ```
 
 ## Bonus
@@ -80,5 +80,5 @@ Full help of this bonus CLI utility:
 
 ```
 $ jinja-stdin --help 
-"python3 jinja_tree/infra/controller/cli_stdin.py --help"|shell()
+{{ "python3 jinja_tree/infra/controllers/cli_stdin.py --help"|shell() }}
 ```
