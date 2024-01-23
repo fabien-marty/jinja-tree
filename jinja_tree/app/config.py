@@ -16,6 +16,8 @@ DIRNAME_IGNORES_DEFAULT = [
     ".*",
 ]
 DOTENV_PATH_DEFAULT = ".env"
+FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS = [".template"]
+FILE_ACTION_PLUGIN_DEFAULT_IN_PLACE = False
 
 EMBEDDED_EXTENSIONS = [
     "jinja_tree.app.embedded_extensions.from_json.FromJsonExtension",
@@ -45,7 +47,11 @@ def make_default_context_plugin_config() -> Dict[str, Any]:
 
 
 def make_default_file_action_plugin_config() -> Dict[str, Any]:
-    return {"plugin": FILE_ACTION_PLUGIN_DEFAULT, "extensions": [".template"]}
+    return {
+        "plugin": FILE_ACTION_PLUGIN_DEFAULT,
+        "extensions": FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
+        "in_place": FILE_ACTION_PLUGIN_DEFAULT_IN_PLACE,
+    }
 
 
 @dataclass

@@ -29,7 +29,10 @@ def get_target_content(target_absolute_path: str) -> str:
 def set_target_content(
     target_absolute_path: str, content: str, blank_run: bool = False
 ):
-    if get_target_content(target_absolute_path) == content:
+    if (
+        os.path.isfile(target_absolute_path)
+        and get_target_content(target_absolute_path) == content
+    ):
         logger.info("No change to apply to the target file", path=target_absolute_path)
         return
     if blank_run:

@@ -94,3 +94,7 @@ plugin = "{{default_config.file_action_plugin_config.plugin}}"
 # File extensions to process [specific to ExtensionsFileActionAdapter plugin]
 # Example: [".j2", ".jinja2", ".template"] for processing all files ending with .j2, .jinja2 or .template
 extensions = [{{ default_config.file_action_plugin_config.extensions|map('double_quotes')|join(', ') }}]
+
+# Modify the file "in-place" (if true) [specific to ExtensionsFileActionAdapter plugin] and don't create/update a new file
+# (WARNING: can be a dangerous option, use with caution)
+in_place = {{ default_config.file_action_plugin_config.in_place|lower }}

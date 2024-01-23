@@ -96,3 +96,7 @@ plugin = "jinja_tree.infra.adapters.file_action.ExtensionsFileActionAdapter"
 # File extensions to process [specific to ExtensionsFileActionAdapter plugin]
 # Example: [".j2", ".jinja2", ".template"] for processing all files ending with .j2, .jinja2 or .template
 extensions = [".template"]
+
+# Modify the file "in-place" (if true) [specific to ExtensionsFileActionAdapter plugin] and don't create/update a new file
+# (WARNING: can be a dangerous option, use with caution)
+in_place = false
