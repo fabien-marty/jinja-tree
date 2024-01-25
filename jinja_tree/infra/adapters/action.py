@@ -1,15 +1,15 @@
 from typing import Optional
 
-from jinja_tree.app.config import (
-    FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
-    FILE_ACTION_PLUGIN_DEFAULT_IN_PLACE,
-    Config,
-)
-from jinja_tree.app.file_action import (
+from jinja_tree.app.action import (
     FileAction,
     FileActionPort,
     IgnoreFileAction,
     ProcessFileAction,
+)
+from jinja_tree.app.config import (
+    FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
+    FILE_ACTION_PLUGIN_DEFAULT_IN_PLACE,
+    Config,
 )
 
 

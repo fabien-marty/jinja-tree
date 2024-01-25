@@ -2,8 +2,8 @@ import stlog
 import typer
 import typer.core
 
+from jinja_tree.app.action import FileActionService
 from jinja_tree.app.context import ContextService
-from jinja_tree.app.file_action import FileActionService
 from jinja_tree.app.jinja import JinjaService
 from jinja_tree.app.jinja_tree import JinjaTreeService
 from jinja_tree.infra.controllers.cli_common import (

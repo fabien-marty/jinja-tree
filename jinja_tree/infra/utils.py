@@ -5,13 +5,13 @@ from typing import List, Optional, Type
 
 import stlog
 
+from jinja_tree.app.action import FileActionPort
 from jinja_tree.app.config import (
     CONTEXT_PLUGIN_DEFAULT,
     FILE_ACTION_PLUGIN_DEFAULT,
     Config,
 )
 from jinja_tree.app.context import ContextPort
-from jinja_tree.app.file_action import FileActionPort
 
 SYSTEM_CONFIG_PATH = "/etc/jinja-tree.toml"
 

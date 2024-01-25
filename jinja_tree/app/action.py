@@ -19,6 +19,10 @@ class FileAction:
 
     source_absolute_path: str
 
+    @property
+    def dirpath(self) -> str:
+        return os.path.dirname(self.source_absolute_path)
+
 
 @dataclass
 class IgnoreFileAction(FileAction):
@@ -39,9 +43,10 @@ class ProcessFileAction(FileAction):
     target_absolute_path: str
     delete_original: bool = False
 
-    @property
-    def dirpath(self) -> str:
-        return os.path.dirname(self.source_absolute_path)
+
+@dataclass
+class RenameFileAction(FileAction):
+    target_absolute_path: str
 
 
 class FileActionPort(ABC):

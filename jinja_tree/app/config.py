@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 CONTEXT_PLUGIN_DEFAULT = "jinja_tree.infra.adapters.context.EnvContextAdapter"
 FILE_ACTION_PLUGIN_DEFAULT = (
-    "jinja_tree.infra.adapters.file_action.ExtensionsFileActionAdapter"
+    "jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter"
 )
 FILENAME_IGNORES_DEFAULT = [".*"]
 DIRNAME_IGNORES_DEFAULT = [

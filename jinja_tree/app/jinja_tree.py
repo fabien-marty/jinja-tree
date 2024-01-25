@@ -1,13 +1,15 @@
 import os
-from typing import Iterator
+import shutil
 
 import stlog
 
-from jinja_tree.app.config import Config
-from jinja_tree.app.file_action import (
+from jinja_tree.app.action import (
     FileActionService,
+    IgnoreFileAction,
     ProcessFileAction,
+    RenameFileAction,
 )
+from jinja_tree.app.config import Config
 from jinja_tree.app.jinja import JinjaService
 from jinja_tree.infra.utils import is_fnmatch_ignored
 
@@ -82,7 +84,34 @@ class JinjaTreeService:
         self.jinja_service = jinja_service
         self.blank_run = blank_run
 
-    def file_absolute_paths(self) -> Iterator[str]:
+    def do_process_action(self, action: ProcessFileAction):
+        if self.config.change_cwd:
+            chdir(action.dirpath)
+        content = get_source_content(action.source_absolute_path)
+        logger.info(
+            "Processing a file",
+            path=action.source_absolute_path,
+            target=action.target_absolute_path,
+        )
+        result = self.jinja_service.render_string(content, action.source_absolute_path)
+        set_target_content(
+            action.target_absolute_path, result, blank_run=self.blank_run
+        )
+        if action.delete_original:
+            delete_source_file(action.source_absolute_path, blank_run=self.blank_run)
+
+    def do_rename_action(self, action: RenameFileAction):
+        if self.blank_run:
+            print(
+                f"[BLANK RUN] Fake renaming {action.source_absolute_path} to {action.target_absolute_path}..."
+            )
+        else:
+            logger.info(
+                f"Renaming {action.source_absolute_path} to {action.target_absolute_path}..."
+            )
+            shutil.move(action.source_absolute_path, action.target_absolute_path)
+
+    def process(self):
         for dirpath, dirnames, filenames in os.walk(self.config.root_dir, topdown=True):
             exclude_file = os.path.join(dirpath, IGNORE_FILENAME)
             if is_fnmatch_ignored(
@@ -113,32 +142,12 @@ class JinjaTreeService:
                         path=path,
                     )
                     continue
-                yield path
-
-    def actions(self) -> Iterator[ProcessFileAction]:
-        for path in self.file_absolute_paths():
-            action = self.file_action_service.get_action(path)
-            if not isinstance(action, ProcessFileAction):
-                logger.debug("Ignored file", path=path)
-                continue
-            yield action
-
-    def process_action(self, action: ProcessFileAction):
-        if self.config.change_cwd:
-            chdir(action.dirpath)
-        content = get_source_content(action.source_absolute_path)
-        logger.info(
-            "Processing a file",
-            path=action.source_absolute_path,
-            target=action.target_absolute_path,
-        )
-        result = self.jinja_service.render_string(content, action.source_absolute_path)
-        set_target_content(
-            action.target_absolute_path, result, blank_run=self.blank_run
-        )
-        if action.delete_original:
-            delete_source_file(action.source_absolute_path, blank_run=self.blank_run)
-
-    def process(self):
-        for action in self.actions():
-            self.process_action(action)
+                action = self.file_action_service.get_action(path)
+                if isinstance(action, IgnoreFileAction):
+                    logger.debug("Ignored file", path=path)
+                elif isinstance(action, ProcessFileAction):
+                    self.do_process_action(action)
+                elif isinstance(action, RenameFileAction):
+                    self.do_rename_action(action)
+                else:
+                    raise Exception("unknown action type: %s", action)

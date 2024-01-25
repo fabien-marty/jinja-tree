@@ -2,9 +2,9 @@ import os
 
 import pytest
 
+from jinja_tree.app.action import FileActionPort
 from jinja_tree.app.config import Config
 from jinja_tree.app.context import ContextPort
-from jinja_tree.app.file_action import FileActionPort
 from jinja_tree.infra.utils import (
     get_config_file_path,
     is_fnmatch_ignored,

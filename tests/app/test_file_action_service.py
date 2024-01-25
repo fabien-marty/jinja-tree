@@ -2,14 +2,14 @@ import os
 
 import pytest
 
-from jinja_tree.app.config import Config
-from jinja_tree.app.file_action import (
+from jinja_tree.app.action import (
     FileAction,
     FileActionPort,
     FileActionService,
     IgnoreFileAction,
     ProcessFileAction,
 )
+from jinja_tree.app.config import Config
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(SCRIPT_DIR, "data")

@@ -91,7 +91,7 @@ plugin_configuration_ignores = ["plugin", "generated_comment_line1", "generated_
 [file-action]
 
 # Plugin full classpath [common key for all file-action plugins]
-plugin = "jinja_tree.infra.adapters.file_action.ExtensionsFileActionAdapter"
+plugin = "jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter"
 
 # File extensions to process [specific to ExtensionsFileActionAdapter plugin]
 # Example: [".j2", ".jinja2", ".template"] for processing all files ending with .j2, .jinja2 or .template

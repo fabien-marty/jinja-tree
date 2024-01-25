@@ -2,12 +2,12 @@ import os
 
 import pytest
 
+from jinja_tree.app.action import IgnoreFileAction, ProcessFileAction
 from jinja_tree.app.config import Config
-from jinja_tree.app.file_action import IgnoreFileAction, ProcessFileAction
+from jinja_tree.infra.adapters.action import ExtensionsFileActionAdapter
 from jinja_tree.infra.adapters.context import (
     EnvContextAdapter,
 )
-from jinja_tree.infra.adapters.file_action import ExtensionsFileActionAdapter
 
 
 @pytest.fixture()
