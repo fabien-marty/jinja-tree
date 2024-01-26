@@ -15,8 +15,8 @@ import typer
 
 from jinja_tree.app.config import (
     Config,
+    make_default_action_plugin_config,
     make_default_context_plugin_config,
-    make_default_file_action_plugin_config,
 )
 from jinja_tree.infra.utils import get_config_file_path
 
@@ -72,10 +72,6 @@ BlankRunType = Annotated[
     ),
 ]
 
-ReplaceType = Annotated[
-    Optional[bool], typer.Option(help="replace target file event if exists")
-]
-
 DeleteOriginalType = Annotated[
     Optional[bool], typer.Option(help="delete original file")
 ]
@@ -95,31 +91,30 @@ def get_config(
     add_root_dir_to_search_path: AddRootDirToSearchPathType = None,
     strict_undefined: StrictUndefinedType = None,
     jinja_extension: ExtensionType = None,
-    replace: ReplaceType = None,
     delete_original: DeleteOriginalType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
     root_dir: Optional[RootDirType] = None,
     context_plugin: ContextPluginType = None,
-    file_action_plugin: FileActionPluginType = None,
+    action_plugin: FileActionPluginType = None,
 ) -> Config:
     if not config_file_path:
         config_file_path = get_config_file_path()
     general = {}
     context_plugin_config = make_default_context_plugin_config()
-    file_action_plugin_config = make_default_file_action_plugin_config()
+    action_plugin_config = make_default_action_plugin_config()
     if config_file_path:
         with open(config_file_path, "rb") as f:
             data = tomli.load(f)
         general = data.get("general", {})
         context_plugin_config = {**context_plugin_config, **data.get("context", {})}
-        file_action_plugin_config = {
-            **file_action_plugin_config,
-            **data.get("file-action", {}),
+        action_plugin_config = {
+            **action_plugin_config,
+            **data.get("action", {}),
         }
     config = Config(
         **general,
         context_plugin_config=context_plugin_config,
-        file_action_plugin_config=file_action_plugin_config,
+        action_plugin_config=action_plugin_config,
     )
     if extra_search_path:
         config.extra_search_paths = [str(x) for x in extra_search_path]
@@ -131,8 +126,6 @@ def get_config(
         config.strict_undefined = strict_undefined
     if jinja_extension:
         config.jinja_extensions = jinja_extension
-    if replace is not None:
-        config.replace = replace
     if delete_original is not None:
         config.delete_original = delete_original
     if disable_embedded_jinja_extensions is not None:
@@ -141,8 +134,8 @@ def get_config(
         config.root_dir = str(root_dir)
     if context_plugin is not None:
         config.context_plugin_config["plugin"] = context_plugin
-    if file_action_plugin is not None:
-        config.file_action_plugin_config["plugin"] = file_action_plugin
+    if action_plugin is not None:
+        config.action_plugin_config["plugin"] = action_plugin
     config.__post_init__()
     return config
 

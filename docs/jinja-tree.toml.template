@@ -1,6 +1,8 @@
 #############################
 ### General configuration ###
 #############################
+# (Note: all values here are the default values)
+
 [general]
 
 # Search paths to jinja"
@@ -21,9 +23,6 @@ change_cwd = {{ default_config.change_cwd|lower }}
 # Crash when templates use undefined variables (if true)
 strict_undefined = {{ default_config.strict_undefined|lower }}
 
-# Replace target files if they already exist (if true)
-replace = {{ default_config.replace|lower }}
-
 # Delete original (template) file after processing (if true)
 delete_original = {{ default_config.delete_original|lower }}
 
@@ -39,12 +38,6 @@ disable_embedded_jinja_extensions = {{ default_config.disable_embedded_jinja_ext
 # - jinja-tree provides embedded extensions which will be added automatically to this list
 # - you can disable embedded extensions with 'disable_embedded_jinja_extensions = true'
 jinja_extensions = []
-
-# Filename patterns to ignore (fnmatch patterns to match against basename only)
-filename_ignores = [ {{ filename_ignores_default|map('double_quotes')|join(', ') }} ]
-
-# Dirname patterns to ignore recursively (fnmatch patterns to match against dirname only)
-dirname_ignores =  [ {{ dirname_ignores_default|map('double_quotes')|join(', ') }} ]
 
 
 ####################################  
@@ -86,15 +79,20 @@ plugin_configuration_ignores = [{{ default_config.context_plugin_config.plugin_c
 ########################################  
 ### File-action plugin configuration ###
 ########################################
-[file-action]
+[action]
 
 # Plugin full classpath [common key for all file-action plugins]
-plugin = "{{default_config.file_action_plugin_config.plugin}}"
+plugin = "{{default_config.action_plugin_config.plugin}}"
 
 # File extensions to process [specific to ExtensionsFileActionAdapter plugin]
 # Example: [".j2", ".jinja2", ".template"] for processing all files ending with .j2, .jinja2 or .template
-extensions = [{{ default_config.file_action_plugin_config.extensions|map('double_quotes')|join(', ') }}]
+extensions = [{{ default_config.action_plugin_config.extensions|map('double_quotes')|join(', ') }}]
 
-# Modify the file "in-place" (if true) [specific to ExtensionsFileActionAdapter plugin] and don't create/update a new file
-# (WARNING: can be a dangerous option, use with caution)
-in_place = {{ default_config.file_action_plugin_config.in_place|lower }}
+# Filename patterns to ignore (fnmatch patterns to match against basename only)
+filename_ignores = [ {{ filename_ignores_default|map('double_quotes')|join(', ') }} ]
+
+# Dirname patterns to ignore recursively (fnmatch patterns to match against dirname only)
+dirname_ignores =  [ {{ dirname_ignores_default|map('double_quotes')|join(', ') }} ]
+
+# Replace target files if they already exist (if true)
+replace = {{ default_config.action_plugin_config.replace|lower }}

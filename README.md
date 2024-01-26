@@ -82,7 +82,7 @@ Options:
                                   add root directory to jinja search path
   --jinja-extension TEXT          jinja extension to load
   --context-plugin TEXT           context plugin (full python class path)
-  --file-action-plugin TEXT       file-action plugin (full python class path)
+  --action-plugin TEXT            file-action plugin (full python class path)
   --strict-undefined / --no-strict-undefined
                                   if set, raise an error if a variable does
                                   not exist in context
@@ -91,7 +91,6 @@ Options:
                                   no-blank-run]
   --delete-original / --no-delete-original
                                   delete original file
-  --replace / --no-replace        replace target file event if exists
   --disable-embedded-jinja-extensions / --no-disable-embedded-jinja-extensions
                                   disable embedded jinja extensions
   --help                          Show this message and exit.

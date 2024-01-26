@@ -17,7 +17,7 @@ DIRNAME_IGNORES_DEFAULT = [
 ]
 DOTENV_PATH_DEFAULT = ".env"
 FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS = [".template"]
-FILE_ACTION_PLUGIN_DEFAULT_IN_PLACE = False
+REPLACE_DEFAULT = True
 
 EMBEDDED_EXTENSIONS = [
     "jinja_tree.app.embedded_extensions.from_json.FromJsonExtension",
@@ -46,11 +46,13 @@ def make_default_context_plugin_config() -> Dict[str, Any]:
     return tmp
 
 
-def make_default_file_action_plugin_config() -> Dict[str, Any]:
+def make_default_action_plugin_config() -> Dict[str, Any]:
     return {
         "plugin": FILE_ACTION_PLUGIN_DEFAULT,
         "extensions": FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
-        "in_place": FILE_ACTION_PLUGIN_DEFAULT_IN_PLACE,
+        "filename_ignores": FILENAME_IGNORES_DEFAULT,
+        "dirname_ignores": DIRNAME_IGNORES_DEFAULT,
+        "replace": REPLACE_DEFAULT,
     }
 
 
@@ -65,20 +67,15 @@ class Config:
     jinja_extensions: List[str] = field(default_factory=list)
     strict_undefined: bool = True
     root_dir: str = field(default_factory=os.getcwd)
-    replace: bool = True
     delete_original: bool = False
     disable_embedded_jinja_extensions: bool = False
-    filename_ignores: List[str] = field(
-        default_factory=lambda: FILENAME_IGNORES_DEFAULT
-    )
-    dirname_ignores: List[str] = field(default_factory=lambda: DIRNAME_IGNORES_DEFAULT)
 
     # Plugin config
     context_plugin_config: Dict[str, Any] = field(
         default_factory=make_default_context_plugin_config
     )
-    file_action_plugin_config: Dict[str, Any] = field(
-        default_factory=make_default_file_action_plugin_config
+    action_plugin_config: Dict[str, Any] = field(
+        default_factory=make_default_action_plugin_config
     )
 
     @property

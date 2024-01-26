@@ -2,7 +2,7 @@ import stlog
 import typer
 import typer.core
 
-from jinja_tree.app.action import FileActionService
+from jinja_tree.app.action import ActionService
 from jinja_tree.app.context import ContextService
 from jinja_tree.app.jinja import JinjaService
 from jinja_tree.app.jinja_tree import JinjaTreeService
@@ -18,7 +18,6 @@ from jinja_tree.infra.controllers.cli_common import (
     ExtraSearchPathsType,
     FileActionPluginType,
     LogLevelType,
-    ReplaceType,
     RootDirType,
     StrictUndefinedType,
     config_dump,
@@ -45,11 +44,10 @@ def tree(
     add_root_dir_to_search_path: AddRootDirToSearchPathType = None,
     jinja_extension: ExtensionType = None,
     context_plugin: ContextPluginType = None,
-    file_action_plugin: FileActionPluginType = None,
+    action_plugin: FileActionPluginType = None,
     strict_undefined: StrictUndefinedType = None,
     blank_run: BlankRunType = False,
     delete_original: DeleteOriginalType = None,
-    replace: ReplaceType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
 ):
     if log_level is not None:
@@ -62,9 +60,8 @@ def tree(
         jinja_extension=jinja_extension,
         strict_undefined=strict_undefined,
         context_plugin=context_plugin,
-        file_action_plugin=file_action_plugin,
+        action_plugin=action_plugin,
         delete_original=delete_original,
-        replace=replace,
         disable_embedded_jinja_extensions=disable_embedded_jinja_extensions,
         root_dir=root_dir,
     )
@@ -74,11 +71,11 @@ def tree(
     context_adapter = make_context_adapter_from_config(config)
     file_action_adapter = make_file_action_adapter_from_config(config)
     context_service = ContextService(config=config, adapter=context_adapter)
-    file_action_service = FileActionService(config=config, adapter=file_action_adapter)
+    file_action_service = ActionService(config=config, adapter=file_action_adapter)
     jinja_service = JinjaService(config=config, context_service=context_service)
     jinja_tree_service = JinjaTreeService(
         config=config,
-        file_action_service=file_action_service,
+        action_service=file_action_service,
         jinja_service=jinja_service,
         blank_run=blank_run,
     )

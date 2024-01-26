@@ -4,16 +4,14 @@ import shutil
 import stlog
 
 from jinja_tree.app.action import (
-    FileActionService,
+    ActionService,
+    IgnoreDirectoryAction,
     IgnoreFileAction,
     ProcessFileAction,
     RenameFileAction,
 )
 from jinja_tree.app.config import Config
 from jinja_tree.app.jinja import JinjaService
-from jinja_tree.infra.utils import is_fnmatch_ignored
-
-IGNORE_FILENAME = ".jinja-tree-ignore"
 
 logger = stlog.getLogger("jinja-tree")
 
@@ -75,12 +73,12 @@ class JinjaTreeService:
     def __init__(
         self,
         config: Config,
-        file_action_service: FileActionService,
+        action_service: ActionService,
         jinja_service: JinjaService,
         blank_run: bool = False,
     ):
         self.config = config
-        self.file_action_service = file_action_service
+        self.action_service = action_service
         self.jinja_service = jinja_service
         self.blank_run = blank_run
 
@@ -113,38 +111,20 @@ class JinjaTreeService:
 
     def process(self):
         for dirpath, dirnames, filenames in os.walk(self.config.root_dir, topdown=True):
-            exclude_file = os.path.join(dirpath, IGNORE_FILENAME)
-            if is_fnmatch_ignored(
-                os.path.basename(dirpath), self.config.dirname_ignores
-            ):
-                logger.debug(
-                    "Ignored directory because of dirname_ignores configuration value",
-                    path=dirpath,
-                )
+            # Directory action
+            dir_action = self.action_service.get_directory_action(dirpath)
+            if isinstance(dir_action, IgnoreDirectoryAction):
                 # modify in-place, see https://stackoverflow.com/a/19859907
                 # to ignore recursively
                 dirnames[:] = []
                 continue
-            if os.path.isfile(exclude_file):
-                logger.debug(
-                    f"Ignored directory tree because of presence of {IGNORE_FILENAME}",
-                    path=dirpath,
-                )
-                # modify in-place, see https://stackoverflow.com/a/19859907
-                # to ignore recursively
-                dirnames[:] = []
-                continue
+
+            # File actions
             for f in filenames:
                 path = os.path.join(dirpath, f)
-                if is_fnmatch_ignored(f, self.config.filename_ignores):
-                    logger.debug(
-                        "Ignored file because of ignores configuration value",
-                        path=path,
-                    )
-                    continue
-                action = self.file_action_service.get_action(path)
+                action = self.action_service.get_file_action(path)
                 if isinstance(action, IgnoreFileAction):
-                    logger.debug("Ignored file", path=path)
+                    pass
                 elif isinstance(action, ProcessFileAction):
                     self.do_process_action(action)
                 elif isinstance(action, RenameFileAction):

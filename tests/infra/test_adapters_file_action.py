@@ -33,14 +33,14 @@ def test_extensions():
     x = ExtensionsFileActionAdapter(
         Config(
             delete_original=True,
-            file_action_plugin_config={"extensions": [".template"]},
+            action_plugin_config={"extensions": [".template"]},
         )
     )
-    a = x.get_action("/foo/bar/foo.template")
+    a = x.get_file_action("/foo/bar/foo.template")
     assert isinstance(a, ProcessFileAction)
     assert a.source_absolute_path == "/foo/bar/foo.template"
     assert a.target_absolute_path == "/foo/bar/foo"
     assert a.delete_original is True
-    a = x.get_action("/foo/bar/foo.py")
+    a = x.get_file_action("/foo/bar/foo.py")
     assert isinstance(a, IgnoreFileAction)
     assert a.source_absolute_path == "/foo/bar/foo.py"

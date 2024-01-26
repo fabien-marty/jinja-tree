@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from jinja_tree.app.action import FileActionPort
+from jinja_tree.app.action import ActionPort
 from jinja_tree.app.config import Config
 from jinja_tree.app.context import ContextPort
 from jinja_tree.infra.utils import (
@@ -23,7 +23,7 @@ def test_make_context_adapter_from_config():
 
 def test_make_file_action_adapter_from_config():
     adapter = make_file_action_adapter_from_config(config=Config())
-    assert isinstance(adapter, FileActionPort)
+    assert isinstance(adapter, ActionPort)
 
 
 @pytest.fixture

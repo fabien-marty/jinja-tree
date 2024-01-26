@@ -5,7 +5,7 @@ from typing import List, Optional, Type
 
 import stlog
 
-from jinja_tree.app.action import FileActionPort
+from jinja_tree.app.action import ActionPort
 from jinja_tree.app.config import (
     CONTEXT_PLUGIN_DEFAULT,
     FILE_ACTION_PLUGIN_DEFAULT,
@@ -35,13 +35,11 @@ def make_context_adapter_from_config(config: Config) -> ContextPort:
     return context_adapter
 
 
-def make_file_action_adapter_from_config(config: Config) -> FileActionPort:
-    class_path = config.file_action_plugin_config.get(
-        "plugin", FILE_ACTION_PLUGIN_DEFAULT
-    )
+def make_file_action_adapter_from_config(config: Config) -> ActionPort:
+    class_path = config.action_plugin_config.get("plugin", FILE_ACTION_PLUGIN_DEFAULT)
     context_adapter_class = import_class_from_string(class_path)
     file_action_adapter = context_adapter_class(config=config)
-    if not isinstance(file_action_adapter, FileActionPort):
+    if not isinstance(file_action_adapter, ActionPort):
         raise Exception(
             f"the class pointed by {class_path} does not implement FileActionPort interface"
         )
