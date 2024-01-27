@@ -1,0 +1,71 @@
+{{JINJA_TREE_STYLE1_GENERATED_COMMENT}}
+
+# Details about plugins
+
+In `jinja-tree` there are two extension points:
+
+- one for providing context variables to Jinja templates (let's call it `context`)
+- one for providing actions to do on files or directories (let's call in `action`)
+
+`jinja-tree` default behavior is driven by two plugins:
+
+- `jinja_tree.infra.adapters.context.EnvContextAdapter` (for the `context` extension point)
+- `jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter`(for the `action` extension point)
+
+Of course, you can provide your own plugins to override the default behavior by passing your class full path to the `--context-plugin` or `--action-plugin` CLI options (or corresponding configuration file keys).
+
+## Context plugins
+
+The role of the context plugin is to provide some context variables for Jinja template processing.
+
+It's a class that must implement the `jinja_tree.app.context.ContextPort` interface.
+
+<details>
+
+<summary>Details of the `ContextPort` interface</summary>
+
+```python
+{{ context_port_source }}
+```
+
+</details>
+
+A higher-level service object will add to the context returned by the plugin some extra keys:
+
+- `JINJA_TREE = "1"`
+- `JINJA_DT = "2024-01-25T12:34:56Z"`
+- `JINJA_TREE_FILEPATH = "/foo/bar/baz.py"`
+- `JINJA_TREE_DIRNAME = "/foo/bar"`
+- `JINJA_TREE_BASENAME = "baz.py"`
+- `JINJA_TREE_RELATIVE_FILEPATH = "bar/baz.py"`
+- `JINJA_TREE_STYLE1_GENERATED_COMMENT = "<!-- ... -->"`
+- `JINJA_TREE_STYLE2_GENERATED_COMMENT = "# ..."`
+- `JINJA_TREE_STYLE3_GENERATED_COMMENT = "// ..."`
+
+> ![NOTE]
+> `JINJA_TREE_STYLE{1,2,3}_GENERATED_COMMENT` are comments you can add
+> to your generated files to say "hey this is the generated file => do not modify it!".
+>
+> You can use the style of comments you need (depending on the file type you generate). And
+> you can also configure the message itself.
+
+### The default context plugin
+
+The [default context plugin](jinja_tree/infra/adapters/context.py) provides a context by merging 3 layers of contexts (in this order):
+
+- the "configuration context" you can provide by adding some extra key/values in the `.jinja-tree.toml` configuration file
+- the "environment variables context" you can provide by setting some environment variables
+- the "dotenv" context you can provide by adding some extra key/values in a dotenv file
+
+Of course, you can configure plenty of things to tune this default behavior.
+
+### Other context plugins
+
+To manage this repository, we use a [custom context plugin](tools/jinja_tree_plugins_context.py) which is very specific to this repository
+but this is maybe a good example to show you how to write your own context plugin.
+
+## Action plugins
+
+FIXME
+
+Go back to [main README](../README.md) file.

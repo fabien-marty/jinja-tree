@@ -47,7 +47,7 @@ There are two extension points:
 - context plugins: to provide context variables to Jinja templates
 - file plugins: to change the way how `jinja-tree` finds files to process (including target files)
 
-See [this specification documentation page](docs/fixme) for more details.
+See [this specification documentation page](docs/details-about-plugins.md) for more details.
 
 #### 2️⃣ Very configurable
 
@@ -55,7 +55,7 @@ See [this specification documentation page](docs/fixme) for more details.
 
 Plugins are configurable via the configuration file.
 
-See [this specification documentation page](docs/fixme) for more details.
+See [this specification documentation page](docs/details-about-configuration.md) for more details.
 
 #### 3️⃣ Embedded extensions
 

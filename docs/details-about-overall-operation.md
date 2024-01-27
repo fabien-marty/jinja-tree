@@ -25,4 +25,4 @@ We get:
 /foo/bar/another.file
 ```
 
-Go back to [../README.md](main README.md) file.
+Go back to [main README](../README.md) file.

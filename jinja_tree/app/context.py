@@ -94,7 +94,6 @@ class ContextService:
                 # should be true...
                 relative_filepath = absolute_path[len(self.config.root_dir) + 1 :]
                 context["JINJA_TREE_RELATIVE_FILEPATH"] = relative_filepath
-                context["JINJA_TREE_MARKDOWN_HTML_GENERATED_COMMENT"] = ""
                 make_generated_comment_kwargs = {
                     "utcnow": utcnow,
                     "absolute_path": absolute_path,
