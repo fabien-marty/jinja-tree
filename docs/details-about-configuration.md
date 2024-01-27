@@ -13,7 +13,9 @@ You have two options to configure the `jinja-tree`:
 ## CLI options
 
 <details>
+
 <summary>CLI options reference of the `jinja-tree` CLI</summary>
+
 ```
 Usage: cli_tree.py [OPTIONS] ROOT_DIR
 
@@ -47,10 +49,13 @@ Options:
   --help                          Show this message and exit.
 
 ```
+
 </details>
 
 <details>
+
 <summary>CLI options reference of the `jinja-stdin` bonus CLI</summary>
+
 ```
 Usage: cli_stdin.py [OPTIONS]
 
@@ -75,6 +80,7 @@ Options:
   --help                          Show this message and exit.
 
 ```
+
 </details>
 
 ## Configuration file
@@ -84,7 +90,9 @@ Options:
 ### Reference (with all keys and default values)
 
 <details>
+
 <summary>Configuration file reference</summary>
+
 ```toml
 #############################
 ### General configuration ###
@@ -190,6 +198,7 @@ replace = true
 # [specific to ExtensionsFileActionAdapter plugin]
 delete_original = false
 ```
+
 </details>
 
 Go back to [../README.md](main README.md) file.

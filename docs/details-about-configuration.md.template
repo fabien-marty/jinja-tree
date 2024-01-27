@@ -13,17 +13,23 @@ You have two options to configure the `jinja-tree`:
 ## CLI options
 
 <details>
+
 <summary>CLI options reference of the `jinja-tree` CLI</summary>
+
 ```
 {{ "python3 ../jinja_tree/infra/controllers/cli_tree.py --help"|shell() }}
 ```
+
 </details>
 
 <details>
+
 <summary>CLI options reference of the `jinja-stdin` bonus CLI</summary>
+
 ```
 {{ "python3 ../jinja_tree/infra/controllers/cli_stdin.py --help"|shell() }}
 ```
+
 </details>
 
 ## Configuration file
@@ -33,10 +39,13 @@ You have two options to configure the `jinja-tree`:
 ### Reference (with all keys and default values)
 
 <details>
+
 <summary>Configuration file reference</summary>
+
 ```toml
 {{ "cat jinja-tree.toml"|shell() }}
 ```
+
 </details>
 
 Go back to [../README.md](main README.md) file.
