@@ -8,6 +8,15 @@ def double_quotes(eval_ctx, value):
 
 
 class DoubleQuotesExtension(Extension):
+    """Jinja2 extension to add double quotes around a string.
+
+    Example:
+    {{ 'foo-bar'|double_quotes() }}
+
+    => "foo-bar"
+
+    """
+
     def __init__(self, environment):
         super().__init__(environment)
         environment.filters["double_quotes"] = double_quotes

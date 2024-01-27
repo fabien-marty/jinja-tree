@@ -13,6 +13,7 @@ from jinja_tree.app.action import (
     ProcessFileAction,
 )
 from jinja_tree.app.config import (
+    DELETE_ORIGINAL_DEFAULT,
     DIRNAME_IGNORES_DEFAULT,
     FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
     FILENAME_IGNORES_DEFAULT,
@@ -39,6 +40,9 @@ class ExtensionsFileActionAdapter(ActionPort):
             "dirname_ignores", DIRNAME_IGNORES_DEFAULT
         )
         self.replace = config.action_plugin_config.get("replace", REPLACE_DEFAULT)
+        self.delete_original = config.action_plugin_config.get(
+            "delete_original", DELETE_ORIGINAL_DEFAULT
+        )
 
     def get_file_action(self, absolute_path: str) -> FileAction:
         if is_fnmatch_ignored(os.path.basename(absolute_path), self.filename_ignores):
@@ -68,7 +72,7 @@ class ExtensionsFileActionAdapter(ActionPort):
         return ProcessFileAction(
             source_absolute_path=absolute_path,
             target_absolute_path=target_absolute_path,
-            delete_original=self.config.delete_original,
+            delete_original=self.delete_original,
         )
 
     def get_directory_action(self, absolute_path: str) -> DirectoryAction:

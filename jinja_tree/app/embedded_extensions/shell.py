@@ -16,6 +16,18 @@ def shell(eval_ctx, value, die_on_error=True, encoding="utf8", **kwargs):
 
 
 class ShellExtension(Extension):
+    """Jinja2 extension to execute shell commands.
+
+    Example:
+    {{ "date"|shell() }}
+
+    => "Thu  7 Nov 2019 15:55:01 CET"
+
+    WARNING: be sure to valid any string submitted to this filter as
+             you can open security holes with it
+
+    """
+
     def __init__(self, environment):
         super().__init__(environment)
         environment.filters["shell"] = shell

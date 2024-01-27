@@ -23,14 +23,11 @@ change_cwd = {{ default_config.change_cwd|lower }}
 # Crash when templates use undefined variables (if true)
 strict_undefined = {{ default_config.strict_undefined|lower }}
 
-# Delete original (template) file after processing (if true)
-delete_original = {{ default_config.delete_original|lower }}
-
 # Disable embedded jinja extensions (if true)
 # List of embedded jinja extensions (for information only):
 {% for x in embedded_jinja_extensions -%}
 # - {{x}}
-{% endfor %}
+{% endfor -%}
 disable_embedded_jinja_extensions = {{ default_config.disable_embedded_jinja_extensions|lower }}
 
 # Jinja extensions to add (full paths)
@@ -81,7 +78,7 @@ plugin_configuration_ignores = [{{ default_config.context_plugin_config.plugin_c
 ########################################
 [action]
 
-# Plugin full classpath [common key for all file-action plugins]
+# Plugin full classpath [common key for all action plugins]
 plugin = "{{default_config.action_plugin_config.plugin}}"
 
 # File extensions to process [specific to ExtensionsFileActionAdapter plugin]
@@ -89,10 +86,17 @@ plugin = "{{default_config.action_plugin_config.plugin}}"
 extensions = [{{ default_config.action_plugin_config.extensions|map('double_quotes')|join(', ') }}]
 
 # Filename patterns to ignore (fnmatch patterns to match against basename only)
+# [specific to ExtensionsFileActionAdapter plugin]
 filename_ignores = [ {{ filename_ignores_default|map('double_quotes')|join(', ') }} ]
 
 # Dirname patterns to ignore recursively (fnmatch patterns to match against dirname only)
+# [specific to ExtensionsFileActionAdapter plugin]
 dirname_ignores =  [ {{ dirname_ignores_default|map('double_quotes')|join(', ') }} ]
 
 # Replace target files if they already exist (if true)
+# [specific to ExtensionsFileActionAdapter plugin]
 replace = {{ default_config.action_plugin_config.replace|lower }}
+
+# Delete original (template) file after processing (if true)
+# [specific to ExtensionsFileActionAdapter plugin]
+delete_original = {{ default_config.action_plugin_config.delete_original|lower }}

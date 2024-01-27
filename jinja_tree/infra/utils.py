@@ -49,6 +49,23 @@ def make_file_action_adapter_from_config(config: Config) -> ActionPort:
 def get_config_file_path(
     cli_option: Optional[str] = None, cwd: Optional[str] = None
 ) -> Optional[str]:
+    """
+    Get the path to the configuration file.
+
+    - if the CLI option is set, it is returned immediately.
+    - if the env var JINJA_TREE_CONFIG_FILE is set, its value is returned immediately.
+    - else, we will try to find it in the current working directory
+        or in the parent directory (recursively).
+
+    Args:
+        cli_option: The configuration file path provided via CLI
+            (if set, the function returns this value immediately)
+        cwd: The current working directory (if not set, the current working directory is used)
+
+    Returns:
+        The path to the configuration file, or None if not found.
+
+    """
     if cli_option is not None:
         logger.debug(f"config file path read from CLI: {cli_option}")
         return cli_option
@@ -77,4 +94,14 @@ def get_config_file_path(
 
 
 def is_fnmatch_ignored(key: str, ignores: List[str]) -> bool:
+    """
+    Check if the given key matches any of the patterns in the ignores list using fnmatch.
+
+    Args:
+        key: The key to check.
+        ignores: The list of patterns to ignore.
+
+    Returns:
+        True if the key matches any of the patterns, False otherwise.
+    """
     return any(fnmatch.fnmatch(key, x) for x in ignores)

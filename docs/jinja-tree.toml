@@ -23,16 +23,12 @@ change_cwd = true
 # Crash when templates use undefined variables (if true)
 strict_undefined = true
 
-# Delete original (template) file after processing (if true)
-delete_original = false
-
 # Disable embedded jinja extensions (if true)
 # List of embedded jinja extensions (for information only):
 # - jinja_tree.app.embedded_extensions.from_json.FromJsonExtension
 # - jinja_tree.app.embedded_extensions.shell.ShellExtension
 # - jinja_tree.app.embedded_extensions.fnmatch.FnMatchExtension
 # - jinja_tree.app.embedded_extensions.double_quotes.DoubleQuotesExtension
-
 disable_embedded_jinja_extensions = false
 
 # Jinja extensions to add (full paths)
@@ -83,7 +79,7 @@ plugin_configuration_ignores = ["plugin", "generated_comment_line1", "generated_
 ########################################
 [action]
 
-# Plugin full classpath [common key for all file-action plugins]
+# Plugin full classpath [common key for all action plugins]
 plugin = "jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter"
 
 # File extensions to process [specific to ExtensionsFileActionAdapter plugin]
@@ -91,10 +87,17 @@ plugin = "jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter"
 extensions = [".template"]
 
 # Filename patterns to ignore (fnmatch patterns to match against basename only)
+# [specific to ExtensionsFileActionAdapter plugin]
 filename_ignores = [ ".*" ]
 
 # Dirname patterns to ignore recursively (fnmatch patterns to match against dirname only)
+# [specific to ExtensionsFileActionAdapter plugin]
 dirname_ignores =  [ "venv", "site-packages", "__pypackages__", "node_modules", "__pycache__", ".*" ]
 
 # Replace target files if they already exist (if true)
+# [specific to ExtensionsFileActionAdapter plugin]
 replace = true
+
+# Delete original (template) file after processing (if true)
+# [specific to ExtensionsFileActionAdapter plugin]
+delete_original = false

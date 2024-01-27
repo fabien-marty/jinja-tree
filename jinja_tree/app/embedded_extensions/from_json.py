@@ -10,6 +10,8 @@ def from_json(eval_ctx, value):
 
 
 class FromJsonExtension(Extension):
+    """Jinja2 extension to load a JSON string into a Python object."""
+
     def __init__(self, environment):
         super().__init__(environment)
         environment.filters["from_json"] = from_json

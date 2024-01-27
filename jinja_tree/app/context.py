@@ -119,6 +119,15 @@ class ContextService:
                 )
 
     def get_context(self, absolute_path: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Retrieve the Jinja context to apply.
+
+        Note: it can depends on the current working directory (CWD).
+
+        Returns:
+            The context dictionary.
+
+        """
         res = self.adapter.get_context()
         self.add_extra_keys_to_context(res, absolute_path=absolute_path)
         return res

@@ -12,7 +12,6 @@ from jinja_tree.infra.controllers.cli_common import (
     BlankRunType,
     ConfigFileType,
     ContextPluginType,
-    DeleteOriginalType,
     DisableEmbeddedExtensions,
     ExtensionType,
     ExtraSearchPathsType,
@@ -47,7 +46,6 @@ def tree(
     action_plugin: FileActionPluginType = None,
     strict_undefined: StrictUndefinedType = None,
     blank_run: BlankRunType = False,
-    delete_original: DeleteOriginalType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
 ):
     if log_level is not None:
@@ -61,7 +59,6 @@ def tree(
         strict_undefined=strict_undefined,
         context_plugin=context_plugin,
         action_plugin=action_plugin,
-        delete_original=delete_original,
         disable_embedded_jinja_extensions=disable_embedded_jinja_extensions,
         root_dir=root_dir,
     )

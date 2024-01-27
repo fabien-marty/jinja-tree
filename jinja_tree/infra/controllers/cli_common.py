@@ -62,7 +62,7 @@ StrictUndefinedType = Annotated[
 ]
 
 FileActionPluginType = Annotated[
-    Optional[str], typer.Option(help="file-action plugin (full python class path)")
+    Optional[str], typer.Option(help="action plugin (full python class path)")
 ]
 
 BlankRunType = Annotated[
@@ -70,10 +70,6 @@ BlankRunType = Annotated[
     typer.Option(
         help="if set, execute a blank run (without modifying or deleting anything)"
     ),
-]
-
-DeleteOriginalType = Annotated[
-    Optional[bool], typer.Option(help="delete original file")
 ]
 
 DisableEmbeddedExtensions = Annotated[
@@ -91,7 +87,6 @@ def get_config(
     add_root_dir_to_search_path: AddRootDirToSearchPathType = None,
     strict_undefined: StrictUndefinedType = None,
     jinja_extension: ExtensionType = None,
-    delete_original: DeleteOriginalType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
     root_dir: Optional[RootDirType] = None,
     context_plugin: ContextPluginType = None,
@@ -126,8 +121,6 @@ def get_config(
         config.strict_undefined = strict_undefined
     if jinja_extension:
         config.jinja_extensions = jinja_extension
-    if delete_original is not None:
-        config.delete_original = delete_original
     if disable_embedded_jinja_extensions is not None:
         config.disable_embedded_jinja_extensions = disable_embedded_jinja_extensions
     if root_dir is not None:

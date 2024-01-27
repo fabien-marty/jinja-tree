@@ -18,6 +18,7 @@ DIRNAME_IGNORES_DEFAULT = [
 DOTENV_PATH_DEFAULT = ".env"
 FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS = [".template"]
 REPLACE_DEFAULT = True
+DELETE_ORIGINAL_DEFAULT = False
 
 EMBEDDED_EXTENSIONS = [
     "jinja_tree.app.embedded_extensions.from_json.FromJsonExtension",
@@ -53,6 +54,7 @@ def make_default_action_plugin_config() -> Dict[str, Any]:
         "filename_ignores": FILENAME_IGNORES_DEFAULT,
         "dirname_ignores": DIRNAME_IGNORES_DEFAULT,
         "replace": REPLACE_DEFAULT,
+        "delete_original": DELETE_ORIGINAL_DEFAULT,
     }
 
 
@@ -67,7 +69,6 @@ class Config:
     jinja_extensions: List[str] = field(default_factory=list)
     strict_undefined: bool = True
     root_dir: str = field(default_factory=os.getcwd)
-    delete_original: bool = False
     disable_embedded_jinja_extensions: bool = False
 
     # Plugin config

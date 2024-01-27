@@ -30,12 +30,10 @@ def test_env(fake_env_fixture):
 
 
 def test_extensions():
-    x = ExtensionsFileActionAdapter(
-        Config(
-            delete_original=True,
-            action_plugin_config={"extensions": [".template"]},
-        )
+    config = Config(
+        action_plugin_config={"extensions": [".template"], "delete_original": True},
     )
+    x = ExtensionsFileActionAdapter(config)
     a = x.get_file_action("/foo/bar/foo.template")
     assert isinstance(a, ProcessFileAction)
     assert a.source_absolute_path == "/foo/bar/foo.template"
