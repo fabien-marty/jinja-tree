@@ -49,6 +49,8 @@ You have two options to configure the `jinja-tree`:
 
 <summary>Configuration file reference</summary>
 
+[Full file example](jinja-tree.toml):
+
 ```toml
 {{ "cat jinja-tree.toml"|shell() }}
 ```
