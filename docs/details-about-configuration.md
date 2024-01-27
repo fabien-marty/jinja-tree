@@ -87,6 +87,13 @@ Options:
 
 ### How the configuration file is found?
 
+- if you set the `--config-file` CLI option, the configuration file is the one you set
+- if the environment variable `JINJA_TREE_CONFIG_FILE` is set, the configuration file is the one set in this environment variable value
+- otherwise, the configuration file is the first `.jinja-tree.toml` file found up from current working directory (we recursively search up from current working directory)
+
+> [!TIP]
+> The most common way to use the configuration file is to put it in the root directory of your project/repository. Its name must be `.jinja-tree.toml`.
+
 ### Reference (with all keys and default values)
 
 <details>
@@ -201,4 +208,4 @@ delete_original = false
 
 </details>
 
-Go back to [../README.md](main README.md) file.
+Go back to [main README](../README.md) file.
