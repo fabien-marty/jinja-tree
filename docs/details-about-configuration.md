@@ -100,6 +100,8 @@ Options:
 
 <summary>Configuration file reference</summary>
 
+[Full file example](jinja-tree.toml):
+
 ```toml
 #############################
 ### General configuration ###
