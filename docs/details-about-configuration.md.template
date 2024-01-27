@@ -1,0 +1,42 @@
+# Details about configuration
+
+You have two options to configure the `jinja-tree`:
+
+- the first one is to provide configuration options with CLI options
+- the second one is to provide a configuration file `.jinja-tree.toml` 
+
+> [!IMPORTANT]
+> CLI options have higher priority than configuration file.
+>
+> But there are only CLI options for "general" configuration (not for "plugin specific" configuration). **So you have more options in the configuration file**
+
+## CLI options
+
+<details>
+<summary>CLI options reference of the `jinja-tree` CLI</summary>
+```
+{{ "python3 ../jinja_tree/infra/controllers/cli_tree.py --help"|shell() }}
+```
+</details>
+
+<details>
+<summary>CLI options reference of the `jinja-stdin` bonus CLI</summary>
+```
+{{ "python3 ../jinja_tree/infra/controllers/cli_stdin.py --help"|shell() }}
+```
+</details>
+
+## Configuration file
+
+### How the configuration file is found?
+
+### Reference (with all keys and default values)
+
+<details>
+<summary>Configuration file reference</summary>
+```toml
+{{ "cat jinja-tree.toml"|shell() }}
+```
+</details>
+
+Go back to [../README.md](main README.md) file.
