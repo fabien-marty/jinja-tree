@@ -1,3 +1,6 @@
+<!-- *** GENERATED FILE - DO NOT EDIT *** -->
+<!-- To modify this file, edit docs/details-about-configuration.md.template and launch 'make doc' -->
+
 # Details about configuration
 
 You have two options to configure the `jinja-tree`:

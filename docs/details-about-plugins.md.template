@@ -22,7 +22,7 @@ It's a class that must implement the `jinja_tree.app.context.ContextPort` interf
 
 <details>
 
-<summary>Details of the `ContextPort` interface</summary>
+<summary>Details of the ContextPort interface</summary>
 
 ```python
 {{ context_port_source }}
@@ -51,7 +51,7 @@ A higher-level service object will add to the context returned by the plugin som
 
 ### The default context plugin
 
-The [default context plugin](jinja_tree/infra/adapters/context.py) provides a context by merging 3 layers of contexts (in this order):
+The [default context plugin](../jinja_tree/infra/adapters/context.py) provides a context by merging 3 layers of contexts (in this order):
 
 - the "configuration context" you can provide by adding some extra key/values in the `.jinja-tree.toml` configuration file
 - the "environment variables context" you can provide by setting some environment variables
@@ -61,7 +61,7 @@ Of course, you can configure plenty of things to tune this default behavior.
 
 ### Other context plugins
 
-To manage this repository, we use a [custom context plugin](tools/jinja_tree_plugins_context.py) which is very specific to this repository
+To manage this repository, we use a [custom context plugin](../tools/jinja_tree_plugins_context.py) which is very specific to this repository
 but this is maybe a good example to show you how to write your own context plugin.
 
 ## Action plugins
