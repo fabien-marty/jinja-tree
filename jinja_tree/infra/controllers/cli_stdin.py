@@ -38,6 +38,10 @@ def pipe(
     strict_undefined: StrictUndefinedType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
 ):
+    """
+    Process the standard input with Jinja templating system and return the result on the standard output.
+
+    """
     setup_logger(log_level)
     config = get_config(
         config_file_path=config_file,

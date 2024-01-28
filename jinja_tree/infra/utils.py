@@ -52,8 +52,7 @@ def get_config_file_path(
     """
     Get the path to the configuration file.
 
-    - if the CLI option is set, it is returned immediately.
-    - if the env var JINJA_TREE_CONFIG_FILE is set, its value is returned immediately.
+    - if the CLI option is set, it is returned immediately (note: can be set by JINJA_TREE_CONFIG_FILE env var)
     - else, we will try to find it in the current working directory
         or in the parent directory (recursively).
 
@@ -69,11 +68,6 @@ def get_config_file_path(
     if cli_option is not None:
         logger.debug(f"config file path read from CLI: {cli_option}")
         return cli_option
-    if os.environ.get("JINJA_TREE_CONFIG_FILE"):
-        logger.debug(
-            f"config file path read from env var JINJA_TREE_CONFIG_FILE: {os.environ.get('JINJA_TREE_CONFIG_FILE')}"
-        )
-        return os.environ.get("JINJA_TREE_CONFIG_FILE")
     if cwd is None:
         cwd = os.getcwd()
     else:

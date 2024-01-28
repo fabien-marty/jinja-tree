@@ -23,7 +23,8 @@ from jinja_tree.infra.utils import get_config_file_path
 ConfigFileType = Annotated[
     Optional[str],
     typer.Option(
-        help="config file path (default: first '.jinja-tree.toml' file found up from current working dir), can also be see with JINJA_TREE_CONFIG_FILE env var"
+        help="config file path (default: first '.jinja-tree.toml' file found up from current working dir), can also be see with JINJA_TREE_CONFIG_FILE env var",
+        envvar="JINJA_TREE_CONFIG_FILE",
     ),
 ]
 LogLevelType = Annotated[

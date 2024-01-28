@@ -133,7 +133,7 @@ jinja-tree .
 <summary>Main CLI options</summary>
 
 ```
-{{ "python3 jinja_tree/infra/controllers/cli_tree.py --help"|shell() }}
+{{ "jinja-tree --help"|shell() }}
 ``` 
 
 </details>
@@ -159,7 +159,7 @@ Hello bar
 <summary>Bonus CLI options</summary>
 
 ```
-{{ "python3 jinja_tree/infra/controllers/cli_tree.py --help"|shell() }}
+{{ "jinja-stdin --help"|shell() }}
 ``` 
 
 </details>

@@ -134,7 +134,9 @@ jinja-tree .
 <summary>Main CLI options</summary>
 
 ```
-Usage: cli_tree.py [OPTIONS] ROOT_DIR
+Usage: jinja-tree [OPTIONS] ROOT_DIR
+
+  Process a directory tree with the Jinja / Jinja2 templating system.
 
 Arguments:
   ROOT_DIR  root directory  [required]
@@ -143,7 +145,8 @@ Options:
   --config-file TEXT              config file path (default: first '.jinja-
                                   tree.toml' file found up from current
                                   working dir), can also be see with
-                                  JINJA_TREE_CONFIG_FILE env var
+                                  JINJA_TREE_CONFIG_FILE env var  [env var:
+                                  JINJA_TREE_CONFIG_FILE]
   --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
                                   [default: INFO]
   --extra-search-path PATH        Search path to jinja
@@ -190,33 +193,28 @@ Hello bar
 <summary>Bonus CLI options</summary>
 
 ```
-Usage: cli_tree.py [OPTIONS] ROOT_DIR
+Usage: jinja-stdin [OPTIONS]
 
-Arguments:
-  ROOT_DIR  root directory  [required]
+  Process the standard input with Jinja templating system and return the
+  result on the standard output.
 
 Options:
   --config-file TEXT              config file path (default: first '.jinja-
                                   tree.toml' file found up from current
                                   working dir), can also be see with
-                                  JINJA_TREE_CONFIG_FILE env var
+                                  JINJA_TREE_CONFIG_FILE env var  [env var:
+                                  JINJA_TREE_CONFIG_FILE]
   --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
                                   [default: INFO]
   --extra-search-path PATH        Search path to jinja
   --add-cwd-to-search-path / --no-add-cwd-to-search-path
                                   add current working directory (CWD) to jinja
                                   search path
-  --add-root-dir-to-search-path / --no-add-root-dir-to-search-path
-                                  add root directory to jinja search path
   --jinja-extension TEXT          jinja extension to load
   --context-plugin TEXT           context plugin (full python class path)
-  --action-plugin TEXT            action plugin (full python class path)
   --strict-undefined / --no-strict-undefined
                                   if set, raise an error if a variable does
                                   not exist in context
-  --blank-run / --no-blank-run    if set, execute a blank run (without
-                                  modifying or deleting anything)  [default:
-                                  no-blank-run]
   --disable-embedded-jinja-extensions / --no-disable-embedded-jinja-extensions
                                   disable embedded jinja extensions
   --help                          Show this message and exit.

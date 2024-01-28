@@ -19,7 +19,7 @@ You have two options to configure the `jinja-tree`:
 <summary>CLI options reference of the `jinja-tree` CLI</summary>
 
 ```
-{{ "python3 ../jinja_tree/infra/controllers/cli_tree.py --help"|shell() }}
+{{ "jinja-tree --help"|shell() }}
 ```
 
 </details>
@@ -29,7 +29,7 @@ You have two options to configure the `jinja-tree`:
 <summary>CLI options reference of the `jinja-stdin` bonus CLI</summary>
 
 ```
-{{ "python3 ../jinja_tree/infra/controllers/cli_stdin.py --help"|shell() }}
+{{ "jinja-stdin --help"|shell() }}
 ```
 
 </details>

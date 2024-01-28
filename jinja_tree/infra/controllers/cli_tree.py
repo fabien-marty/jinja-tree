@@ -48,6 +48,10 @@ def tree(
     blank_run: BlankRunType = False,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
 ):
+    """
+    Process a directory tree with the Jinja / Jinja2 templating system.
+
+    """
     if log_level is not None:
         stlog.setup(level=log_level)
     config = get_config(

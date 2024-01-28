@@ -20,7 +20,9 @@ You have two options to configure the `jinja-tree`:
 <summary>CLI options reference of the `jinja-tree` CLI</summary>
 
 ```
-Usage: cli_tree.py [OPTIONS] ROOT_DIR
+Usage: jinja-tree [OPTIONS] ROOT_DIR
+
+  Process a directory tree with the Jinja / Jinja2 templating system.
 
 Arguments:
   ROOT_DIR  root directory  [required]
@@ -29,7 +31,8 @@ Options:
   --config-file TEXT              config file path (default: first '.jinja-
                                   tree.toml' file found up from current
                                   working dir), can also be see with
-                                  JINJA_TREE_CONFIG_FILE env var
+                                  JINJA_TREE_CONFIG_FILE env var  [env var:
+                                  JINJA_TREE_CONFIG_FILE]
   --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
                                   [default: INFO]
   --extra-search-path PATH        Search path to jinja
@@ -60,13 +63,17 @@ Options:
 <summary>CLI options reference of the `jinja-stdin` bonus CLI</summary>
 
 ```
-Usage: cli_stdin.py [OPTIONS]
+Usage: jinja-stdin [OPTIONS]
+
+  Process the standard input with Jinja templating system and return the
+  result on the standard output.
 
 Options:
   --config-file TEXT              config file path (default: first '.jinja-
                                   tree.toml' file found up from current
                                   working dir), can also be see with
-                                  JINJA_TREE_CONFIG_FILE env var
+                                  JINJA_TREE_CONFIG_FILE env var  [env var:
+                                  JINJA_TREE_CONFIG_FILE]
   --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
                                   [default: INFO]
   --extra-search-path PATH        Search path to jinja
