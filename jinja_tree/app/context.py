@@ -16,8 +16,12 @@ class ContextPort(ABC):
         """
         Construct a new ContextPort object given a configuration object.
 
+        The "context" plugin configuration block is available in:
+        config.context_plugin_config
+
         Args:
             config (Config): The configuration object.
+
         """
         pass
 

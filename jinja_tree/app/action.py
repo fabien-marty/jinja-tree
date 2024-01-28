@@ -82,6 +82,10 @@ class BrowseDirectoryAction(DirectoryAction):
     pass
 
 
+CONCRETE_DIRECTORY_ACTIONS = [IgnoreDirectoryAction, BrowseDirectoryAction]
+CONCRETE_FILE_ACTIONS = [IgnoreFileAction, ProcessFileAction, RenameFileAction]
+
+
 class ActionPort(ABC):
     """This is the abstract interface for FileActionPort adapters."""
 
@@ -89,6 +93,9 @@ class ActionPort(ABC):
     def __init__(self, config: Config):
         """
         Construct a new FileActionPort object given a configuration object.
+
+        The "action" plugin configuration block is available in:
+        config.action_plugin_config
 
         Args:
             config (Config): The configuration object.
@@ -99,6 +106,9 @@ class ActionPort(ABC):
     def get_file_action(self, absolute_path: str) -> FileAction:
         """Return the action to execute on the file at the given absolute path.
 
+        Note:
+        - absolute_path is checked to be a file before calling this method.
+
         Attributes:
             absolute_path: absolute path for the file to process.
         """
@@ -107,6 +117,9 @@ class ActionPort(ABC):
     @abstractmethod
     def get_directory_action(self, absolute_path: str) -> DirectoryAction:
         """Return the action to execute on the directory at the given absolute path.
+
+        Note:
+        - absolute_path is checked to be a directory before calling this method.
 
         Attributes:
             absolute_path: absolute path for the directory to process.

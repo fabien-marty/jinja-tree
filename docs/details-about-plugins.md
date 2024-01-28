@@ -34,8 +34,12 @@ class ContextPort(ABC):
         """
         Construct a new ContextPort object given a configuration object.
 
+        The "context" plugin configuration block is available in:
+        config.context_plugin_config
+
         Args:
             config (Config): The configuration object.
+
         """
         pass
 
@@ -87,11 +91,150 @@ Of course, you can configure plenty of things to tune this default behavior.
 
 ### Other context plugins
 
-To manage this repository, we use a [custom context plugin](../tools/jinja_tree_plugins_context.py) which is very specific to this repository
+To manage this repository, we use a [custom context plugin](../tools/jinja_tree_plugins_context.py) that is very specific to this repository
 but this is maybe a good example to show you how to write your own context plugin.
 
 ## Action plugins
 
-FIXME
+The role of the `action` plugin is to provide actions to do on files or directories. 
+
+> [!NOTE]
+> The `action` plugin returns actions to do on the file or directory. It does not do the action itself.
+
+It's a class that must implement the `jinja_tree.app.context.ActionPort` interface.
+
+<details>
+
+<summary>Details of the ActionPort interface</summary>
+
+### Interface to implement
+
+```python
+class ActionPort(ABC):
+    """This is the abstract interface for FileActionPort adapters."""
+
+    @abstractmethod
+    def __init__(self, config: Config):
+        """
+        Construct a new FileActionPort object given a configuration object.
+
+        The "action" plugin configuration block is available in:
+        config.action_plugin_config
+
+        Args:
+            config (Config): The configuration object.
+        """
+        pass
+
+    @abstractmethod
+    def get_file_action(self, absolute_path: str) -> FileAction:
+        """Return the action to execute on the file at the given absolute path.
+
+        Note:
+        - absolute_path is checked to be a file before calling this method.
+
+        Attributes:
+            absolute_path: absolute path for the file to process.
+        """
+        pass
+
+    @abstractmethod
+    def get_directory_action(self, absolute_path: str) -> DirectoryAction:
+        """Return the action to execute on the directory at the given absolute path.
+
+        Note:
+        - absolute_path is checked to be a directory before calling this method.
+
+        Attributes:
+            absolute_path: absolute path for the directory to process.
+        """
+        pass
+
+```
+
+</details>
+
+<details>
+
+<summary>Concrete FileAction classes the plugin can return</summary>
+
+```python
+@dataclass
+class IgnoreFileAction(FileAction):
+    """This is a concrete implementation of FileAction to represent a "do nothing with this file" action."""
+
+    pass
+
+
+@dataclass
+class ProcessFileAction(FileAction):
+    """This is a concrete implementation of FileAction to represent a "process this file with jinja" action.
+
+    Attributes:
+        target_absolute_path: absolute path for the target file (the rendered file).
+        delete_original: if True, the original file will be deleted after the rendering.
+    """
+
+    target_absolute_path: str
+    delete_original: bool = False
+
+
+@dataclass
+class RenameFileAction(FileAction):
+    """This is a concrete implementation of fileAction to represent a "rename this file" action."""
+
+    target_absolute_path: str
+
+```
+
+</details>
+
+<details>
+
+<summary>Create DirectoryAction classes the plugin can return</summary>
+
+```python
+@dataclass
+class IgnoreDirectoryAction(DirectoryAction):
+    """This is a concrete implementation of DirectoryAction to represent a "do nothing with this directory" action.
+
+    All files in this directory or subdirectories will be ignored (recursively).
+    """
+
+    pass
+
+
+@dataclass
+class BrowseDirectoryAction(DirectoryAction):
+    """This is a concrete implementation of DirectoryAction to represent a "browse this directory" action.
+
+    The directory itself won't be changed but all files and subdirectories will be scanned for actions.
+    """
+
+    pass
+
+```
+
+</details>
+
+## The default action plugin
+
+The [default action plugin](../jinja_tree/infra/adapters/action.py) has the following behavior.
+
+### For directories
+
+- it checks if the directory name matches the fnmatch pattern provided `dirname_ignores` configuration key
+    - if it matches, the directory (and recursively all this content) is ignored
+- it checks if there is a `.jinja-tree.ignore` file in the directory
+    - if there is one, the directory (and recursively all this content) is ignored
+- else the directory is flagged to be recursively browsed
+
+### For files
+
+- if checks if the filename matches the fnmatch pattern provided by the `filename_ignores` configuration key
+    - if it matches, the file is ignored
+- if checks if the filename extension is one of the extensions provided by the `extensions` configuration key
+    - if it doesn't match, the file is ignored
+- else the file is flagged to be processed with "Jinja2" with a target filename that is the same as the original filename but with the extension removed
 
 Go back to [main README](../README.md) file.

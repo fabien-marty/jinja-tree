@@ -61,11 +61,68 @@ Of course, you can configure plenty of things to tune this default behavior.
 
 ### Other context plugins
 
-To manage this repository, we use a [custom context plugin](../tools/jinja_tree_plugins_context.py) which is very specific to this repository
+To manage this repository, we use a [custom context plugin](../tools/jinja_tree_plugins_context.py) that is very specific to this repository
 but this is maybe a good example to show you how to write your own context plugin.
 
 ## Action plugins
 
-FIXME
+The role of the `action` plugin is to provide actions to do on files or directories. 
+
+> [!NOTE]
+> The `action` plugin returns actions to do on the file or directory. It does not do the action itself.
+
+It's a class that must implement the `jinja_tree.app.context.ActionPort` interface.
+
+<details>
+
+<summary>Details of the ActionPort interface</summary>
+
+### Interface to implement
+
+```python
+{{ action_port_source }}
+```
+
+</details>
+
+<details>
+
+<summary>Concrete FileAction classes the plugin can return</summary>
+
+```python
+{{ file_actions_source }}
+```
+
+</details>
+
+<details>
+
+<summary>Create DirectoryAction classes the plugin can return</summary>
+
+```python
+{{ directory_actions_source }}
+```
+
+</details>
+
+## The default action plugin
+
+The [default action plugin](../jinja_tree/infra/adapters/action.py) has the following behavior.
+
+### For directories
+
+- it checks if the directory name matches the fnmatch pattern provided `dirname_ignores` configuration key
+    - if it matches, the directory (and recursively all this content) is ignored
+- it checks if there is a `.jinja-tree.ignore` file in the directory
+    - if there is one, the directory (and recursively all this content) is ignored
+- else the directory is flagged to be recursively browsed
+
+### For files
+
+- if checks if the filename matches the fnmatch pattern provided by the `filename_ignores` configuration key
+    - if it matches, the file is ignored
+- if checks if the filename extension is one of the extensions provided by the `extensions` configuration key
+    - if it doesn't match, the file is ignored
+- else the file is flagged to be processed with "Jinja2" with a target filename that is the same as the original filename but with the extension removed
 
 Go back to [main README](../README.md) file.
