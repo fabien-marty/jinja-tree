@@ -64,9 +64,11 @@ jobs:
         run: |
           poetry run make test
       - name: Run doc
+        if: matrix.python-version == '3.12'
         run: |
           poetry run make doc
       - name: Check modified files
+        if: matrix.python-version == '3.12'
         run: |
           git diff --exit-code
 
