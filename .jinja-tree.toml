@@ -1,0 +1,10 @@
+# This is jinja-tree configuration file for the needs
+# of this specific repository.
+
+# If you are looking for the default configuration file, 
+# you will find it under docs/ directory.
+
+[context]
+
+plugin = "tools.jinja_tree_plugins.context.CustomEnvContextAdapter"
+generated_comment_line2 = "To modify this file, edit {{relative_filepath}} and launch 'make doc'"

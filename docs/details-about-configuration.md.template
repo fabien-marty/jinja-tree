@@ -1,0 +1,62 @@
+{{JINJA_TREE_STYLE1_GENERATED_COMMENT}}
+
+# Details about configuration
+
+You have two options to configure the `jinja-tree`:
+
+- the first one is to provide configuration options with CLI options
+- the second one is to provide a configuration file `.jinja-tree.toml` 
+
+> [!IMPORTANT]
+> CLI options have higher priority than configuration file.
+>
+> But there are only CLI options for "general" configuration (not for "plugin specific" configuration). **So you have more options in the configuration file**
+
+## CLI options
+
+<details>
+
+<summary>CLI options reference of the `jinja-tree` CLI</summary>
+
+```
+{{ "jinja-tree --help"|shell() }}
+```
+
+</details>
+
+<details>
+
+<summary>CLI options reference of the `jinja-stdin` bonus CLI</summary>
+
+```
+{{ "jinja-stdin --help"|shell() }}
+```
+
+</details>
+
+## Configuration file
+
+### How the configuration file is found?
+
+- if you set the `--config-file` CLI option, the configuration file is the one you set
+- if the environment variable `JINJA_TREE_CONFIG_FILE` is set, the configuration file is the one set in this environment variable value
+- otherwise, the configuration file is the first `.jinja-tree.toml` file found up from current working directory (we recursively search up from current working directory)
+
+> [!TIP]
+> The most common way to use the configuration file is to put it in the root directory of your project/repository. Its name must be `.jinja-tree.toml`.
+
+### Reference (with all keys and default values)
+
+<details>
+
+<summary>Configuration file reference</summary>
+
+[Full file example](jinja-tree.toml):
+
+```toml
+{{ "cat jinja-tree.toml"|shell() }}
+```
+
+</details>
+
+Go back to [main README](../README.md) file.
