@@ -4,9 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev
   release:
-    types: [published]
   pull_request:
 
 env:
@@ -96,6 +94,7 @@ jobs:
       - name: Publish on Pypi
         run: |
           poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
-          poetry version "${{ github.event.release.tag_name }}"
+          VERSION=$(echo "${{ github.event.release.tag_name }}" | sed -e 's/^v//')
+          poetry version "${VERSION}"
           poetry build
           poetry publish
