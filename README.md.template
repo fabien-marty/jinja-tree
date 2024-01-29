@@ -18,7 +18,7 @@ The default behavior is to recursively search for files with a given extension (
 Then, the processed content is written into another file with the same name/path but with the configured extension (`.template` by default) removed. The original file can also be deleted (but this is not the default behavior).
 
 > [!TIP]
-> If you want a full example about overall operation, you can find an [example here](docs/details-about-overall-operation.md).
+> If you want a full example about overall operation, you can find an [example here]({{BASEURL}}docs/details-about-overall-operation.md).
 
 ## What's it for?
 
@@ -29,11 +29,11 @@ Your imagination is your limit 😅 but it's very useful for maintaining DRY doc
 > [!TIP]
 > Do you cant real-life examples? You can find some details about how we use it in this repository for:
 > 
-> - [getting `jinja-tree --help` output automatically added (and updated) in this README](docs/details-about-real-life-example1.md)
-> - [getting a reference TOML configuration file rendered with defaults values read from code](docs/details-about-real-life-example2.md)
+> - [getting `jinja-tree --help` output automatically added (and updated) in this README]({{BASEURL}}docs/details-about-real-life-example1.md)
+> - [getting a reference TOML configuration file rendered with defaults values read from code]({{BASEURL}}docs/details-about-real-life-example2.md)
 
 > [!NOTE]
-> Another "action" plugin will be soon 🕒 provided to bootstrap directory trees from templates (like with the [cookiecutter](https://github.com/cookiecutter/cookiecutter) project).
+> Another "action" plugin will be soon 🕒 provided to bootstrap directory trees from templates (like with the [cookiecutter]({{BASEURL}}https://github.com/cookiecutter/cookiecutter) project).
 
 ## Features
 
@@ -46,7 +46,7 @@ There are two extension points:
 - context plugins: to provide context variables to Jinja templates
 - file plugins: to change the way how `jinja-tree` finds files to process (including target files)
 
-See [this specification documentation page](docs/details-about-plugins.md) for more details.
+See [this specification documentation page]({{BASEURL}}docs/details-about-plugins.md) for more details.
 
 #### 2️⃣ Very configurable
 
@@ -54,14 +54,14 @@ See [this specification documentation page](docs/details-about-plugins.md) for m
 
 Plugins are configurable via the configuration file.
 
-See [this specification documentation page](docs/details-about-configuration.md) for more details.
+See [this specification documentation page]({{BASEURL}}docs/details-about-configuration.md) for more details.
 
 #### 3️⃣ Embedded extensions
 
 `jinja-tree` includes some extensions to Jinja templates engine:
 
-- [to execute some commands (and get the corresponding output)](jinja_tree/app/embedded_extensions/shell.py)
-- [to parse JSON strings into Python objects)](jinja_tree/app/embedded_extensions/from_json.py)
+- [to execute some commands (and get the corresponding output)]({{BASEURL}}jinja_tree/app/embedded_extensions/shell.py)
+- [to parse JSON strings into Python objects)]({{BASEURL}}jinja_tree/app/embedded_extensions/from_json.py)
 - ..
 
 <details>
@@ -104,7 +104,7 @@ EOF
 
 </details>
 
-See [this directory](jinja_tree/app/embedded_extensions/) for others
+See [this directory]({{BASEURL}}jinja_tree/app/embedded_extensions/) for others
 
 #### 4️⃣ Full Jinja / Jinja2 support (including "includes" and "inheritance")
 

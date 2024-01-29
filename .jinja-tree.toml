@@ -8,3 +8,6 @@
 
 plugin = "tools.jinja_tree_plugins.context.CustomEnvContextAdapter"
 generated_comment_line2 = "To modify this file, edit {{relative_filepath}} and launch 'make doc'"
+
+# Default value for BASEURL (can be overriden, for example for publishing the README.md file to PyPi)
+BASEURL = ""
