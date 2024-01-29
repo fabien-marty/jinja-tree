@@ -91,6 +91,11 @@ jobs:
       - name: Install requirements
         run: |
           poetry install
+      - name: Override BASEURL in README.md
+        env:
+          BASEURL: https://github.com/fabien-marty/jinja-tree/blob/main/
+        run: |
+          jinja-tree .
       - name: Publish on Pypi
         run: |
           poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"

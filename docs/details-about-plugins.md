@@ -67,6 +67,7 @@ A higher-level service object will add to the context returned by the plugin som
 - `JINJA_TREE_FILEPATH = "/foo/bar/baz.py"`
 - `JINJA_TREE_DIRNAME = "/foo/bar"`
 - `JINJA_TREE_BASENAME = "baz.py"`
+- `JINJA_TREE_ROOT_DIR = "/foo"`
 - `JINJA_TREE_RELATIVE_FILEPATH = "bar/baz.py"`
 - `JINJA_TREE_STYLE1_GENERATED_COMMENT = "<!-- ... -->"`
 - `JINJA_TREE_STYLE2_GENERATED_COMMENT = "# ..."`
@@ -225,7 +226,7 @@ The [default action plugin](../jinja_tree/infra/adapters/action.py) has the foll
 
 - it checks if the directory name matches the fnmatch pattern provided `dirname_ignores` configuration key
     - if it matches, the directory (and recursively all this content) is ignored
-- it checks if there is a `.jinja-tree.ignore` file in the directory
+- it checks if there is a `.jinja-tree-ignore` file in the directory
     - if there is one, the directory (and recursively all this content) is ignored
 - else the directory is flagged to be recursively browsed
 
