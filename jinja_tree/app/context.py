@@ -94,6 +94,7 @@ class ContextService:
             context["JINJA_TREE_DIRNAME"] = dirname
             basename = os.path.basename(absolute_path)
             context["JINJA_TREE_BASENAME"] = basename
+            context["JINJA_TREE_ROOT_DIR"] = self.config.root_dir
             if absolute_path.startswith(self.config.root_dir):
                 # should be true...
                 relative_filepath = absolute_path[len(self.config.root_dir) + 1 :]
