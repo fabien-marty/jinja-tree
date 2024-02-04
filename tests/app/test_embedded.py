@@ -46,3 +46,12 @@ def test_fnmatch():
     template = env.from_string('test {{ "foo-bar"|fnmatch("foo-*") }}')
     result = template.render()
     assert result == "test True"
+
+
+def test_urlencode():
+    env = Environment(
+        extensions=["jinja_tree.app.embedded_extensions.urlencode.UrlEncodeExtension"]
+    )
+    template = env.from_string('test {{ "https://google.com"|urlencode(safe="") }}')
+    result = template.render()
+    assert result == "test https%3A%2F%2Fgoogle.com"

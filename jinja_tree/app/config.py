@@ -25,6 +25,7 @@ EMBEDDED_EXTENSIONS = [
     "jinja_tree.app.embedded_extensions.shell.ShellExtension",
     "jinja_tree.app.embedded_extensions.fnmatch.FnMatchExtension",
     "jinja_tree.app.embedded_extensions.double_quotes.DoubleQuotesExtension",
+    "jinja_tree.app.embedded_extensions.urlencode.UrlEncodeExtension",
 ]
 
 JINJA_TREE_URL = "https://github.com/fabien-marty/jinja-tree"
