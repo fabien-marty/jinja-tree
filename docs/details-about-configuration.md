@@ -144,6 +144,7 @@ strict_undefined = true
 # - jinja_tree.app.embedded_extensions.shell.ShellExtension
 # - jinja_tree.app.embedded_extensions.fnmatch.FnMatchExtension
 # - jinja_tree.app.embedded_extensions.double_quotes.DoubleQuotesExtension
+# - jinja_tree.app.embedded_extensions.urlencode.UrlEncodeExtension
 disable_embedded_jinja_extensions = false
 
 # Jinja extensions to add (full paths)
