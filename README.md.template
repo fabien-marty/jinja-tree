@@ -17,8 +17,35 @@ The default behavior is to recursively search for files with a given extension (
 
 Then, the processed content is written into another file with the same name/path but with the configured extension (`.template` by default) removed. The original file can also be deleted (but this is not the default behavior).
 
-> [!TIP]
-> If you want a full example about overall operation, you can find an [example here]({{BASEURL}}docs/details-about-overall-operation.md).
+<details>
+
+<summary>Full example about overall operation (in default mode)</summary>
+
+Note: this is only the **default behaviour** as you can tune this with your own plugins!
+
+Let's imagine the following directory structure:
+
+```
+/foo/
+/foo/README.md.template
+/foo/bar/baz.py.template
+/foo/bar/another.file
+```
+
+And execute `jinja-tree /foo` with the default configuration.
+
+We get:
+
+```
+/foo/
+/foo/README.md.template
+/foo/README.md <= NEW FILE FROM README.md.template jinja2 processing
+/foo/bar/baz.py.template
+/foo/bar/baz.py <= NEW FILE FROM baz.py.template jinja2 processing 
+/foo/bar/another.file
+```
+
+</details>
 
 ## What's it for?
 
