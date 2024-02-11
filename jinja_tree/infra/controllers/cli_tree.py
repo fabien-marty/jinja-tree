@@ -19,11 +19,11 @@ from jinja_tree.infra.controllers.cli_common import (
     RootDirType,
     StrictUndefinedType,
     VerboseType,
-    config_dump,
     get_config,
     setup_logger,
 )
 from jinja_tree.infra.utils import (
+    dump,
     make_context_adapter_from_config,
     make_file_action_adapter_from_config,
 )
@@ -68,7 +68,7 @@ def tree(
         verbose=verbose,
     )
     if config.verbose:
-        config_dump(config)
+        dump("config", config)
     setup_logger(config.log_level)
     context_adapter = make_context_adapter_from_config(config)
     file_action_adapter = make_file_action_adapter_from_config(config)

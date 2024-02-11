@@ -15,13 +15,10 @@ from jinja_tree.infra.controllers.cli_common import (
     LogLevelType,
     StrictUndefinedType,
     VerboseType,
-    config_dump,
     get_config,
     setup_logger,
 )
-from jinja_tree.infra.utils import (
-    make_context_adapter_from_config,
-)
+from jinja_tree.infra.utils import dump, make_context_adapter_from_config
 
 # disable rich usage in typer
 typer.core.rich = None  # type: ignore
@@ -57,7 +54,7 @@ def pipe(
     )
     setup_logger(config.log_level)
     if config.verbose:
-        config_dump(config)
+        dump("config", config)
     context_adapter = make_context_adapter_from_config(config)
     context_service = ContextService(config=config, adapter=context_adapter)
     jinja_service = JinjaService(config=config, context_service=context_service)

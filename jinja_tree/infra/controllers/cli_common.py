@@ -1,6 +1,3 @@
-import json
-import sys
-from dataclasses import asdict
 from pathlib import Path
 from typing import List, Optional
 
@@ -148,12 +145,6 @@ def get_config(
         config.verbose = False
     config.__post_init__()
     return config
-
-
-def config_dump(config: Config):
-    print("<config dump>", file=sys.stderr)
-    print(json.dumps(asdict(config), indent=4, sort_keys=True), file=sys.stderr)
-    print("</config dump>", file=sys.stderr)
 
 
 def setup_logger(log_level: Optional[str]):

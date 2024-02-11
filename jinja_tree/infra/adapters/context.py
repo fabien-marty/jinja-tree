@@ -1,13 +1,11 @@
-import json
 import os
-import sys
 from typing import Any, Dict, List, cast
 
 from dotenv import dotenv_values
 
 from jinja_tree.app.config import Config
 from jinja_tree.app.context import ContextPort
-from jinja_tree.infra.utils import is_fnmatch_ignored
+from jinja_tree.infra.utils import dump, is_fnmatch_ignored
 
 
 class EnvContextAdapter(ContextPort):
@@ -28,17 +26,7 @@ class EnvContextAdapter(ContextPort):
         assert self.dotenv_ignores is not None
         self.config = config
         if self.config.verbose:
-            print("<initial context dump>", file=sys.stderr)
-            print(
-                json.dumps(
-                    self.get_context(),
-                    indent=4,
-                    sort_keys=True,
-                    default=lambda o: "<not serializable>",
-                ),
-                file=sys.stderr,
-            )
-            print("</initial context dump>", file=sys.stderr)
+            dump("initial context", self.get_context())
 
     def get_plugin_configuration_context(self) -> Dict[str, Any]:
         if self.plugin_configuration_ignores == ["*"]:

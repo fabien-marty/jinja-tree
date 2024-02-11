@@ -1,5 +1,7 @@
 import fnmatch
+import json
 import os
+import sys
 from importlib import import_module
 from typing import List, Optional, Type
 
@@ -12,6 +14,13 @@ from jinja_tree.app.config import (
     Config,
 )
 from jinja_tree.app.context import ContextPort
+
+RICH_AVAILABLE = True
+try:
+    from rich import print as rprint
+except ImportError:
+    rprint = print  # type: ignore
+    RICH_AVAILABLE = False
 
 SYSTEM_CONFIG_PATH = "/etc/jinja-tree.toml"
 
@@ -99,3 +108,17 @@ def is_fnmatch_ignored(key: str, ignores: List[str]) -> bool:
         True if the key matches any of the patterns, False otherwise.
     """
     return any(fnmatch.fnmatch(key, x) for x in ignores)
+
+
+def dump(name: str, obj):
+    rprint(f"<{name} dump", file=sys.stderr)
+    if RICH_AVAILABLE:
+        rprint(obj, file=sys.stderr)
+    else:
+        rprint(
+            json.dumps(
+                obj, indent=4, sort_keys=True, default=lambda o: "<not serializable>"
+            ),
+            file=sys.stderr,
+        )
+    rprint(f"</{name} dump>", file=sys.stderr)
