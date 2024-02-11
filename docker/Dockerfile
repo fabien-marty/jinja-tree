@@ -1,6 +1,8 @@
 from python:3.12-slim-bookworm
 
-COPY jinja-tree.toml /etc/jinja-tree.toml
-RUN pip install jinja-tree
+RUN pip install jinja-tree rich
+
+RUN mkdir /workdir
+WORKDIR /workdir
 
 ENTRYPOINT ["jinja-tree"]
