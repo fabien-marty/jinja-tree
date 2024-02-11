@@ -43,6 +43,10 @@ clean: ## Clean generated files
 	rm -Rf .*_cache build
 	find . -type d -name __pycache__ -exec rm -Rf {} \; 2>/dev/null || true
 
+.PHONY: docker
+docker: ## Build docker image
+	cd docker && $(MAKE) build
+
 .PHONY: publish
 publish: ## Publish to PyPI
 	@if test "${VERSION}" = "0.0.0"; then echo "ERROR: Cannot publish a dev version"; exit 1; fi
