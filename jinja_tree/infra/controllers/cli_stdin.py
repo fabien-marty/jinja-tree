@@ -9,11 +9,12 @@ from jinja_tree.infra.controllers.cli_common import (
     AddCwdDirToSearchPathType,
     ConfigFileType,
     ContextPluginType,
-    DisableEmbeddedExtensions,
+    DisableEmbeddedExtensionsType,
     ExtensionType,
     ExtraSearchPathsType,
     LogLevelType,
     StrictUndefinedType,
+    VerboseType,
     config_dump,
     get_config,
     setup_logger,
@@ -31,18 +32,18 @@ app = typer.Typer(add_completion=False)
 def pipe(
     config_file: ConfigFileType = None,
     log_level: LogLevelType = "INFO",
+    verbose: VerboseType = False,
     extra_search_path: ExtraSearchPathsType = None,
     add_cwd_to_search_path: AddCwdDirToSearchPathType = None,
     jinja_extension: ExtensionType = None,
     context_plugin: ContextPluginType = None,
     strict_undefined: StrictUndefinedType = None,
-    disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
+    disable_embedded_jinja_extensions: DisableEmbeddedExtensionsType = None,
 ):
     """
     Process the standard input with Jinja templating system and return the result on the standard output.
 
     """
-    setup_logger(log_level)
     config = get_config(
         config_file_path=config_file,
         extra_search_path=extra_search_path,
@@ -51,8 +52,11 @@ def pipe(
         jinja_extension=jinja_extension,
         strict_undefined=strict_undefined,
         disable_embedded_jinja_extensions=disable_embedded_jinja_extensions,
+        log_level=log_level,
+        verbose=verbose,
     )
-    if log_level == "DEBUG":
+    setup_logger(config.log_level)
+    if config.verbose:
         config_dump(config)
     context_adapter = make_context_adapter_from_config(config)
     context_service = ContextService(config=config, adapter=context_adapter)

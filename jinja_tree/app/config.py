@@ -71,6 +71,8 @@ class Config:
     strict_undefined: bool = True
     root_dir: str = field(default_factory=os.getcwd)
     disable_embedded_jinja_extensions: bool = False
+    verbose: bool = False
+    log_level: str = "INFO"
 
     # Plugin config
     context_plugin_config: Dict[str, Any] = field(

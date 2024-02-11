@@ -28,7 +28,7 @@ ConfigFileType = Annotated[
     ),
 ]
 LogLevelType = Annotated[
-    Optional[str], typer.Option(help="log level (DEBUG, INFO, WARNING or ERROR)")
+    str, typer.Option(help="log level (DEBUG, INFO, WARNING or ERROR)")
 ]
 
 ExtraSearchPathsType = Annotated[
@@ -73,8 +73,15 @@ BlankRunType = Annotated[
     ),
 ]
 
-DisableEmbeddedExtensions = Annotated[
+DisableEmbeddedExtensionsType = Annotated[
     Optional[bool], typer.Option(help="disable embedded jinja extensions")
+]
+
+VerboseType = Annotated[
+    bool,
+    typer.Option(
+        help="increase verbosity of the DEBUG log level (note: this forces log-level = DEBUG)"
+    ),
 ]
 
 
@@ -88,10 +95,12 @@ def get_config(
     add_root_dir_to_search_path: AddRootDirToSearchPathType = None,
     strict_undefined: StrictUndefinedType = None,
     jinja_extension: ExtensionType = None,
-    disable_embedded_jinja_extensions: DisableEmbeddedExtensions = None,
+    disable_embedded_jinja_extensions: DisableEmbeddedExtensionsType = None,
     root_dir: Optional[RootDirType] = None,
     context_plugin: ContextPluginType = None,
     action_plugin: FileActionPluginType = None,
+    verbose: VerboseType = False,
+    log_level: LogLevelType = "INFO",
 ) -> Config:
     if not config_file_path:
         config_file_path = get_config_file_path()
@@ -130,6 +139,13 @@ def get_config(
         config.context_plugin_config["plugin"] = context_plugin
     if action_plugin is not None:
         config.action_plugin_config["plugin"] = action_plugin
+    config.verbose = verbose
+    if verbose:
+        config.log_level = "DEBUG"
+        config.verbose = True
+    else:
+        config.log_level = log_level
+        config.verbose = False
     config.__post_init__()
     return config
 

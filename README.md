@@ -176,6 +176,9 @@ Options:
                                   JINJA_TREE_CONFIG_FILE]
   --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
                                   [default: INFO]
+  --verbose / --no-verbose        increase verbosity of the DEBUG log level
+                                  (note: this forces log-level = DEBUG)
+                                  [default: no-verbose]
   --extra-search-path PATH        Search path to jinja
   --add-cwd-to-search-path / --no-add-cwd-to-search-path
                                   add current working directory (CWD) to jinja
@@ -233,6 +236,9 @@ Options:
                                   JINJA_TREE_CONFIG_FILE]
   --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
                                   [default: INFO]
+  --verbose / --no-verbose        increase verbosity of the DEBUG log level
+                                  (note: this forces log-level = DEBUG)
+                                  [default: no-verbose]
   --extra-search-path PATH        Search path to jinja
   --add-cwd-to-search-path / --no-add-cwd-to-search-path
                                   add current working directory (CWD) to jinja
