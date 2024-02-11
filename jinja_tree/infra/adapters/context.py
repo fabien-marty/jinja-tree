@@ -30,7 +30,12 @@ class EnvContextAdapter(ContextPort):
         if self.config.verbose:
             print("<initial context dump>", file=sys.stderr)
             print(
-                json.dumps(self.get_context(), indent=4, sort_keys=True),
+                json.dumps(
+                    self.get_context(),
+                    indent=4,
+                    sort_keys=True,
+                    default=lambda o: "<not serializable>",
+                ),
                 file=sys.stderr,
             )
             print("</initial context dump>", file=sys.stderr)
