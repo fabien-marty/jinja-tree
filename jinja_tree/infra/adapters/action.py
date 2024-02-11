@@ -44,9 +44,13 @@ class ExtensionsFileActionAdapter(ActionPort):
             "delete_original", DELETE_ORIGINAL_DEFAULT
         )
 
+    def trace(self, msg: str, **kwargs):
+        if self.config.verbose:
+            logger.debug(msg, **kwargs)
+
     def get_file_action(self, absolute_path: str) -> FileAction:
         if is_fnmatch_ignored(os.path.basename(absolute_path), self.filename_ignores):
-            logger.debug(
+            self.trace(
                 "Ignored file because of ignores configuration value",
                 path=absolute_path,
                 filename_ignores=self.filename_ignores,
@@ -58,7 +62,7 @@ class ExtensionsFileActionAdapter(ActionPort):
                 target_absolute_path = absolute_path[0 : -(len(extension))]
         if target_absolute_path is None:
             # break not encountered
-            logger.debug(
+            self.trace(
                 "Ignored file because of its extension",
                 path=absolute_path,
                 extensions=self.extensions,
@@ -77,7 +81,7 @@ class ExtensionsFileActionAdapter(ActionPort):
 
     def get_directory_action(self, absolute_path: str) -> DirectoryAction:
         if is_fnmatch_ignored(os.path.basename(absolute_path), self.dirname_ignores):
-            logger.debug(
+            self.trace(
                 "Ignored directory because of dirname_ignores configuration value",
                 path=absolute_path,
                 dirname_ignores=self.dirname_ignores,
@@ -85,6 +89,9 @@ class ExtensionsFileActionAdapter(ActionPort):
             return IgnoreDirectoryAction(source_absolute_path=absolute_path)
         exclude_file = os.path.join(absolute_path, IGNORE_FILENAME)
         if os.path.isfile(exclude_file):
-            logger.debug(f"{IGNORE_FILENAME} found", path=absolute_path)
+            self.trace(
+                f"Ignored directory because {IGNORE_FILENAME} found (inside)",
+                path=absolute_path,
+            )
             return IgnoreDirectoryAction(source_absolute_path=absolute_path)
         return BrowseDirectoryAction(source_absolute_path=absolute_path)
