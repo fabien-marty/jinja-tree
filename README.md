@@ -22,7 +22,7 @@ Then, the processed content is written into another file with the same name/path
 
 <summary>Full example about overall operation (in default mode)</summary>
 
-Note: this is only the **default behaviour** as you can tune this with your own plugins!
+Note: this is only the **default behavior** as you can tune this with your own plugins!
 
 Let's imagine the following directory structure:
 
@@ -50,7 +50,7 @@ We get:
 
 ## What's it for?
 
-Your imagination is your limit 😅 but it's very useful for maintaining DRY documentation (for example: `your-cli --help` output automatically updated in a markdown file), configuration files with default values read in code, including common blocks in different files...
+Your imagination is your limit 😅 but it's very useful for maintaining DRY documentation (for example `your-cli --help` output automatically updated in a markdown file), configuration files with default values read in code, including common blocks in different files...
 
 **So it's a great tool for maintaining repositories in general.**
 
@@ -58,7 +58,7 @@ Your imagination is your limit 😅 but it's very useful for maintaining DRY doc
 > Do you cant real-life examples? You can find some details about how we use it in this repository for:
 > 
 > - [getting `jinja-tree --help` output automatically added (and updated) in this README](docs/details-about-real-life-example1.md)
-> - [getting a reference TOML configuration file rendered with defaults values read from code](docs/details-about-real-life-example2.md)
+> - [getting a reference TOML configuration file rendered with default values read from code](docs/details-about-real-life-example2.md)
 
 > [!NOTE]
 > Another "action" plugin will be soon 🕒 provided to bootstrap directory trees from templates (like with the [cookiecutter](https://github.com/cookiecutter/cookiecutter) project).
@@ -136,7 +136,7 @@ See [this directory](jinja_tree/app/embedded_extensions/) for others
 
 #### 4️⃣ Full Jinja / Jinja2 support (including "includes" and "inheritance")
 
-`jinja-tree` has several options about Jinja "search paths". So you can use Jinja "includes" and "inheritance" features.
+`jinja-tree` has several options for Jinja "search paths". So you can use Jinja "includes" and "inheritance" features.
 
 ## Installation
 
