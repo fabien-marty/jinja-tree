@@ -1,7 +1,5 @@
 import fnmatch
-import json
 import os
-import sys
 from importlib import import_module
 from typing import List, Optional, Type
 
@@ -9,18 +7,10 @@ import stlog
 
 from jinja_tree.app.action import ActionPort
 from jinja_tree.app.config import (
-    CONTEXT_PLUGIN_DEFAULT,
     FILE_ACTION_PLUGIN_DEFAULT,
     Config,
 )
 from jinja_tree.app.context import ContextPort
-
-RICH_AVAILABLE = True
-try:
-    from rich import print as rprint
-except ImportError:
-    rprint = print  # type: ignore
-    RICH_AVAILABLE = False
 
 SYSTEM_CONFIG_PATH = "/etc/jinja-tree.toml"
 
@@ -33,15 +23,25 @@ def import_class_from_string(class_path: str) -> Type:
     return klass
 
 
-def make_context_adapter_from_config(config: Config) -> ContextPort:
-    class_path = config.context_plugin_config.get("plugin", CONTEXT_PLUGIN_DEFAULT)
-    context_adapter_class = import_class_from_string(class_path)
-    context_adapter = context_adapter_class(config=config)
-    if not isinstance(context_adapter, ContextPort):
-        raise Exception(
-            f"the class pointed by {class_path} does not implement ContextPort interface"
+def make_context_adapter_from_config(klass, config: Config) -> ContextPort:
+    config_name = klass.get_config_name()
+    plugin_config = config.context_plugins_configs.get(config_name, {})
+    return klass(config, plugin_config)
+
+
+def make_context_adapters_from_config(config: Config) -> List[ContextPort]:
+    res: List[ContextPort] = []
+    for class_path in config.context_plugins:
+        context_adapter_class = import_class_from_string(class_path)
+        context_adapter = make_context_adapter_from_config(
+            context_adapter_class, config
         )
-    return context_adapter
+        if not isinstance(context_adapter, ContextPort):
+            raise Exception(
+                f"the class pointed by {class_path} does not implement ContextPort interface"
+            )
+        res.append(context_adapter)
+    return res
 
 
 def make_file_action_adapter_from_config(config: Config) -> ActionPort:
@@ -108,17 +108,3 @@ def is_fnmatch_ignored(key: str, ignores: List[str]) -> bool:
         True if the key matches any of the patterns, False otherwise.
     """
     return any(fnmatch.fnmatch(key, x) for x in ignores)
-
-
-def dump(name: str, obj):
-    rprint(f"<{name} dump", file=sys.stderr)
-    if RICH_AVAILABLE:
-        rprint(obj, file=sys.stderr)
-    else:
-        rprint(
-            json.dumps(
-                obj, indent=4, sort_keys=True, default=lambda o: "<not serializable>"
-            ),
-            file=sys.stderr,
-        )
-    rprint(f"</{name} dump>", file=sys.stderr)

@@ -1,10 +1,11 @@
 import datetime
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from jinja2 import Template
 
+from jinja_tree.app import dump
 from jinja_tree.app.config import Config
 
 
@@ -12,15 +13,14 @@ class ContextPort(ABC):
     """This is the abstract interface for ContextPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         """
-        Construct a new ContextPort object given a configuration object.
-
-        The "context" plugin configuration block is available in:
-        config.context_plugin_config
+        Construct a new ContextPort object given a configuration object
+        and a plugin configuration dict.
 
         Args:
             config (Config): The configuration object.
+            plugin_config (Dict[str, Any]): The plugin configuration dict.
 
         """
         pass
@@ -34,6 +34,24 @@ class ContextPort(ABC):
 
         Returns:
             The context dictionary.
+
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_config_name(cls) -> str:
+        """
+        Return the name of the configuration object.
+
+        For example, if we return "foo", it means that the configuration in the TOML file
+        is located under:
+
+        [context.foo]
+        # ... some configuration ...
+
+        Returns:
+            The name of the configuration object.
 
         """
         pass
@@ -63,19 +81,17 @@ class ContextService:
 
     Attributes:
         config: The configuration object.
-        adapter: The ContextPort adapter to use.
+        adapters: The ContextPort adapters to use.
 
     """
 
-    def __init__(self, config: Config, adapter: ContextPort):
+    def __init__(self, config: Config, adapters: List[ContextPort]):
         self.config = config
-        self.adapter = adapter
-        self.comment_line1_template = self.config.context_plugin_config.get(
-            "generated_comment_line1", ""
-        )
-        self.comment_line2_template = self.config.context_plugin_config.get(
-            "generated_comment_line2", ""
-        )
+        self.adapters = adapters
+        self.comment_line1_template = self.config.context_generated_comment_line1
+        self.comment_line2_template = self.config.context_generated_comment_line2
+        if self.config.verbose:
+            dump("initial context", self.get_context())
 
     def add_extra_keys_to_context(
         self, context: Dict[str, Any], absolute_path: Optional[str] = None
@@ -132,6 +148,8 @@ class ContextService:
             The context dictionary.
 
         """
-        res = self.adapter.get_context()
+        res: Dict[str, Any] = {}
+        for adapter in self.adapters:
+            res = {**res, **adapter.get_context()}
         self.add_extra_keys_to_context(res, absolute_path=absolute_path)
         return res

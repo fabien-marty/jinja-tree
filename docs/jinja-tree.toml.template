@@ -36,39 +36,41 @@ disable_embedded_jinja_extensions = {{ default_config.disable_embedded_jinja_ext
 # - you can disable embedded extensions with 'disable_embedded_jinja_extensions = true'
 jinja_extensions = []
 
+# Plugin full classpath 
+context_plugins = [{{ default_config.context_plugins|map('double_quotes')|join(', ') }}]
+
+# Generated comment template: line1 for context
+# Available placeholders: {% raw %}{{utcnow}}, {{absolute_path}}, {{dirname}}, {{basename}}, {{relative_filepath}}{% endraw %}
+context_generated_comment_line1 = "{{default_config.context_generated_comment_line1}}"
+
+# Generated comment template: line2 for context
+# Available placeholders: {% raw %}{{utcnow}}, {{absolute_path}}, {{dirname}}, {{basename}}, {{relative_filepath}}{% endraw %}
+context_generated_comment_line2 = "{{default_config.context_generated_comment_line2}}"
+
 
 ####################################  
 ### Context plugin configuration ###
 ####################################  
 [context]
 
-# Plugin full classpath [common key for all context plugins]
-plugin = "{{default_config.context_plugin_config.plugin}}"
+[context.env]
 
-# Generated comment template: line1 [common key for all context plugins]
-# Available placeholders: {utcnow}, {absolute_path}, {dirname}, {basename}, {relative_filepath}
-generated_comment_line1 = "{{default_config.context_plugin_config.generated_comment_line1}}"
-
-# Generated comment template: line2 [common key for all context plugins]
-# Available placeholders: {utcnow}, {absolute_path}, {dirname}, {basename}, {relative_filepath}
-generated_comment_line2 = "{{default_config.context_plugin_config.generated_comment_line2}}"
-
-# Fnmatch patterns (for environment variable names) to ignore [specific to EnvContextAdapter plugin]
+# Fnmatch patterns (for environment variable names) to ignore
 # Example: ["FOO*", "*BAR"]  for ignoring all env var starting with FOO or ending with BAR
-env_ignores = [{{ default_config.context_plugin_config.env_ignores|map('double_quotes')|join(', ') }}]
+ignores = [{{ ENV_CONTEXT_ADAPTER_DEFAULT_IGNORES|map('double_quotes')|join(', ') }}]
 
-# dotenv file path (absolute or relative), if set to an empty string (""), dotenv support is disabled [specific to EnvContextAdapter plugin]
-dotenv_path = "{{default_config.context_plugin_config.dotenv_path}}"
+[context.dotenv]
 
-# Fnmatch patterns (for dotenv variable names) to ignore [specific to EnvContextAdapter plugin]
+# dotenv file path (absolute or relative), if set to an empty string (""), dotenv support is disabled 
+path = "{{ DOTENV_CONTEXT_ADAPTER_DEFAULT_PATH }}"
+
+# Fnmatch patterns (for dotenv variable names) to ignore
 # Example: ["FOO*", "*BAR"]  for ignoring all dotenv var starting with FOO or ending with BAR
-dotenv_ignores = [{{ default_config.context_plugin_config.dotenv_ignores|map('double_quotes')|join(', ') }}]
+ignores = [{{ DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES|map('double_quotes')|join(', ') }}]
 
-# Fnmatch patterns (for plugin_configuration variable names) to ignore [specific to EnvContextAdapter plugin]
-# Example: ["foo*", "*bar"]  for ignoring all plugin configuration var starting with foo or ending with bar
-plugin_configuration_ignores = [{{ default_config.context_plugin_config.plugin_configuration_ignores|map('double_quotes')|join(', ') }}]
+[context.config]
 
-# With the EnvContextAdapter plugin, you can add key/values below, they will be available in Jinja2 context
+# With the ConfigurationContextAdapter plugin, you can add key/values below, they will be available in Jinja2 context
 
 # [...]
 

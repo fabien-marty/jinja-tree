@@ -13,7 +13,6 @@ import typer
 from jinja_tree.app.config import (
     Config,
     make_default_action_plugin_config,
-    make_default_context_plugin_config,
 )
 from jinja_tree.infra.utils import get_config_file_path
 
@@ -29,7 +28,8 @@ LogLevelType = Annotated[
 ]
 
 ExtraSearchPathsType = Annotated[
-    Optional[List[Path]], typer.Option(help="Search path to jinja")
+    Optional[List[Path]],
+    typer.Option(help="Search path to jinja (can be used multiple times)"),
 ]
 
 AddProcessedFileDirToSearchPathType = Annotated[
@@ -50,8 +50,11 @@ ExtensionType = Annotated[
     Optional[List[str]], typer.Option(help="jinja extension to load")
 ]
 
-ContextPluginType = Annotated[
-    Optional[str], typer.Option(help="context plugin (full python class path)")
+ContextPluginsType = Annotated[
+    Optional[List[str]],
+    typer.Option(
+        help="context plugins (full python class path, can be used multiple times)"
+    ),
 ]
 
 StrictUndefinedType = Annotated[
@@ -94,7 +97,7 @@ def get_config(
     jinja_extension: ExtensionType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensionsType = None,
     root_dir: Optional[RootDirType] = None,
-    context_plugin: ContextPluginType = None,
+    context_plugins: ContextPluginsType = None,
     action_plugin: FileActionPluginType = None,
     verbose: VerboseType = False,
     log_level: LogLevelType = "INFO",
@@ -102,20 +105,20 @@ def get_config(
     if not config_file_path:
         config_file_path = get_config_file_path()
     general = {}
-    context_plugin_config = make_default_context_plugin_config()
+
     action_plugin_config = make_default_action_plugin_config()
+    data = {}
     if config_file_path:
         with open(config_file_path, "rb") as f:
             data = tomli.load(f)
         general = data.get("general", {})
-        context_plugin_config = {**context_plugin_config, **data.get("context", {})}
         action_plugin_config = {
             **action_plugin_config,
             **data.get("action", {}),
         }
     config = Config(
         **general,
-        context_plugin_config=context_plugin_config,
+        context_plugins_configs=data.get("context", {}),
         action_plugin_config=action_plugin_config,
     )
     if extra_search_path:
@@ -132,8 +135,10 @@ def get_config(
         config.disable_embedded_jinja_extensions = disable_embedded_jinja_extensions
     if root_dir is not None:
         config.root_dir = str(root_dir)
-    if context_plugin is not None:
-        config.context_plugin_config["plugin"] = context_plugin
+    if context_plugins:
+        config.context_plugins = context_plugins
+    elif "context_plugins" in general:
+        config.context_plugins = general["context_plugins"]
     if action_plugin is not None:
         config.action_plugin_config["plugin"] = action_plugin
     config.verbose = verbose

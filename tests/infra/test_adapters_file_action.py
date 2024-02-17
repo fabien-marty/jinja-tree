@@ -24,8 +24,7 @@ def fake_env_fixture():
 
 def test_env(fake_env_fixture):
     config = Config()
-    config.context_plugin_config["env_ignores"] = ["F*", "PYTEST_*"]
-    x = EnvContextAdapter(config)
+    x = EnvContextAdapter(config, {"ignores": ["F*", "PYTEST_*"]})
     assert x.get_context() == {"BAR": "FOO"}
 
 
