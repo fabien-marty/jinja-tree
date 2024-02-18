@@ -132,15 +132,33 @@ class ActionPort(ABC):
     """This is the abstract interface for FileActionPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         """
-        Construct a new FileActionPort object given a configuration object.
-
-        The "action" plugin configuration block is available in:
-        config.action_plugin_config
+        Construct a new FileActionPort object given a configuration object
+        and a plugin configuration dict.
 
         Args:
             config (Config): The configuration object.
+            plugin_config (Dict[str, Any]): The plugin configuration dict.
+
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_config_name(cls) -> str:
+        """
+        Return the name of the configuration object.
+
+        For example, if we return "foo", it means that the configuration in the TOML file
+        is located under:
+
+        [action.foo]
+        # ... some configuration ...
+
+        Returns:
+            The name of the configuration object.
+
         """
         pass
 

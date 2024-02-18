@@ -194,7 +194,8 @@ Options:
   --jinja-extension TEXT          jinja extension to load
   --context-plugin TEXT           context plugins (full python class path, can
                                   be used multiple times)
-  --action-plugin TEXT            action plugin (full python class path)
+  --action-plugin TEXT            action plugin (full python class path, can
+                                  be used multiple times)
   --strict-undefined / --no-strict-undefined
                                   if set, raise an error if a variable does
                                   not exist in context

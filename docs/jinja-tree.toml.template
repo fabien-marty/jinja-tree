@@ -48,7 +48,7 @@ context_generated_comment_line1 = "{{default_config.context_generated_comment_li
 context_generated_comment_line2 = "{{default_config.context_generated_comment_line2}}"
 
 # Action plugin full classpaths
-context_plugins = [{{ default_config.action_plugins|map('double_quotes')|join(', ') }}]
+action_plugins = [{{ default_config.action_plugins|map('double_quotes')|join(', ') }}]
 
 
 ####################################  
