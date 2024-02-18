@@ -6,14 +6,13 @@ try:
 except ImportError:
     from typing_extensions import Annotated  # type: ignore
 
-import stlog
 import tomli
 import typer
 
 from jinja_tree.app.config import (
     Config,
 )
-from jinja_tree.infra.utils import get_config_file_path
+from jinja_tree.infra.utils import get_config_file_path, read_config_file_or_die
 
 ConfigFileType = Annotated[
     Optional[str],
@@ -106,6 +105,7 @@ def get_config(
 ) -> Config:
     if not config_file_path:
         config_file_path = get_config_file_path()
+    config = read_config_file_or_die(config_file_path)
     general: Dict[str, Any] = {}
     data = {}
     general = {}
@@ -132,12 +132,8 @@ def get_config(
         config.root_dir = str(root_dir)
     if context_plugins:
         config.context_plugins = context_plugins
-    elif "context_plugins" in general:
-        config.context_plugins = general["context_plugins"]
     if action_plugins:
         config.action_plugins = action_plugins
-    elif "action_plugins" in general:
-        config.action_plugins = general["action_plugins"]
     config.verbose = verbose
     if verbose:
         config.log_level = "DEBUG"
@@ -147,9 +143,3 @@ def get_config(
         config.verbose = False
     config.__post_init__()
     return config
-
-
-def setup_logger(log_level: Optional[str]):
-    if log_level is None:
-        log_level = "INFO"
-    stlog.setup(level=log_level)

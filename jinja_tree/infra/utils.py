@@ -1,9 +1,12 @@
 import fnmatch
 import os
+import sys
 from importlib import import_module
 from typing import List, Optional, Type
 
+import dataclasses_json
 import stlog
+import tomli
 
 from jinja_tree.app.action import ActionPort
 from jinja_tree.app.config import (
@@ -115,3 +118,45 @@ def is_fnmatch_ignored(key: str, ignores: List[str]) -> bool:
         True if the key matches any of the patterns, False otherwise.
     """
     return any(fnmatch.fnmatch(key, x) for x in ignores)
+
+
+def setup_logger(log_level: Optional[str] = None):
+    if log_level is None:
+        log_level = "INFO"
+    stlog.setup(level=log_level)
+
+
+def log_error_and_die(*args, **kwargs):
+    setup_logger()  # as we are not that logging is setup at this point
+    logger.error(*args, **kwargs)
+    sys.exit(1)
+
+
+def read_config_file_or_die(config_file_path: Optional[str]) -> Config:
+    with stlog.LogContext.bind(config_file_path=config_file_path):
+        if config_file_path is not None:
+            try:
+                with open(config_file_path, "rb") as f:
+                    data = tomli.load(f)
+            except Exception:
+                log_error_and_die("cannot read config file", exc_info=True)
+            for key in data.keys():
+                if key not in ("general", "context", "action"):
+                    log_error_and_die(f"invalid section: {key} found in config file")
+            general = data.get("general", {})
+            try:
+                config = Config.from_dict(general)
+            except dataclasses_json.undefined.UndefinedParameterError as e:
+                log_error_and_die(
+                    f"invalid parameters found in config file: {e.normalized_messages()}"
+                )
+            try:
+                make_context_adapters_from_config(config)
+            except Exception:
+                log_error_and_die("invalid context plugin configuration", exc_info=True)
+            try:
+                make_action_adapters_from_config(config)
+            except Exception:
+                log_error_and_die("invalid action plugin configuration", exc_info=True)
+            return config
+    return Config()

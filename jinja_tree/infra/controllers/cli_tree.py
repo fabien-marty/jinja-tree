@@ -21,11 +21,11 @@ from jinja_tree.infra.controllers.cli_common import (
     StrictUndefinedType,
     VerboseType,
     get_config,
-    setup_logger,
 )
 from jinja_tree.infra.utils import (
     make_action_adapters_from_config,
     make_context_adapters_from_config,
+    setup_logger,
 )
 
 # disable rich usage in typer

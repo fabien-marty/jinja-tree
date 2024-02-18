@@ -17,9 +17,8 @@ from jinja_tree.infra.controllers.cli_common import (
     StrictUndefinedType,
     VerboseType,
     get_config,
-    setup_logger,
 )
-from jinja_tree.infra.utils import make_context_adapters_from_config
+from jinja_tree.infra.utils import make_context_adapters_from_config, setup_logger
 
 # disable rich usage in typer
 typer.core.rich = None  # type: ignore
