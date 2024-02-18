@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 try:
     from typing import Annotated
@@ -12,7 +12,6 @@ import typer
 
 from jinja_tree.app.config import (
     Config,
-    make_default_action_plugin_config,
 )
 from jinja_tree.infra.utils import get_config_file_path
 
@@ -62,8 +61,11 @@ StrictUndefinedType = Annotated[
     typer.Option(help="if set, raise an error if a variable does not exist in context"),
 ]
 
-FileActionPluginType = Annotated[
-    Optional[str], typer.Option(help="action plugin (full python class path)")
+ActionPluginType = Annotated[
+    Optional[List[str]],
+    typer.Option(
+        help="action plugin (full python class path, can be used multiple times)"
+    ),
 ]
 
 BlankRunType = Annotated[
@@ -98,28 +100,23 @@ def get_config(
     disable_embedded_jinja_extensions: DisableEmbeddedExtensionsType = None,
     root_dir: Optional[RootDirType] = None,
     context_plugins: ContextPluginsType = None,
-    action_plugin: FileActionPluginType = None,
+    action_plugins: ActionPluginType = None,
     verbose: VerboseType = False,
     log_level: LogLevelType = "INFO",
 ) -> Config:
     if not config_file_path:
         config_file_path = get_config_file_path()
-    general = {}
-
-    action_plugin_config = make_default_action_plugin_config()
+    general: Dict[str, Any] = {}
     data = {}
+    general = {}
     if config_file_path:
         with open(config_file_path, "rb") as f:
             data = tomli.load(f)
         general = data.get("general", {})
-        action_plugin_config = {
-            **action_plugin_config,
-            **data.get("action", {}),
-        }
     config = Config(
         **general,
         context_plugins_configs=data.get("context", {}),
-        action_plugin_config=action_plugin_config,
+        action_plugins_configs=data.get("action", {}),
     )
     if extra_search_path:
         config.extra_search_paths = [str(x) for x in extra_search_path]
@@ -139,8 +136,10 @@ def get_config(
         config.context_plugins = context_plugins
     elif "context_plugins" in general:
         config.context_plugins = general["context_plugins"]
-    if action_plugin is not None:
-        config.action_plugin_config["plugin"] = action_plugin
+    if action_plugins:
+        config.action_plugins = action_plugins
+    elif "action_plugins" in general:
+        config.action_plugins = general["action_plugins"]
     config.verbose = verbose
     if verbose:
         config.log_level = "DEBUG"

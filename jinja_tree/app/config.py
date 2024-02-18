@@ -30,23 +30,16 @@ EMBEDDED_EXTENSIONS = [
 JINJA_TREE_URL = "https://github.com/fabien-marty/jinja-tree"
 
 
-def make_default_action_plugin_config() -> Dict[str, Any]:
-    return {
-        "plugin": FILE_ACTION_PLUGIN_DEFAULT,
-        "extensions": FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
-        "filename_ignores": FILENAME_IGNORES_DEFAULT,
-        "dirname_ignores": DIRNAME_IGNORES_DEFAULT,
-        "replace": REPLACE_DEFAULT,
-        "delete_original": DELETE_ORIGINAL_DEFAULT,
-    }
-
-
 def make_default_context_plugins() -> List[str]:
     return [
         "jinja_tree.infra.adapters.context.ConfigurationContextAdapter",
         "jinja_tree.infra.adapters.context.EnvContextAdapter",
         "jinja_tree.infra.adapters.context.DotEnvContextAdapter",
     ]
+
+
+def make_default_action_plugins() -> List[str]:
+    return ["jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter"]
 
 
 @dataclass
@@ -69,11 +62,10 @@ class Config:
         % JINJA_TREE_URL
     )
     context_plugins: List[str] = field(default_factory=make_default_context_plugins)
+    action_plugins: List[str] = field(default_factory=make_default_action_plugins)
 
     context_plugins_configs: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    action_plugin_config: Dict[str, Any] = field(
-        default_factory=make_default_action_plugin_config
-    )
+    action_plugins_configs: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
     @property
     def resolved_extensions(self) -> List[str]:

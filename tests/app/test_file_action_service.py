@@ -21,6 +21,10 @@ class MockFileActionAdapter(ActionPort):
     def __init__(self, config: Config):
         self.config = config
 
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "extension"
+
     def get_file_action(self, absolute_path: str) -> FileAction:
         if absolute_path == "/does/not/exist":
             raise Exception("does not exist should be ignored by FileActionService")
@@ -54,7 +58,7 @@ def foo_cleanup_fixture():
 def test_file_action_service(foo_cleanup_fixture):
     config = Config()
     adapter = MockFileActionAdapter(config)
-    x = ActionService(config=config, adapter=adapter)
+    x = ActionService(config=config, adapters=[adapter])
     assert isinstance(
         x.get_file_action(os.path.join(DATA_DIR, "foo.nomatch")), IgnoreFileAction
     )

@@ -7,7 +7,6 @@ import stlog
 
 from jinja_tree.app.action import ActionPort
 from jinja_tree.app.config import (
-    FILE_ACTION_PLUGIN_DEFAULT,
     Config,
 )
 from jinja_tree.app.context import ContextPort
@@ -29,6 +28,12 @@ def make_context_adapter_from_config(klass, config: Config) -> ContextPort:
     return klass(config, plugin_config)
 
 
+def make_action_adapter_from_config(klass, config: Config) -> ContextPort:
+    config_name = klass.get_config_name()
+    plugin_config = config.action_plugins_configs.get(config_name, {})
+    return klass(config, plugin_config)
+
+
 def make_context_adapters_from_config(config: Config) -> List[ContextPort]:
     res: List[ContextPort] = []
     for class_path in config.context_plugins:
@@ -44,15 +49,17 @@ def make_context_adapters_from_config(config: Config) -> List[ContextPort]:
     return res
 
 
-def make_file_action_adapter_from_config(config: Config) -> ActionPort:
-    class_path = config.action_plugin_config.get("plugin", FILE_ACTION_PLUGIN_DEFAULT)
-    context_adapter_class = import_class_from_string(class_path)
-    file_action_adapter = context_adapter_class(config=config)
-    if not isinstance(file_action_adapter, ActionPort):
-        raise Exception(
-            f"the class pointed by {class_path} does not implement FileActionPort interface"
-        )
-    return file_action_adapter
+def make_action_adapters_from_config(config: Config) -> List[ActionPort]:
+    res: List[ActionPort] = []
+    for class_path in config.action_plugins:
+        context_adapter_class = import_class_from_string(class_path)
+        action_adapter = make_action_adapter_from_config(context_adapter_class, config)
+        if not isinstance(action_adapter, ActionPort):
+            raise Exception(
+                f"the class pointed by {class_path} does not implement ActionPort interface"
+            )
+        res.append(action_adapter)
+    return res
 
 
 def get_config_file_path(

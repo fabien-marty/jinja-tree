@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import stlog
 
@@ -28,21 +28,26 @@ logger = stlog.getLogger("jinja-tree")
 
 
 class ExtensionsFileActionAdapter(ActionPort):
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         self.config = config
-        self.extensions = config.action_plugin_config.get(
+        self.plugin_config = plugin_config
+        self.extensions = plugin_config.get(
             "extensions", FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS
         )
-        self.filename_ignores = config.action_plugin_config.get(
+        self.filename_ignores = plugin_config.get(
             "filename_ignores", FILENAME_IGNORES_DEFAULT
         )
-        self.dirname_ignores = config.action_plugin_config.get(
+        self.dirname_ignores = plugin_config.get(
             "dirname_ignores", DIRNAME_IGNORES_DEFAULT
         )
-        self.replace = config.action_plugin_config.get("replace", REPLACE_DEFAULT)
-        self.delete_original = config.action_plugin_config.get(
+        self.replace = plugin_config.get("replace", REPLACE_DEFAULT)
+        self.delete_original = plugin_config.get(
             "delete_original", DELETE_ORIGINAL_DEFAULT
         )
+
+    @classmethod
+    def get_config_name(self) -> str:
+        return "extension"
 
     def trace(self, msg: str, **kwargs):
         if self.config.verbose:

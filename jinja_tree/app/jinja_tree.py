@@ -71,7 +71,7 @@ class JinjaTreeService:
 
     Args:
         config: The configuration object.
-        file_action_service: The FileAction service.
+        action_service: The Action service.
         jinja_service: The JinjaService object to render single strings.
         blank_run: Flag indicating if it is a blank run.
     """

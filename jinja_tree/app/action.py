@@ -1,6 +1,7 @@
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any, Dict, List
 
 import stlog
 
@@ -90,15 +91,33 @@ class ActionPort(ABC):
     """This is the abstract interface for FileActionPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         """
-        Construct a new FileActionPort object given a configuration object.
-
-        The "action" plugin configuration block is available in:
-        config.action_plugin_config
+        Construct a new FileActionPort object given a configuration object
+        and a plugin configuration dict.
 
         Args:
             config (Config): The configuration object.
+            plugin_config (Dict[str, Any]): The plugin configuration dict.
+
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_config_name(cls) -> str:
+        """
+        Return the name of the configuration object.
+
+        For example, if we return "foo", it means that the configuration in the TOML file
+        is located under:
+
+        [action.foo]
+        # ... some configuration ...
+
+        Returns:
+            The name of the configuration object.
+
         """
         pass
 
@@ -138,9 +157,9 @@ class ActionService:
 
     """
 
-    def __init__(self, config: Config, adapter: ActionPort):
+    def __init__(self, config: Config, adapters: List[ActionPort]):
         self.config = config
-        self.adapter = adapter
+        self.adapters = adapters
 
     def get_file_action(self, absolute_path: str) -> FileAction:
         """Return the action to execute on the file at the given absolute path.
@@ -149,18 +168,22 @@ class ActionService:
             absolute_path: absolute path for the file to process.
         """
         assert os.path.isfile(absolute_path)
-        action = self.adapter.get_file_action(absolute_path)
-        if not hasattr(action, "target_absolute_path"):
-            return action
-        if os.path.exists(action.target_absolute_path) and not os.path.isfile(
-            action.target_absolute_path
-        ):
-            logger.warning(
-                f"target file: {action.target_absolute_path} is not a file => ignoring"
-            )
-            return IgnoreFileAction(source_absolute_path=absolute_path)
-
-        return action
+        if not self.adapters:
+            raise Exception("no action plugins configured!")
+        for adapter in self.adapters:
+            a = adapter.get_file_action(absolute_path)
+            if not hasattr(a, "target_absolute_path"):
+                # => IgnoreFileAction, let's try next adapter
+                continue
+            if os.path.exists(a.target_absolute_path) and not os.path.isfile(
+                a.target_absolute_path
+            ):
+                logger.warning(
+                    f"target file: {a.target_absolute_path} is not a file => ignoring"
+                )
+                return IgnoreFileAction(source_absolute_path=absolute_path)
+            return a
+        return IgnoreFileAction(source_absolute_path=absolute_path)
 
     def get_directory_action(self, absolute_path: str) -> DirectoryAction:
         """Return the action to execute on the directory at the given absolute path.
@@ -169,4 +192,10 @@ class ActionService:
             absolute_path: absolute path for the directory to process.
         """
         assert os.path.isdir(absolute_path)
-        return self.adapter.get_directory_action(absolute_path)
+        for adapter in self.adapters:
+            a = adapter.get_directory_action(absolute_path)
+            if isinstance(a, IgnoreDirectoryAction):
+                # => IgnoreFileAction, let's try next adapter
+                continue
+            return a
+        return IgnoreDirectoryAction(source_absolute_path=absolute_path)
