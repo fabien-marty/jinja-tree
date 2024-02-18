@@ -28,6 +28,7 @@ stlog = ">= 0.1.0"
 tomli = "^2.0.1"
 python-dotenv = "^1.0.0"
 rich = "^13.7.0"
+dataclasses-json = "^0.6.4"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.11"

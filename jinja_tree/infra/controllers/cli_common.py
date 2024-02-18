@@ -113,11 +113,9 @@ def get_config(
         with open(config_file_path, "rb") as f:
             data = tomli.load(f)
         general = data.get("general", {})
-    config = Config(
-        **general,
-        context_plugins_configs=data.get("context", {}),
-        action_plugins_configs=data.get("action", {}),
-    )
+    config = Config.from_dict(general)
+    config.context_plugins_configs = data.get("context", {})
+    config.action_plugins_configs = data.get("action", {})
     if extra_search_path:
         config.extra_search_paths = [str(x) for x in extra_search_path]
     if add_cwd_to_search_path is not None:

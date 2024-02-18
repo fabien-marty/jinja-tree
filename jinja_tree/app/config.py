@@ -2,6 +2,8 @@ import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
+from dataclasses_json import DataClassJsonMixin, Undefined
+
 EMBEDDED_EXTENSIONS = [
     "jinja_tree.app.embedded_extensions.from_json.FromJsonExtension",
     "jinja_tree.app.embedded_extensions.shell.ShellExtension",
@@ -26,7 +28,7 @@ def make_default_action_plugins() -> List[str]:
 
 
 @dataclass
-class Config:
+class Config(DataClassJsonMixin):
     # Global config
     extra_search_paths: List[str] = field(default_factory=list)
     add_root_dir_to_search_path: bool = True
@@ -47,8 +49,14 @@ class Config:
     context_plugins: List[str] = field(default_factory=make_default_context_plugins)
     action_plugins: List[str] = field(default_factory=make_default_action_plugins)
 
-    context_plugins_configs: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    action_plugins_configs: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    context_plugins_configs: Dict[str, Dict[str, Any]] = field(
+        init=False, default_factory=dict
+    )
+    action_plugins_configs: Dict[str, Dict[str, Any]] = field(
+        init=False, default_factory=dict
+    )
+
+    dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
 
     @property
     def resolved_extensions(self) -> List[str]:
