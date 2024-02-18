@@ -6,13 +6,15 @@ from jinja_tree.app.action import (
     CONCRETE_FILE_ACTIONS,
     ActionPort,
 )
-from jinja_tree.app.config import (
-    DIRNAME_IGNORES_DEFAULT,
-    EMBEDDED_EXTENSIONS,
-    FILENAME_IGNORES_DEFAULT,
-    Config,
-)
+from jinja_tree.app.config import EMBEDDED_EXTENSIONS, Config
 from jinja_tree.app.context import ContextPort
+from jinja_tree.infra.adapters.action import (
+    DEFAULT_EXTENSIONS,
+    DELETE_ORIGINAL_DEFAULT,
+    DIRNAME_IGNORES_DEFAULT,
+    FILENAME_IGNORES_DEFAULT,
+    REPLACE_DEFAULT,
+)
 from jinja_tree.infra.adapters.context import (
     DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES,
     DOTENV_CONTEXT_ADAPTER_DEFAULT_PATH,
@@ -48,4 +50,9 @@ class CustomEnvContextAdapter(ContextPort):
         res[
             "DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES"
         ] = DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES
+        res["DEFAULT_EXTENSIONS"] = DEFAULT_EXTENSIONS
+        res["REPLACE_DEFAULT"] = REPLACE_DEFAULT
+        res["DELETE_ORIGINAL_DEFAULT"] = DELETE_ORIGINAL_DEFAULT
+        res["DIRNAME_IGNORES_DEFAULT"] = DIRNAME_IGNORES_DEFAULT
+        res["FILENAME_IGNORES_DEFAULT"] = FILENAME_IGNORES_DEFAULT
         return res

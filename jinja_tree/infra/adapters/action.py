@@ -12,17 +12,23 @@ from jinja_tree.app.action import (
     IgnoreFileAction,
     ProcessFileAction,
 )
-from jinja_tree.app.config import (
-    DELETE_ORIGINAL_DEFAULT,
-    DIRNAME_IGNORES_DEFAULT,
-    FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
-    FILENAME_IGNORES_DEFAULT,
-    REPLACE_DEFAULT,
-    Config,
-)
+from jinja_tree.app.config import Config
 from jinja_tree.infra.utils import is_fnmatch_ignored
 
 IGNORE_FILENAME = ".jinja-tree-ignore"
+FILENAME_IGNORES_DEFAULT = [".*"]
+DIRNAME_IGNORES_DEFAULT = [
+    "venv",
+    "site-packages",
+    "__pypackages__",
+    "node_modules",
+    "__pycache__",
+    ".*",
+]
+
+DEFAULT_EXTENSIONS = [".template"]
+REPLACE_DEFAULT = True
+DELETE_ORIGINAL_DEFAULT = False
 
 logger = stlog.getLogger("jinja-tree")
 
@@ -31,9 +37,7 @@ class ExtensionsFileActionAdapter(ActionPort):
     def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         self.config = config
         self.plugin_config = plugin_config
-        self.extensions = plugin_config.get(
-            "extensions", FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS
-        )
+        self.extensions = plugin_config.get("extensions", DEFAULT_EXTENSIONS)
         self.filename_ignores = plugin_config.get(
             "filename_ignores", FILENAME_IGNORES_DEFAULT
         )

@@ -2,23 +2,6 @@ import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-FILE_ACTION_PLUGIN_DEFAULT = (
-    "jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter"
-)
-FILENAME_IGNORES_DEFAULT = [".*"]
-DIRNAME_IGNORES_DEFAULT = [
-    "venv",
-    "site-packages",
-    "__pypackages__",
-    "node_modules",
-    "__pycache__",
-    ".*",
-]
-DOTENV_PATH_DEFAULT = ".env"
-FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS = [".template"]
-REPLACE_DEFAULT = True
-DELETE_ORIGINAL_DEFAULT = False
-
 EMBEDDED_EXTENSIONS = [
     "jinja_tree.app.embedded_extensions.from_json.FromJsonExtension",
     "jinja_tree.app.embedded_extensions.shell.ShellExtension",
