@@ -1,12 +1,11 @@
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 try:
     from typing import Annotated
 except ImportError:
     from typing_extensions import Annotated  # type: ignore
 
-import tomli
 import typer
 
 from jinja_tree.app.config import (
@@ -106,16 +105,6 @@ def get_config(
     if not config_file_path:
         config_file_path = get_config_file_path()
     config = read_config_file_or_die(config_file_path)
-    general: Dict[str, Any] = {}
-    data = {}
-    general = {}
-    if config_file_path:
-        with open(config_file_path, "rb") as f:
-            data = tomli.load(f)
-        general = data.get("general", {})
-    config = Config.from_dict(general)
-    config.context_plugins_configs = data.get("context", {})
-    config.action_plugins_configs = data.get("action", {})
     if extra_search_path:
         config.extra_search_paths = [str(x) for x in extra_search_path]
     if add_cwd_to_search_path is not None:

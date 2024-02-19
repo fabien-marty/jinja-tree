@@ -13,7 +13,6 @@ context_plugins = [
     "tools.jinja_tree_plugins.context.CustomEnvContextAdapter",
 ]
 
-
 [context.config]
 
 # Default value for BASEURL (can be overriden, for example for publishing the README.md file to PyPi)

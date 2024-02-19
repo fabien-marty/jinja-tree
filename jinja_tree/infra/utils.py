@@ -148,15 +148,26 @@ def read_config_file_or_die(config_file_path: Optional[str]) -> Config:
                 config = Config.from_dict(general)
             except dataclasses_json.undefined.UndefinedParameterError as e:
                 log_error_and_die(
-                    f"invalid parameters found in config file: {e.normalized_messages()}"
+                    f"invalid parameters found in general section of the config file: {e.normalized_messages()}"
                 )
+            config.context_plugins_configs = data.get("context", {})
+            config.action_plugins_configs = data.get("action", {})
             try:
                 make_context_adapters_from_config(config)
+            except dataclasses_json.undefined.UndefinedParameterError as e:
+                log_error_and_die(
+                    f"invalid parameters found in context section of the config file: {e.normalized_messages()}"
+                )
             except Exception:
                 log_error_and_die("invalid context plugin configuration", exc_info=True)
             try:
                 make_action_adapters_from_config(config)
+            except dataclasses_json.undefined.UndefinedParameterError as e:
+                log_error_and_die(
+                    f"invalid parameters found in action section of the config file: {e.normalized_messages()}"
+                )
             except Exception:
                 log_error_and_die("invalid action plugin configuration", exc_info=True)
+            config.__post_init__()
             return config
     return Config()
