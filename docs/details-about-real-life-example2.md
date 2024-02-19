@@ -21,16 +21,24 @@ from jinja_tree.app.config import (
     DIRNAMES_IGNORES_DEFAULT,
     Config,
 )
-from jinja_tree.infra.adapters.context import EnvContextAdapter
+from jinja_tree.app.context import ContextPort
+from jinja_tree.infra.adapters.action import DIRNAME_IGNORES_DEFAULT
 
-class CustomEnvContextAdapter(EnvContextAdapter):
+class CustomEnvContextAdapter(ContextPort):
+
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "custom_env"
+
     def get_context(self) -> Dict[str, Any]:
         tmp = super().get_context() # we override the default behavior
-        tmp["default_config"] = Config()
-        tmp["dirname_ignores_default"] = DIRNAME_IGNORES_DEFAULT
-        tmp["embedded_jinja_extensions"] = EMBEDDED_EXTENSIONS
+        tmp["default_config"] = Config() # we publish the default configuration as a "default_config" context variable
+        tmp["dirname_ignores_default"] = DIRNAME_IGNORES_DEFAULT # we publish other default values
+        tmp["embedded_jinja_extensions"] = EMBEDDED_EXTENSIONS # ...
         return tmp
 ```
+
+Then we have to activate our plugin with `--context-plugin` CLI option (or in the `context_plugins` key of the configuration file).
 
 Now in the `jinja-tree.toml.template` file, we can use these context variables. For examples:
 
@@ -44,9 +52,10 @@ to get: `change_cwd = true` in the target file.
 More complex example:
 
 ```toml
+[action.extension]
+
 # Dirname patterns to ignore recursively (fnmatch patterns to match against dirname only)
-# [specific to ExtensionsFileActionAdapter plugin]
-dirname_ignores =  [ {{ dirname_ignores_default|map('double_quotes')|join(', ') }} ]
+ignores =  [ {{ dirname_ignores_default|map('double_quotes')|join(', ') }} ]
 ```
 
 to get: `dirname_ignores =  [ "venv", "site-packages", "__pypackages__", "node_modules", "__pycache__", ".*" ]` in the target file.

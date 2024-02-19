@@ -51,11 +51,9 @@ context_generated_comment_line2 = "{{default_config.context_generated_comment_li
 action_plugins = [{{ default_config.action_plugins|map('double_quotes')|join(', ') }}]
 
 
-####################################  
-### Context plugin configuration ###
-####################################  
-[context]
-
+######################################
+### Context plugins configurations ###
+######################################
 [context.env]
 
 # Fnmatch patterns (for environment variable names) to ignore
@@ -78,11 +76,9 @@ ignores = [{{ DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES|map('double_quotes')|join('
 # [...]
 
 
-########################################  
-### File-action plugin configuration ###
-########################################
-[action]
-
+##########################################  
+### File-action plugins configurations ###
+##########################################
 [action.extension]
 
 # File extensions to process

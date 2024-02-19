@@ -15,7 +15,6 @@ from jinja_tree.app.action import (
 from jinja_tree.app.config import Config
 from jinja_tree.infra.utils import is_fnmatch_ignored
 
-IGNORE_FILENAME = ".jinja-tree-ignore"
 FILENAME_IGNORES_DEFAULT = [".*"]
 DIRNAME_IGNORES_DEFAULT = [
     "venv",
@@ -33,7 +32,7 @@ DELETE_ORIGINAL_DEFAULT = False
 logger = stlog.getLogger("jinja-tree")
 
 
-class ExtensionsFileActionAdapter(ActionPort):
+class ExtensionsActionAdapter(ActionPort):
     def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         self.config = config
         self.plugin_config = plugin_config
@@ -94,13 +93,6 @@ class ExtensionsFileActionAdapter(ActionPort):
                 "Ignored directory because of dirname_ignores configuration value",
                 path=absolute_path,
                 dirname_ignores=self.dirname_ignores,
-            )
-            return IgnoreDirectoryAction(source_absolute_path=absolute_path)
-        exclude_file = os.path.join(absolute_path, IGNORE_FILENAME)
-        if os.path.isfile(exclude_file):
-            self.trace(
-                f"Ignored directory because {IGNORE_FILENAME} found (inside)",
-                path=absolute_path,
             )
             return IgnoreDirectoryAction(source_absolute_path=absolute_path)
         return BrowseDirectoryAction(source_absolute_path=absolute_path)

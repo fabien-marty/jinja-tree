@@ -14,6 +14,7 @@ from jinja_tree.app.action import (
 from jinja_tree.app.config import Config
 from jinja_tree.app.jinja import JinjaService
 
+IGNORE_FILENAME = ".jinja-tree-ignore"
 logger = stlog.getLogger("jinja-tree")
 
 
@@ -88,9 +89,12 @@ class JinjaTreeService:
         self.jinja_service = jinja_service
         self.blank_run = blank_run
 
-    def chdir(self, dirpath: str):
+    def trace(self, msg: str, **kwargs):
         if self.config.verbose:
-            logger.debug("Changing working directory", new_path=dirpath)
+            logger.debug(msg, **kwargs)
+
+    def chdir(self, dirpath: str):
+        self.trace("Changing working directory", new_path=dirpath)
         os.chdir(dirpath)
 
     def do_process_action(self, action: ProcessFileAction):
@@ -126,6 +130,17 @@ class JinjaTreeService:
 
     def process(self):
         for dirpath, dirnames, filenames in os.walk(self.config.root_dir, topdown=True):
+            # Check if the directory should be ignored because of IGNORE_FILENAME
+            if IGNORE_FILENAME in filenames:
+                self.trace(
+                    f"Ignored directory because {IGNORE_FILENAME} found (inside)",
+                    path=dirpath,
+                )
+                # modify in-place, see https://stackoverflow.com/a/19859907
+                # to ignore recursively
+                dirnames[:] = []
+                continue
+
             # Directory action
             dir_action = self.action_service.get_directory_action(dirpath)
             if isinstance(dir_action, IgnoreDirectoryAction):

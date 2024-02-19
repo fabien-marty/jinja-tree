@@ -24,7 +24,7 @@ def make_default_context_plugins() -> List[str]:
 
 
 def make_default_action_plugins() -> List[str]:
-    return ["jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter"]
+    return ["jinja_tree.infra.adapters.action.ExtensionsActionAdapter"]
 
 
 @dataclass

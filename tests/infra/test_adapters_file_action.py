@@ -4,7 +4,7 @@ import pytest
 
 from jinja_tree.app.action import IgnoreFileAction, ProcessFileAction
 from jinja_tree.app.config import Config
-from jinja_tree.infra.adapters.action import ExtensionsFileActionAdapter
+from jinja_tree.infra.adapters.action import ExtensionsActionAdapter
 from jinja_tree.infra.adapters.context import (
     EnvContextAdapter,
 )
@@ -31,7 +31,7 @@ def test_env(fake_env_fixture):
 def test_extensions():
     config = Config()
     plugin_config = {"extensions": [".template"], "delete_original": True}
-    x = ExtensionsFileActionAdapter(config, plugin_config)
+    x = ExtensionsActionAdapter(config, plugin_config)
     a = x.get_file_action("/foo/bar/foo.template")
     assert isinstance(a, ProcessFileAction)
     assert a.source_absolute_path == "/foo/bar/foo.template"
