@@ -10,6 +10,13 @@ In `jinja-tree` there are two extension points:
 
 For each of these extension points, you can provide one or more plugins.
 
+> [!NOTE]
+> For the `context` extension point, the final context will be the **union** of all contexts
+> provided by configured plugins (if two plugins provides the same variable, the latest wins).
+> 
+> For the `action` extension point, the executed action will the first "non-default" one provided 
+> by configured plugins (so the first wins).
+
 `jinja-tree` default behavior is driven by four plugins:
 
 - `jinja_tree.infra.adapters.context.ConfigurationContextAdapter` (for the `context` extension point)
@@ -17,7 +24,7 @@ For each of these extension points, you can provide one or more plugins.
 - `jinja_tree.infra.adapters.context.DotEnvContextAdapter` (for the `context` extension point)
 - `jinja_tree.infra.adapters.action.ExtensionsActionAdapter`(for the `action` extension point)
 
-Of course, you can provide your own plugins to override the default behavior by passing your class full path to the `--context-plugin` or `--action-plugin` CLI options (or corresponding configuration file keys).
+Of course, you can override this default behavior with your own plugins by passing your class full path to the `--context-plugin` or `--action-plugin` CLI options (or corresponding configuration file keys).
 
 ## Context plugins
 
@@ -105,16 +112,30 @@ A higher-level service object will add to the context returned by the plugin som
 
 The [default context plugins](../jinja_tree/infra/adapters/context.py) provides a context by merging 3 layers of contexts (in this order):
 
-- the "configuration context" you can provide by adding some extra key/values in the `.jinja-tree.toml` configuration file
+- the "configuration context" you can provide by adding some extra key/values in the `.jinja-tree.toml` configuration file (in the `[context.config]` section)
 - the "environment variables context" you can provide by setting some environment variables
 - the "dotenv" context you can provide by adding some extra key/values in a dotenv file
 
-Of course, you can configure plenty of things to tune this default behavior.
+Of course, you can configure plenty of things to tune this default behavior. See the [the default configuration file](jinja-tree.toml) for more details (in sections: `[context.env]`, `[context.dotenv]` and `[context.config]`)
 
 ### Other context plugins
 
 To manage this repository, we use a [custom context plugin](../tools/jinja_tree_plugins_context.py) that is very specific to this repository
 but this is maybe a good example to show you how to write your own context plugin.
+
+> [!NOTE]
+> For configuring your custom plugin, you can user a `[context.foo]` section in the configuration file
+> 
+> If your plugin define this method:
+
+> ```python
+> @classmethod
+> def get_configuration_name(self) -> str:
+>     return "foo"
+> ```
+> 
+> All key/values found in the `[context.foo]` section will be passed to the plugin constructor as a dict
+> in the `plugin_config` parameter.
 
 ## Action plugins
 
@@ -263,15 +284,17 @@ The [default action plugin](../jinja_tree/infra/adapters/action.py) has the foll
 
 ### For directories
 
-- it checks if the directory name matches the fnmatch pattern provided `filename_ignores` configuration key (under `[action.extension]`)
-    - if it matches, the directory (and recursively all this content) is ignored
-- it checks if there is a `.jinja-tree-ignore` file in the directory
+- it checks if the directory name matches the fnmatch pattern provided `dirname_ignores` configuration key (under `[action.extension]`)
     - if there is one, the directory (and recursively all this content) is ignored
 - else the directory is flagged to be recursively browsed
 
+> [!NOTE]
+> A common behavior (not specific to the default plugin) is also to ignore
+> (recursively) directories with a `.jinja-tree-ignore` file in it.
+
 ### For files
 
-- if checks if the filename matches the fnmatch pattern provided by the `dirname_ignores` configuration key (under `[action.extension]`)
+- if checks if the filename matches the fnmatch pattern provided by the `filename_ignores` configuration key (under `[action.extension]`)
     - if it matches, the file is ignored
 - if checks if the filename extension is one of the extensions provided by the `extensions` configuration key (under `[action.extension]`)
     - if it doesn't match, the file is ignored

@@ -84,7 +84,9 @@ class BrowseDirectoryAction(DirectoryAction):
 
 
 CONCRETE_DIRECTORY_ACTIONS = [IgnoreDirectoryAction, BrowseDirectoryAction]
+DEFAULT_CONCRETE_DIRECTORY_ACTION = BrowseDirectoryAction
 CONCRETE_FILE_ACTIONS = [IgnoreFileAction, ProcessFileAction, RenameFileAction]
+DEFAULT_CONCRETE_FILE_ACTION = IgnoreFileAction
 
 
 class ActionPort(ABC):
@@ -172,18 +174,21 @@ class ActionService:
             raise Exception("no action plugins configured!")
         for adapter in self.adapters:
             a = adapter.get_file_action(absolute_path)
-            if not hasattr(a, "target_absolute_path"):
+            if not isinstance(a, tuple(CONCRETE_FILE_ACTIONS)):
+                raise Exception(f"bad action: {a} returned by action plugin: {adapter}")
+            if isinstance(a, DEFAULT_CONCRETE_FILE_ACTION):
                 # => IgnoreFileAction, let's try next adapter
                 continue
-            if os.path.exists(a.target_absolute_path) and not os.path.isfile(
-                a.target_absolute_path
+            target_absolute_path: str = a.target_absolute_path  # type: ignore
+            if os.path.exists(target_absolute_path) and not os.path.isfile(
+                target_absolute_path
             ):
                 logger.warning(
-                    f"target file: {a.target_absolute_path} is not a file => ignoring"
+                    f"target file: {target_absolute_path} is not a file => ignoring"
                 )
                 return IgnoreFileAction(source_absolute_path=absolute_path)
             return a
-        return IgnoreFileAction(source_absolute_path=absolute_path)
+        return DEFAULT_CONCRETE_FILE_ACTION(source_absolute_path=absolute_path)
 
     def get_directory_action(self, absolute_path: str) -> DirectoryAction:
         """Return the action to execute on the directory at the given absolute path.
@@ -194,8 +199,10 @@ class ActionService:
         assert os.path.isdir(absolute_path)
         for adapter in self.adapters:
             a = adapter.get_directory_action(absolute_path)
-            if isinstance(a, IgnoreDirectoryAction):
-                # => IgnoreFileAction, let's try next adapter
+            if not isinstance(a, tuple(CONCRETE_DIRECTORY_ACTIONS)):
+                raise Exception(f"bad action: {a} returned by action plugin: {adapter}")
+            if isinstance(a, DEFAULT_CONCRETE_DIRECTORY_ACTION):
+                # => BrowseDirectoryAction, let's try next adapter
                 continue
             return a
-        return IgnoreDirectoryAction(source_absolute_path=absolute_path)
+        return DEFAULT_CONCRETE_DIRECTORY_ACTION(source_absolute_path=absolute_path)
