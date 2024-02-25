@@ -36,67 +36,63 @@ disable_embedded_jinja_extensions = {{ default_config.disable_embedded_jinja_ext
 # - you can disable embedded extensions with 'disable_embedded_jinja_extensions = true'
 jinja_extensions = []
 
+# Context plugin full classpaths
+context_plugins = [{{ default_config.context_plugins|map('double_quotes')|join(', ') }}]
 
-####################################  
-### Context plugin configuration ###
-####################################  
-[context]
+# Generated comment template: line1 for context
+# Available placeholders: {% raw %}{{utcnow}}, {{absolute_path}}, {{dirname}}, {{basename}}, {{relative_filepath}}{% endraw %}
+context_generated_comment_line1 = "{{default_config.context_generated_comment_line1}}"
 
-# Plugin full classpath [common key for all context plugins]
-plugin = "{{default_config.context_plugin_config.plugin}}"
+# Generated comment template: line2 for context
+# Available placeholders: {% raw %}{{utcnow}}, {{absolute_path}}, {{dirname}}, {{basename}}, {{relative_filepath}}{% endraw %}
+context_generated_comment_line2 = "{{default_config.context_generated_comment_line2}}"
 
-# Generated comment template: line1 [common key for all context plugins]
-# Available placeholders: {utcnow}, {absolute_path}, {dirname}, {basename}, {relative_filepath}
-generated_comment_line1 = "{{default_config.context_plugin_config.generated_comment_line1}}"
+# Action plugin full classpaths
+action_plugins = [{{ default_config.action_plugins|map('double_quotes')|join(', ') }}]
 
-# Generated comment template: line2 [common key for all context plugins]
-# Available placeholders: {utcnow}, {absolute_path}, {dirname}, {basename}, {relative_filepath}
-generated_comment_line2 = "{{default_config.context_plugin_config.generated_comment_line2}}"
 
-# Fnmatch patterns (for environment variable names) to ignore [specific to EnvContextAdapter plugin]
+######################################
+### Context plugins configurations ###
+######################################
+[context.env]
+
+# Fnmatch patterns (for environment variable names) to ignore
 # Example: ["FOO*", "*BAR"]  for ignoring all env var starting with FOO or ending with BAR
-env_ignores = [{{ default_config.context_plugin_config.env_ignores|map('double_quotes')|join(', ') }}]
+ignores = [{{ ENV_CONTEXT_ADAPTER_DEFAULT_IGNORES|map('double_quotes')|join(', ') }}]
 
-# dotenv file path (absolute or relative), if set to an empty string (""), dotenv support is disabled [specific to EnvContextAdapter plugin]
-dotenv_path = "{{default_config.context_plugin_config.dotenv_path}}"
+[context.dotenv]
 
-# Fnmatch patterns (for dotenv variable names) to ignore [specific to EnvContextAdapter plugin]
+# dotenv file path (absolute or relative), if set to an empty string (""), dotenv support is disabled 
+path = "{{ DOTENV_CONTEXT_ADAPTER_DEFAULT_PATH }}"
+
+# Fnmatch patterns (for dotenv variable names) to ignore
 # Example: ["FOO*", "*BAR"]  for ignoring all dotenv var starting with FOO or ending with BAR
-dotenv_ignores = [{{ default_config.context_plugin_config.dotenv_ignores|map('double_quotes')|join(', ') }}]
+ignores = [{{ DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES|map('double_quotes')|join(', ') }}]
 
-# Fnmatch patterns (for plugin_configuration variable names) to ignore [specific to EnvContextAdapter plugin]
-# Example: ["foo*", "*bar"]  for ignoring all plugin configuration var starting with foo or ending with bar
-plugin_configuration_ignores = [{{ default_config.context_plugin_config.plugin_configuration_ignores|map('double_quotes')|join(', ') }}]
+[context.config]
 
-# With the EnvContextAdapter plugin, you can add key/values below, they will be available in Jinja2 context
+# With the ConfigurationContextAdapter plugin, you can add key/values below, they will be available in Jinja2 context
 
 # [...]
 
 
-########################################  
-### File-action plugin configuration ###
-########################################
-[action]
+##########################################  
+### File-action plugins configurations ###
+##########################################
+[action.extension]
 
-# Plugin full classpath [common key for all action plugins]
-plugin = "{{default_config.action_plugin_config.plugin}}"
-
-# File extensions to process [specific to ExtensionsFileActionAdapter plugin]
+# File extensions to process
 # Example: [".j2", ".jinja2", ".template"] for processing all files ending with .j2, .jinja2 or .template
-extensions = [{{ default_config.action_plugin_config.extensions|map('double_quotes')|join(', ') }}]
+extensions = [{{ DEFAULT_EXTENSIONS|map('double_quotes')|join(', ') }}]
 
 # Filename patterns to ignore (fnmatch patterns to match against basename only)
-# [specific to ExtensionsFileActionAdapter plugin]
-filename_ignores = [ {{ filename_ignores_default|map('double_quotes')|join(', ') }} ]
+filename_ignores = [ {{ FILENAME_IGNORES_DEFAULT|map('double_quotes')|join(', ') }} ]
 
 # Dirname patterns to ignore recursively (fnmatch patterns to match against dirname only)
-# [specific to ExtensionsFileActionAdapter plugin]
-dirname_ignores =  [ {{ dirname_ignores_default|map('double_quotes')|join(', ') }} ]
+dirname_ignores =  [ {{ DIRNAME_IGNORES_DEFAULT|map('double_quotes')|join(', ') }} ]
 
 # Replace target files if they already exist (if true)
-# [specific to ExtensionsFileActionAdapter plugin]
-replace = {{ default_config.action_plugin_config.replace|lower }}
+replace = {{ REPLACE_DEFAULT|lower }}
 
 # Delete original (template) file after processing (if true)
-# [specific to ExtensionsFileActionAdapter plugin]
-delete_original = {{ default_config.action_plugin_config.delete_original|lower }}
+delete_original = {{ DELETE_ORIGINAL_DEFAULT|lower }}

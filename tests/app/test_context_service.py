@@ -5,8 +5,12 @@ from jinja_tree.app.context import ContextPort, ContextService
 
 
 class MockContextAdapter(ContextPort):
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         pass
+
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "mock"
 
     def get_context(self, absolute_path: Optional[str] = None) -> Dict[str, Any]:
         return {"foo": "bar"}
@@ -14,8 +18,8 @@ class MockContextAdapter(ContextPort):
 
 def test_context_service():
     config = Config()
-    context_adapter = MockContextAdapter(config)
-    x = ContextService(config, context_adapter)
+    context_adapter = MockContextAdapter(config, {})
+    x = ContextService(config, [context_adapter])
     res = x.get_context()
     assert res["foo"] == "bar"
     assert res["JINJA_TREE"] == "1"

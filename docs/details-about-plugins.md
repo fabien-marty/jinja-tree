@@ -8,16 +8,27 @@ In `jinja-tree` there are two extension points:
 - one for providing context variables to Jinja templates (let's call it `context`)
 - one for providing actions to do on files or directories (let's call in `action`)
 
-`jinja-tree` default behavior is driven by two plugins:
+For each of these extension points, you can provide one or more plugins.
 
+> [!NOTE]
+> For the `context` extension point, the final context will be the **union** of all contexts
+> provided by configured plugins (if two plugins provides the same variable, the latest wins).
+> 
+> For the `action` extension point, the executed action will the first "non-default" one provided 
+> by configured plugins (so the first wins).
+
+`jinja-tree` default behavior is driven by four plugins:
+
+- `jinja_tree.infra.adapters.context.ConfigurationContextAdapter` (for the `context` extension point)
 - `jinja_tree.infra.adapters.context.EnvContextAdapter` (for the `context` extension point)
-- `jinja_tree.infra.adapters.action.ExtensionsFileActionAdapter`(for the `action` extension point)
+- `jinja_tree.infra.adapters.context.DotEnvContextAdapter` (for the `context` extension point)
+- `jinja_tree.infra.adapters.action.ExtensionsActionAdapter`(for the `action` extension point)
 
-Of course, you can provide your own plugins to override the default behavior by passing your class full path to the `--context-plugin` or `--action-plugin` CLI options (or corresponding configuration file keys).
+Of course, you can override this default behavior with your own plugins by passing your class full path to the `--context-plugin` or `--action-plugin` CLI options (or corresponding configuration file keys).
 
 ## Context plugins
 
-The role of the context plugin is to provide some context variables for Jinja template processing.
+The role of `context` plugins is to provide some context variables for Jinja template processing.
 
 It's a class that must implement the `jinja_tree.app.context.ContextPort` interface.
 
@@ -30,15 +41,14 @@ class ContextPort(ABC):
     """This is the abstract interface for ContextPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         """
-        Construct a new ContextPort object given a configuration object.
-
-        The "context" plugin configuration block is available in:
-        config.context_plugin_config
+        Construct a new ContextPort object given a configuration object
+        and a plugin configuration dict.
 
         Args:
             config (Config): The configuration object.
+            plugin_config (Dict[str, Any]): The plugin configuration dict.
 
         """
         pass
@@ -52,6 +62,24 @@ class ContextPort(ABC):
 
         Returns:
             The context dictionary.
+
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_config_name(cls) -> str:
+        """
+        Return the name of the configuration object.
+
+        For example, if we return "foo", it means that the configuration in the TOML file
+        is located under:
+
+        [context.foo]
+        # ... some configuration ...
+
+        Returns:
+            The name of the configuration object.
 
         """
         pass
@@ -80,29 +108,43 @@ A higher-level service object will add to the context returned by the plugin som
 > You can use the style of comments you need (depending on the file type you generate). And
 > you can also configure the message itself.
 
-### The default context plugin
+### The default context plugins
 
-The [default context plugin](../jinja_tree/infra/adapters/context.py) provides a context by merging 3 layers of contexts (in this order):
+The [default context plugins](../jinja_tree/infra/adapters/context.py) provides a context by merging 3 layers of contexts (in this order):
 
-- the "configuration context" you can provide by adding some extra key/values in the `.jinja-tree.toml` configuration file
+- the "configuration context" you can provide by adding some extra key/values in the `.jinja-tree.toml` configuration file (in the `[context.config]` section)
 - the "environment variables context" you can provide by setting some environment variables
 - the "dotenv" context you can provide by adding some extra key/values in a dotenv file
 
-Of course, you can configure plenty of things to tune this default behavior.
+Of course, you can configure plenty of things to tune this default behavior. See the [the default configuration file](jinja-tree.toml) for more details (in sections: `[context.env]`, `[context.dotenv]` and `[context.config]`)
 
 ### Other context plugins
 
 To manage this repository, we use a [custom context plugin](../tools/jinja_tree_plugins_context.py) that is very specific to this repository
 but this is maybe a good example to show you how to write your own context plugin.
 
+> [!NOTE]
+> For configuring your custom plugin, you can user a `[context.foo]` section in the configuration file
+> 
+> If your plugin define this method:
+
+> ```python
+> @classmethod
+> def get_configuration_name(self) -> str:
+>     return "foo"
+> ```
+> 
+> All key/values found in the `[context.foo]` section will be passed to the plugin constructor as a dict
+> in the `plugin_config` parameter.
+
 ## Action plugins
 
-The role of the `action` plugin is to provide actions to do on files or directories. 
+The role of `action` plugins is to provide actions to do on files or directories. 
 
 > [!NOTE]
 > The `action` plugin returns actions to do on the file or directory. It does not do the action itself.
 
-It's a class that must implement the `jinja_tree.app.context.ActionPort` interface.
+It's a class that must implement the `jinja_tree.app.action.ActionPort` interface.
 
 <details>
 
@@ -115,15 +157,33 @@ class ActionPort(ABC):
     """This is the abstract interface for FileActionPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         """
-        Construct a new FileActionPort object given a configuration object.
-
-        The "action" plugin configuration block is available in:
-        config.action_plugin_config
+        Construct a new FileActionPort object given a configuration object
+        and a plugin configuration dict.
 
         Args:
             config (Config): The configuration object.
+            plugin_config (Dict[str, Any]): The plugin configuration dict.
+
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_config_name(cls) -> str:
+        """
+        Return the name of the configuration object.
+
+        For example, if we return "foo", it means that the configuration in the TOML file
+        is located under:
+
+        [action.foo]
+        # ... some configuration ...
+
+        Returns:
+            The name of the configuration object.
+
         """
         pass
 
@@ -224,17 +284,19 @@ The [default action plugin](../jinja_tree/infra/adapters/action.py) has the foll
 
 ### For directories
 
-- it checks if the directory name matches the fnmatch pattern provided `dirname_ignores` configuration key
-    - if it matches, the directory (and recursively all this content) is ignored
-- it checks if there is a `.jinja-tree-ignore` file in the directory
+- it checks if the directory name matches the fnmatch pattern provided `dirname_ignores` configuration key (under `[action.extension]`)
     - if there is one, the directory (and recursively all this content) is ignored
 - else the directory is flagged to be recursively browsed
 
+> [!NOTE]
+> A common behavior (not specific to the default plugin) is also to ignore
+> (recursively) directories with a `.jinja-tree-ignore` file in it.
+
 ### For files
 
-- if checks if the filename matches the fnmatch pattern provided by the `filename_ignores` configuration key
+- if checks if the filename matches the fnmatch pattern provided by the `filename_ignores` configuration key (under `[action.extension]`)
     - if it matches, the file is ignored
-- if checks if the filename extension is one of the extensions provided by the `extensions` configuration key
+- if checks if the filename extension is one of the extensions provided by the `extensions` configuration key (under `[action.extension]`)
     - if it doesn't match, the file is ignored
 - else the file is flagged to be processed with "Jinja2" with a target filename that is the same as the original filename but with the extension removed
 

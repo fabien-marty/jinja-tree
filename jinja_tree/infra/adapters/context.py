@@ -1,66 +1,86 @@
 import os
-from typing import Any, Dict, List, cast
+from dataclasses import dataclass, field
+from typing import Any, Dict, List
 
+from dataclasses_json import DataClassJsonMixin, Undefined
 from dotenv import dotenv_values
 
 from jinja_tree.app.config import Config
 from jinja_tree.app.context import ContextPort
-from jinja_tree.infra.utils import dump, is_fnmatch_ignored
+from jinja_tree.infra.utils import is_fnmatch_ignored
+
+ENV_CONTEXT_ADAPTER_DEFAULT_IGNORES: List[str] = []
+DOTENV_CONTEXT_ADAPTER_DEFAULT_PATH = ".env"
+DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES: List[str] = []
+
+
+@dataclass
+class EnvContextConfig(DataClassJsonMixin):
+    ignores: List[str] = field(
+        default_factory=lambda: list(ENV_CONTEXT_ADAPTER_DEFAULT_IGNORES)
+    )
+    dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
 
 
 class EnvContextAdapter(ContextPort):
-    def __init__(self, config: Config):
-        self.env_ignores = cast(
-            List[str], config.context_plugin_config.get("env_ignores")
-        )
-        assert self.env_ignores is not None
-        self.plugin_configuration_ignores = cast(
-            List[str], config.context_plugin_config.get("plugin_configuration_ignores")
-        )
-        assert self.plugin_configuration_ignores is not None
-        self.dotenv_path = config.context_plugin_config.get("dotenv_path")
-        assert self.dotenv_path is not None
-        self.dotenv_ignores = cast(
-            List[str], config.context_plugin_config.get("dotenv_ignores")
-        )
-        assert self.dotenv_ignores is not None
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         self.config = config
-        if self.config.verbose:
-            dump("initial context", self.get_context())
+        self.plugin_config = EnvContextConfig.from_dict(plugin_config)
 
-    def get_plugin_configuration_context(self) -> Dict[str, Any]:
-        if self.plugin_configuration_ignores == ["*"]:
-            return {}
-        return {
-            x: y
-            for x, y in self.config.context_plugin_config.items()
-            if not is_fnmatch_ignored(x, self.plugin_configuration_ignores)
-        }
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "env"
 
-    def get_dotenv_context(self) -> Dict[str, Any]:
-        if not self.dotenv_path:
-            return {}
-        if not os.path.isfile(self.dotenv_path):
-            return {}
-        if self.dotenv_ignores == ["*"]:
-            return {}
-        return {
-            x: y
-            for x, y in dotenv_values(self.dotenv_path).items()
-            if not is_fnmatch_ignored(x, self.dotenv_ignores)
-        }
-
-    def get_env_context(self) -> Dict[str, Any]:
-        if self.env_ignores == ["*"]:
+    def get_context(self) -> Dict[str, Any]:
+        if self.plugin_config.ignores == ["*"]:
             return {}
         return {
             x: y
             for x, y in os.environ.items()
-            if not is_fnmatch_ignored(x, self.env_ignores)
+            if not is_fnmatch_ignored(x, self.plugin_config.ignores)
         }
 
+
+@dataclass
+class DotEnvContextConfig(DataClassJsonMixin):
+    path: str = DOTENV_CONTEXT_ADAPTER_DEFAULT_PATH
+    ignores: List[str] = field(
+        default_factory=lambda: list(DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES)
+    )
+    dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
+
+
+class DotEnvContextAdapter(ContextPort):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+        self.config = config
+        self.plugin_config = DotEnvContextConfig.from_dict(plugin_config)
+
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "dotenv"
+
     def get_context(self) -> Dict[str, Any]:
-        plugin_context = self.get_plugin_configuration_context()
-        env_context = self.get_env_context()
-        dotenv_context = self.get_dotenv_context()
-        return {**plugin_context, **env_context, **dotenv_context}
+        if not self.plugin_config.path:
+            return {}
+        if not os.path.isfile(self.plugin_config.path):
+            return {}
+        if self.plugin_config.ignores == ["*"]:
+            return {}
+        return {
+            x: y
+            for x, y in dotenv_values(self.plugin_config.path).items()
+            if not is_fnmatch_ignored(x, self.plugin_config.ignores)
+        }
+
+
+class ConfigurationContextAdapter(ContextPort):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+        self.config = config
+        self.plugin_config = plugin_config
+
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "config"
+
+    def get_context(self) -> Dict[str, Any]:
+        return self.plugin_config

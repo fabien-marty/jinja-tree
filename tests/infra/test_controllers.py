@@ -22,7 +22,6 @@ def fake_env():
 
 
 def test_stdin(fake_env):
-    os.environ["FOO"] = "BAR"
     result = runner.invoke(app_stdin, [], input="FOO{{JINJA_TREE_FOO}}")
     assert result.exit_code == 0
     assert result.stdout == "FOOBAR\n"

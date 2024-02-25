@@ -4,6 +4,7 @@ import pytest
 
 from jinja_tree.app.config import Config
 from jinja_tree.infra.adapters.context import (
+    ConfigurationContextAdapter,
     EnvContextAdapter,
 )
 
@@ -22,17 +23,11 @@ def fake_env_fixture():
 
 def test_env(fake_env_fixture):
     config = Config()
-    config.context_plugin_config["env_ignores"] = ["F*", "PYTEST_*"]
-    config.context_plugin_config["plugin_configuration_ignores"] = ["*"]
-    config.context_plugin_config["dotenv_ignores"] = ["*"]
-    x = EnvContextAdapter(config)
+    x = EnvContextAdapter(config, {"ignores": ["F*", "PYTEST_*"]})
     assert x.get_context() == {"BAR": "FOO"}
 
 
 def test_config_file():
     config = Config()
-    config.context_plugin_config["foo"] = "bar"
-    config.context_plugin_config["env_ignores"] = ["*"]
-    config.context_plugin_config["dotenv_ignores"] = ["*"]
-    x = EnvContextAdapter(config)
+    x = ConfigurationContextAdapter(config, {"foo": "bar"})
     assert x.get_context() == {"foo": "bar"}

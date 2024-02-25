@@ -184,15 +184,18 @@ Options:
   --verbose / --no-verbose        increase verbosity of the DEBUG log level
                                   (note: this forces log-level = DEBUG)
                                   [default: no-verbose]
-  --extra-search-path PATH        Search path to jinja
+  --extra-search-path PATH        Search path to jinja (can be used multiple
+                                  times)
   --add-cwd-to-search-path / --no-add-cwd-to-search-path
                                   add current working directory (CWD) to jinja
                                   search path
   --add-root-dir-to-search-path / --no-add-root-dir-to-search-path
                                   add root directory to jinja search path
   --jinja-extension TEXT          jinja extension to load
-  --context-plugin TEXT           context plugin (full python class path)
-  --action-plugin TEXT            action plugin (full python class path)
+  --context-plugin TEXT           context plugins (full python class path, can
+                                  be used multiple times)
+  --action-plugin TEXT            action plugin (full python class path, can
+                                  be used multiple times)
   --strict-undefined / --no-strict-undefined
                                   if set, raise an error if a variable does
                                   not exist in context
@@ -244,12 +247,14 @@ Options:
   --verbose / --no-verbose        increase verbosity of the DEBUG log level
                                   (note: this forces log-level = DEBUG)
                                   [default: no-verbose]
-  --extra-search-path PATH        Search path to jinja
+  --extra-search-path PATH        Search path to jinja (can be used multiple
+                                  times)
   --add-cwd-to-search-path / --no-add-cwd-to-search-path
                                   add current working directory (CWD) to jinja
                                   search path
   --jinja-extension TEXT          jinja extension to load
-  --context-plugin TEXT           context plugin (full python class path)
+  --context-plugin TEXT           context plugins (full python class path, can
+                                  be used multiple times)
   --strict-undefined / --no-strict-undefined
                                   if set, raise an error if a variable does
                                   not exist in context

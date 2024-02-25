@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import stlog
 
@@ -12,37 +12,45 @@ from jinja_tree.app.action import (
     IgnoreFileAction,
     ProcessFileAction,
 )
-from jinja_tree.app.config import (
-    DELETE_ORIGINAL_DEFAULT,
-    DIRNAME_IGNORES_DEFAULT,
-    FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS,
-    FILENAME_IGNORES_DEFAULT,
-    REPLACE_DEFAULT,
-    Config,
-)
+from jinja_tree.app.config import Config
 from jinja_tree.infra.utils import is_fnmatch_ignored
 
-IGNORE_FILENAME = ".jinja-tree-ignore"
+FILENAME_IGNORES_DEFAULT = [".*"]
+DIRNAME_IGNORES_DEFAULT = [
+    "venv",
+    "site-packages",
+    "__pypackages__",
+    "node_modules",
+    "__pycache__",
+    ".*",
+]
+
+DEFAULT_EXTENSIONS = [".template"]
+REPLACE_DEFAULT = True
+DELETE_ORIGINAL_DEFAULT = False
 
 logger = stlog.getLogger("jinja-tree")
 
 
-class ExtensionsFileActionAdapter(ActionPort):
-    def __init__(self, config: Config):
+class ExtensionsActionAdapter(ActionPort):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         self.config = config
-        self.extensions = config.action_plugin_config.get(
-            "extensions", FILE_ACTION_PLUGIN_DEFAULT_EXTENSIONS
-        )
-        self.filename_ignores = config.action_plugin_config.get(
+        self.plugin_config = plugin_config
+        self.extensions = plugin_config.get("extensions", DEFAULT_EXTENSIONS)
+        self.filename_ignores = plugin_config.get(
             "filename_ignores", FILENAME_IGNORES_DEFAULT
         )
-        self.dirname_ignores = config.action_plugin_config.get(
+        self.dirname_ignores = plugin_config.get(
             "dirname_ignores", DIRNAME_IGNORES_DEFAULT
         )
-        self.replace = config.action_plugin_config.get("replace", REPLACE_DEFAULT)
-        self.delete_original = config.action_plugin_config.get(
+        self.replace = plugin_config.get("replace", REPLACE_DEFAULT)
+        self.delete_original = plugin_config.get(
             "delete_original", DELETE_ORIGINAL_DEFAULT
         )
+
+    @classmethod
+    def get_config_name(self) -> str:
+        return "extension"
 
     def trace(self, msg: str, **kwargs):
         if self.config.verbose:
@@ -85,13 +93,6 @@ class ExtensionsFileActionAdapter(ActionPort):
                 "Ignored directory because of dirname_ignores configuration value",
                 path=absolute_path,
                 dirname_ignores=self.dirname_ignores,
-            )
-            return IgnoreDirectoryAction(source_absolute_path=absolute_path)
-        exclude_file = os.path.join(absolute_path, IGNORE_FILENAME)
-        if os.path.isfile(exclude_file):
-            self.trace(
-                f"Ignored directory because {IGNORE_FILENAME} found (inside)",
-                path=absolute_path,
             )
             return IgnoreDirectoryAction(source_absolute_path=absolute_path)
         return BrowseDirectoryAction(source_absolute_path=absolute_path)

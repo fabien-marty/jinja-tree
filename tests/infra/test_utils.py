@@ -8,22 +8,26 @@ from jinja_tree.app.context import ContextPort
 from jinja_tree.infra.utils import (
     get_config_file_path,
     is_fnmatch_ignored,
-    make_context_adapter_from_config,
-    make_file_action_adapter_from_config,
+    make_action_adapters_from_config,
+    make_context_adapters_from_config,
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(SCRIPT_DIR, "data")
 
 
-def test_make_context_adapter_from_config():
-    adapter = make_context_adapter_from_config(config=Config())
-    assert isinstance(adapter, ContextPort)
+def test_make_context_adapters_from_config():
+    adapters = make_context_adapters_from_config(config=Config())
+    assert adapters
+    for adapter in adapters:
+        assert isinstance(adapter, ContextPort)
 
 
-def test_make_file_action_adapter_from_config():
-    adapter = make_file_action_adapter_from_config(config=Config())
-    assert isinstance(adapter, ActionPort)
+def test_make_action_adapters_from_config():
+    adapters = make_action_adapters_from_config(config=Config())
+    assert adapters
+    for adapter in adapters:
+        assert isinstance(adapter, ActionPort)
 
 
 @pytest.fixture

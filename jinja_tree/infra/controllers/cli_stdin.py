@@ -3,12 +3,13 @@ import sys
 import typer
 import typer.core
 
+from jinja_tree.app import dump
 from jinja_tree.app.context import ContextService
 from jinja_tree.app.jinja import JinjaService
 from jinja_tree.infra.controllers.cli_common import (
     AddCwdDirToSearchPathType,
     ConfigFileType,
-    ContextPluginType,
+    ContextPluginsType,
     DisableEmbeddedExtensionsType,
     ExtensionType,
     ExtraSearchPathsType,
@@ -16,9 +17,8 @@ from jinja_tree.infra.controllers.cli_common import (
     StrictUndefinedType,
     VerboseType,
     get_config,
-    setup_logger,
 )
-from jinja_tree.infra.utils import dump, make_context_adapter_from_config
+from jinja_tree.infra.utils import make_context_adapters_from_config, setup_logger
 
 # disable rich usage in typer
 typer.core.rich = None  # type: ignore
@@ -33,7 +33,7 @@ def pipe(
     extra_search_path: ExtraSearchPathsType = None,
     add_cwd_to_search_path: AddCwdDirToSearchPathType = None,
     jinja_extension: ExtensionType = None,
-    context_plugin: ContextPluginType = None,
+    context_plugin: ContextPluginsType = None,
     strict_undefined: StrictUndefinedType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensionsType = None,
 ):
@@ -44,7 +44,7 @@ def pipe(
     config = get_config(
         config_file_path=config_file,
         extra_search_path=extra_search_path,
-        context_plugin=context_plugin,
+        context_plugins=context_plugin,
         add_cwd_to_search_path=add_cwd_to_search_path,
         jinja_extension=jinja_extension,
         strict_undefined=strict_undefined,
@@ -55,8 +55,8 @@ def pipe(
     setup_logger(config.log_level)
     if config.verbose:
         dump("config", config)
-    context_adapter = make_context_adapter_from_config(config)
-    context_service = ContextService(config=config, adapter=context_adapter)
+    context_adapters = make_context_adapters_from_config(config)
+    context_service = ContextService(config=config, adapters=context_adapters)
     jinja_service = JinjaService(config=config, context_service=context_service)
     print(jinja_service.render_string(sys.stdin.read()))
 

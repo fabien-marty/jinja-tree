@@ -6,16 +6,12 @@ try:
 except ImportError:
     from typing_extensions import Annotated  # type: ignore
 
-import stlog
-import tomli
 import typer
 
 from jinja_tree.app.config import (
     Config,
-    make_default_action_plugin_config,
-    make_default_context_plugin_config,
 )
-from jinja_tree.infra.utils import get_config_file_path
+from jinja_tree.infra.utils import get_config_file_path, read_config_file_or_die
 
 ConfigFileType = Annotated[
     Optional[str],
@@ -29,7 +25,8 @@ LogLevelType = Annotated[
 ]
 
 ExtraSearchPathsType = Annotated[
-    Optional[List[Path]], typer.Option(help="Search path to jinja")
+    Optional[List[Path]],
+    typer.Option(help="Search path to jinja (can be used multiple times)"),
 ]
 
 AddProcessedFileDirToSearchPathType = Annotated[
@@ -50,8 +47,11 @@ ExtensionType = Annotated[
     Optional[List[str]], typer.Option(help="jinja extension to load")
 ]
 
-ContextPluginType = Annotated[
-    Optional[str], typer.Option(help="context plugin (full python class path)")
+ContextPluginsType = Annotated[
+    Optional[List[str]],
+    typer.Option(
+        help="context plugins (full python class path, can be used multiple times)"
+    ),
 ]
 
 StrictUndefinedType = Annotated[
@@ -59,8 +59,11 @@ StrictUndefinedType = Annotated[
     typer.Option(help="if set, raise an error if a variable does not exist in context"),
 ]
 
-FileActionPluginType = Annotated[
-    Optional[str], typer.Option(help="action plugin (full python class path)")
+ActionPluginType = Annotated[
+    Optional[List[str]],
+    typer.Option(
+        help="action plugin (full python class path, can be used multiple times)"
+    ),
 ]
 
 BlankRunType = Annotated[
@@ -94,30 +97,14 @@ def get_config(
     jinja_extension: ExtensionType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensionsType = None,
     root_dir: Optional[RootDirType] = None,
-    context_plugin: ContextPluginType = None,
-    action_plugin: FileActionPluginType = None,
+    context_plugins: ContextPluginsType = None,
+    action_plugins: ActionPluginType = None,
     verbose: VerboseType = False,
     log_level: LogLevelType = "INFO",
 ) -> Config:
     if not config_file_path:
         config_file_path = get_config_file_path()
-    general = {}
-    context_plugin_config = make_default_context_plugin_config()
-    action_plugin_config = make_default_action_plugin_config()
-    if config_file_path:
-        with open(config_file_path, "rb") as f:
-            data = tomli.load(f)
-        general = data.get("general", {})
-        context_plugin_config = {**context_plugin_config, **data.get("context", {})}
-        action_plugin_config = {
-            **action_plugin_config,
-            **data.get("action", {}),
-        }
-    config = Config(
-        **general,
-        context_plugin_config=context_plugin_config,
-        action_plugin_config=action_plugin_config,
-    )
+    config = read_config_file_or_die(config_file_path)
     if extra_search_path:
         config.extra_search_paths = [str(x) for x in extra_search_path]
     if add_cwd_to_search_path is not None:
@@ -132,10 +119,10 @@ def get_config(
         config.disable_embedded_jinja_extensions = disable_embedded_jinja_extensions
     if root_dir is not None:
         config.root_dir = str(root_dir)
-    if context_plugin is not None:
-        config.context_plugin_config["plugin"] = context_plugin
-    if action_plugin is not None:
-        config.action_plugin_config["plugin"] = action_plugin
+    if context_plugins:
+        config.context_plugins = context_plugins
+    if action_plugins:
+        config.action_plugins = action_plugins
     config.verbose = verbose
     if verbose:
         config.log_level = "DEBUG"
@@ -145,9 +132,3 @@ def get_config(
         config.verbose = False
     config.__post_init__()
     return config
-
-
-def setup_logger(log_level: Optional[str]):
-    if log_level is None:
-        log_level = "INFO"
-    stlog.setup(level=log_level)
