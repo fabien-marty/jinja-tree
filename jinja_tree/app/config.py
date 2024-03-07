@@ -6,6 +6,7 @@ from dataclasses_json import DataClassJsonMixin, Undefined
 
 EMBEDDED_EXTENSIONS = [
     "jinja_tree.app.embedded_extensions.from_json.FromJsonExtension",
+    "jinja_tree.app.embedded_extensions.from_toml.FromTomlExtension",
     "jinja_tree.app.embedded_extensions.shell.ShellExtension",
     "jinja_tree.app.embedded_extensions.fnmatch.FnMatchExtension",
     "jinja_tree.app.embedded_extensions.double_quotes.DoubleQuotesExtension",

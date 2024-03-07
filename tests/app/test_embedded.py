@@ -39,6 +39,21 @@ def test_from_json():
     assert result == "test  False"
 
 
+def test_from_toml():
+    env = Environment(
+        extensions=["jinja_tree.app.embedded_extensions.from_toml.FromTomlExtension"]
+    )
+    toml = """
+[foo]
+bar = "baz"
+"""
+    template = env.from_string(
+        "test {% set y = '" + toml + "'|from_toml %} " "{{'foo' in y}}"
+    )
+    result = template.render()
+    assert result == "test  True"
+
+
 def test_fnmatch():
     env = Environment(
         extensions=["jinja_tree.app.embedded_extensions.fnmatch.FnMatchExtension"]

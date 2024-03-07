@@ -26,6 +26,7 @@ strict_undefined = true
 # Disable embedded jinja extensions (if true)
 # List of embedded jinja extensions (for information only):
 # - jinja_tree.app.embedded_extensions.from_json.FromJsonExtension
+# - jinja_tree.app.embedded_extensions.from_toml.FromTomlExtension
 # - jinja_tree.app.embedded_extensions.shell.ShellExtension
 # - jinja_tree.app.embedded_extensions.fnmatch.FnMatchExtension
 # - jinja_tree.app.embedded_extensions.double_quotes.DoubleQuotesExtension
