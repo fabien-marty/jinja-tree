@@ -49,6 +49,9 @@ class DotEnvContextConfig(DataClassJsonMixin):
     )
     dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
 
+    def __post_init__(self):
+        self.path = os.path.abspath(self.path)
+
 
 class DotEnvContextAdapter(ContextPort):
     def __init__(self, config: Config, plugin_config: Dict[str, Any]):
