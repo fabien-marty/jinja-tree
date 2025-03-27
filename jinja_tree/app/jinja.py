@@ -60,7 +60,6 @@ class JinjaService:
         )
         template = env.get_template(self.template_name)
         template.globals = self.context_service.get_context(absolute_path)
-        self.context_service.get_context()
         try:
             output = template.render()
         except UndefinedError:

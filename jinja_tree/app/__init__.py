@@ -10,7 +10,7 @@ except ImportError:
 
 
 def dump(name: str, obj):
-    rprint(f"<{name} dump", file=sys.stderr)
+    rprint(f"<{name} dump>", file=sys.stderr)
     if RICH_AVAILABLE:
         rprint(obj, file=sys.stderr)
     else:
