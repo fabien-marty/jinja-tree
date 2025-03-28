@@ -45,3 +45,14 @@ tasks:
       - install
     cmds:
       - "docker build -t myapp ."
+
+  publish:
+    desc: "Publish the package (to pypi)"
+    cmds:
+      - |
+          if [ "${UV_PUBLISH_TOKEN:-}" = "" ]; then
+            echo "UV_PUBLISH_TOKEN is not set"
+            exit 1
+          fi
+      - task: uv:build
+      - task: uv:publish

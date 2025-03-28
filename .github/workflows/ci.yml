@@ -74,46 +74,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-      - name: Install poetry
-        run: |
-          python3 -m venv $POETRY_HOME
-          $POETRY_HOME/bin/pip install poetry==$POETRY_VERSION
-      - name: Fix github path
-        run: |
-          echo "$POETRY_HOME/bin" >> "$GITHUB_PATH"
-      - name: Install requirements
-        run: |
-          poetry install
-      - name: Override BASEURL in README.md
-        env:
-          BASEURL: https://github.com/fabien-marty/jinja-tree/blob/main/
-        run: |
-          poetry run jinja-tree .
-      - name: Publish on Pypi
-        run: |
-          poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
-          VERSION=$(echo "${{ github.event.release.tag_name }}" | sed -e 's/^v//')
-          poetry version "${VERSION}"
-          poetry build
-          poetry publish
-
-  test_docker:
-    runs-on: ubuntu-latest
-    needs: lint_and_test
-    if: github.event_name != 'release'
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4 
       - name: Install Task
         uses: arduino/setup-task@v2
         with:
@@ -123,14 +83,46 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
-          python-version: "3.12"
-      - name: Build docker
+          python-version: 3.12
+      - name: Install
         run: |
-          task docker
+          task install
+      - name: Override BASEURL in README.md
+        env:
+          BASEURL: https://github.com/fabien-marty/jinja-tree/blob/main/
+        run: |
+          task doc
+      - name: Publish on Pypi
+        run: |
+          VERSION=$(echo "${{ github.event.release.tag_name }}" | sed -e 's/^v//')
+          echo "VERSION: $VERSION"
+          uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version "$VERSION"
+          poetry version "${VERSION}"
+          poetry build
+          poetry publish
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+
+  test_docker:
+    runs-on: ubuntu-latest
+    needs: lint_and_test
+    if: github.event_name != 'release'
+    #env:
+    #  REGISTRY: ghcr.io
+    #  IMAGE_NAME: ${{ github.repository }}
+    #permissions:
+    #  contents: read
+    #  packages: write
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4 
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: false
 
   publish_docker:
     runs-on: ubuntu-latest
-    needs: publish_pypi
     if: github.event_name == 'release' && github.event.action == 'created'
     env:
       REGISTRY: ghcr.io
@@ -155,7 +147,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: docker
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}

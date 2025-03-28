@@ -99,7 +99,6 @@ tasks:
       - echo "{{.UV_SYNC_OPTS}}" >{{.VENV}}/.uv_sync_opts
 
   lint:
-    desc: "Lint the code"
     deps:
       - sync
     internal: true
@@ -121,7 +120,6 @@ tasks:
           fi
 
   test:
-    desc: "Test the code"
     deps:
       - sync
     internal: true
@@ -135,6 +133,22 @@ tasks:
               {{.PYTEST}} {{.PYTEST_OPTS}} {{.PYTEST_ARGS}}
             fi
           fi
+
+  build:
+    internal: true
+    silent: true
+    deps:
+      - sync
+    cmds:
+      - "{{.UV}} build"
+
+  publish:
+    internal: true
+    silent: true
+    deps:
+      - build
+    cmds:
+      - "{{.UV}} publish"
 
   clean:
     internal: true
