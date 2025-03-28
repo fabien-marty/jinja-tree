@@ -1,6 +1,8 @@
 version: '3'
 
 vars:
+  UV_EXTERNAL:
+    sh: "( uv --version >/dev/null 2>&1 && echo 1 ) || echo 0"
   UV_DIR:
     sh: "( uv --version >/dev/null 2>&1 && dirname $(which uv) ) || echo {{.ROOT_DIR}}/.tmp/bin"
   UV: "{{.UV_DIR}}/uv"
@@ -46,17 +48,21 @@ tasks:
   install:
     desc: "(advanced) Install uv (if not already installed) in a local temporary directory"
     status:
-      - "{{.UV}} --version"
+      - "test '{{.UV_EXTERNAL}}' = '1'"
     env:
       UV_NO_MODIFY_PATH: 1
       XDG_BIN_HOME: "{{.UV_DIR}}"
+    silent: true
     cmds:
+      - echo 'INSTALLING UV...'
+      - echo '{{.UV_DIR}}'
+      - echo '{{.UV_EXTERNAL}}'
       - mkdir -p "{{.UV_DIR}}"
       - wget -O install.sh https://astral.sh/uv/install.sh
       - chmod +x install.sh
-      - ./install.sh
+      - ./install.sh 
       - rm -f install.sh
-
+      - "echo 'OK: UV INSTALLED'"
   lock:
     desc: "(advanced) Lock the uv environment"
     deps:
@@ -70,6 +76,7 @@ tasks:
 
   sync:
     desc: "(advanced) Sync the uv environment"
+    silent: true
     status:
       - |
           if ! [ -f "{{.VENV}}/.uv_sync_opts" ]; then
@@ -131,9 +138,13 @@ tasks:
 
   clean:
     internal: true
+    silent: true
     cmds:
-      - rm -f "{{.UV}}"
-      - rm -f "{{.UVX}}"
-      - rm -Rf {{.VENV}}
+      - |
+          if [ "{{.UV_EXTERNAL}}" = "0" ]; then
+            rm -f "{{.UVX}}"
+            rm -Rf {{.UV}}
+          fi
       - rm -Rf .*_cache build
       - find . -type d -name __pycache__ -exec rm -Rf {} \; 2>/dev/null || true
+      - "echo 'OK: CLEANED'"
