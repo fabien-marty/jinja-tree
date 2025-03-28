@@ -114,9 +114,14 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4 
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          python-version: "3.12"
       - name: Build docker
         run: |
-          make docker
+          task docker
 
   publish_docker:
     runs-on: ubuntu-latest
