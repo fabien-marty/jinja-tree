@@ -25,50 +25,42 @@ jobs:
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Install Task
+        uses: arduino/setup-task@v2
         with:
+          version: 3.x
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
           python-version: ${{ matrix.python-version }}
-      - name: Cache deps install
-        id: cache-deps
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ env.POETRY_HOME }}
-            ${{ env.POETRY_CACHE }}
-          key: cachepoetry-${{ hashFiles('poetry.lock', '.github/workflows/**') }}-${{ matrix.python-version }}
-      - name: Install poetry
-        if: steps.cache-deps.outputs.cache-hit != 'true'
+      - name: Install
         run: |
-          python3 -m venv $POETRY_HOME
-          $POETRY_HOME/bin/pip install poetry==$POETRY_VERSION
-      - name: Fix github path
-        run: |
-          echo "$POETRY_HOME/bin" >> "$GITHUB_PATH"
-      - name: Configure poetry
-        run: |
-          poetry config virtualenvs.create true
-          poetry config virtualenvs.in-project false
-          poetry config cache-dir $POETRY_CACHE
-          poetry config virtualenvs.path $POETRY_CACHE/venv
-      - name: Install requirements
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: |
-          poetry install
+          task install
       - name: Run lint
         run: |
-          poetry run make FIX=0 lint
-      - name: Run tests / coverage
+          task lint
+        env:
+          FIX: 0
+      - name: Run tests
         run: |
-          poetry run make test
+          task test
       - name: Run doc
         if: matrix.python-version == '3.12'
         run: |
-          poetry run make doc
+          task doc
       - name: Check modified files
         if: matrix.python-version == '3.12'
         run: |
-          git diff --exit-code
+          task no-dirty
+      - name: Clean
+        if: matrix.python-version == '3.12'
+        run: |
+          task clean
+      - name: Check modified files (after clean)
+        if: matrix.python-version == '3.12'
+        run: |
+          task no-dirty
 
   publish_pypi:
     runs-on: ubuntu-latest

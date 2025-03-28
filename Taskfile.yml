@@ -1,0 +1,47 @@
+version: '3'
+
+includes:
+  uv: .task/taskfiles/Taskfile-uv.yml
+  misc: 
+    taskfile: .task/taskfiles/Taskfile-misc.yml
+    flatten: true
+
+vars:
+  DEFAULT_IMAGE: 'docker.io/library/dunamai'
+  IMAGE: '{{ .IMAGE | default .DEFAULT_IMAGE }}'
+
+tasks:
+
+  clean:
+    desc: "Clean the repository"
+    deps:
+      - uv:clean
+
+  install:
+    desc: "Install the venv" 
+    deps:
+      - uv:sync
+
+  lint:
+    desc: "Lint the code"
+    deps:
+      - uv:lint
+
+  test:
+    desc: "Test the code"
+    deps:
+      - uv:test
+
+  doc:
+    desc: "Generate documentation"
+    deps:
+      - install
+    cmds:
+      - "{{.UV}} run python jinja_tree/infra/controllers/cli_tree.py ."
+
+  docker:
+    desc: "Build docker image"
+    deps:
+      - install
+    cmds:
+      - "docker build -t myapp ."
