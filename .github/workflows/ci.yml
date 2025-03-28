@@ -40,7 +40,7 @@ jobs:
           task install
       - name: Run lint
         run: |
-          if [ "{{ matrix.python-version }}" = "3.8" ]; then
+          if [ "${{ matrix.python-version }}" = "3.8" ]; then
             # As we have mypy issues with 3.8 => let's skip
             export LINT_MYPY=0
           fi
