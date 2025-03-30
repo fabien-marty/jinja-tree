@@ -27,10 +27,7 @@ queue_rules:
     commit_message_template: '{{ title }}'
     queue_conditions:
       - or:
-        - check-success = lint_and_test
-        - "-files~=^(?!CHANGELOG\\.md$).*$"
-      - or:
-        - check-success = test_docker
+        - check-success = mergify-ci-status
         - "-files~=^(?!CHANGELOG\\.md$).*$"
       - "-draft"
       - "-closed"
