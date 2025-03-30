@@ -1,0 +1,38 @@
+pull_request_rules:
+  - name: Automatic merge
+    conditions:
+      - "-label=Merge: Manual"
+      - "label~=^Type:"
+    actions:
+      queue:
+  - name: Missing type
+    conditions:
+      - "base=main"
+      - "-draft"
+      - "-closed"
+      - "-label~=^Type:"
+    actions:
+      comment:
+        message: "Please add a type label to your PR"
+  - name: Delete branches 24 hours post-merge
+    conditions:
+      - merged-at < 1 day ago
+    actions:
+      delete_head_branch:
+
+
+queue_rules:
+  - name: default
+    merge_method: squash
+    commit_message_template: '{{ title }}'
+    queue_conditions:
+      - or:
+        - check-success = lint_and_test
+        - "-files~=^(?!CHANGELOG\\.md$).*$"
+      - or:
+        - check-success = test_docker
+        - "-files~=^(?!CHANGELOG\\.md$).*$"
+      - "-draft"
+      - "-closed"
+      - "-conflict"
+
