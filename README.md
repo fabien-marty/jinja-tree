@@ -3,6 +3,11 @@
 
 # jinja-tree
 
+![Static Badge](https://img.shields.io/badge/Python-3.8%2B-blue)
+[![PyPI - Version](https://img.shields.io/pypi/v/jinja-tree)](https://pypi.org/project/jinja-tree/)
+[![Static Badge](https://img.shields.io/badge/Packaged--with-uv-blue)](https://docs.astral.sh/uv/)
+[![Static Badge](https://img.shields.io/badge/Build--with-Task-blue)](https://taskfile.dev/)
+
 ## What is it?
 
 `jinja-tree` is a CLI utility to process [jinja (jinja2)](https://jinja.palletsprojects.com/) templates

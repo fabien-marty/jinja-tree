@@ -97,9 +97,7 @@ jobs:
           VERSION=$(echo "${{ github.event.release.tag_name }}" | sed -e 's/^v//')
           echo "VERSION: $VERSION"
           uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version "$VERSION"
-          poetry version "${VERSION}"
-          poetry build
-          poetry publish
+          task publish
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
