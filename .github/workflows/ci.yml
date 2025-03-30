@@ -142,4 +142,12 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
-    
+
+
+  mergify-ci-status: # this is a special job for mergify
+    runs-on: ubuntu-24.04
+    needs: ["lint_and_test", "test_docker"]
+    steps:
+      - name: Status
+        run: |
+          echo "OK"

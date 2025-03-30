@@ -3,11 +3,11 @@
 
 # jinja-tree
 
-![Python Badge](https://img.shields.io/badge/Python-3.8%2B-blue)
-[![PyPI - Version](https://img.shields.io/pypi/v/jinja-tree)](https://pypi.org/project/jinja-tree/)
-[![UV Badge](https://img.shields.io/badge/Packaged--with-uv-blue)](https://docs.astral.sh/uv/)
-[![Task Badge](https://img.shields.io/badge/Build--with-Task-blue)](https://taskfile.dev/)
-[![Mergify Badge](https://img.shields.io/badge/Managed--with-Mergify-blue)](https://mergify.com/)
+![Python Badge](https://raw.githubusercontent.com/fabien-marty/jinja-tree/refs/heads/main/.github/badges/python38plus.svg)
+[![UV Badge](https://raw.githubusercontent.com/fabien-marty/jinja-tree/refs/heads/main/.github/badges/uv.svg)](https://docs.astral.sh/uv/)
+[![Task Badge](https://raw.githubusercontent.com/fabien-marty/jinja-tree/refs/heads/main/.github/badges/task.svg)](https://taskfile.dev/)
+[![Mergify Badge](https://raw.githubusercontent.com/fabien-marty/jinja-tree/refs/heads/main/.github/badges/mergify.svg)](https://mergify.com/)
+[![MIT Licensed](https://raw.githubusercontent.com/fabien-marty/jinja-tree/refs/heads/main/.github/badges/mit.svg)](https://en.wikipedia.org/wiki/MIT_License)
 
 ## What is it?
 
