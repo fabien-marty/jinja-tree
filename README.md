@@ -3,10 +3,11 @@
 
 # jinja-tree
 
-![Static Badge](https://img.shields.io/badge/Python-3.8%2B-blue)
+![Python Badge](https://img.shields.io/badge/Python-3.8%2B-blue)
 [![PyPI - Version](https://img.shields.io/pypi/v/jinja-tree)](https://pypi.org/project/jinja-tree/)
-[![Static Badge](https://img.shields.io/badge/Packaged--with-uv-blue)](https://docs.astral.sh/uv/)
-[![Static Badge](https://img.shields.io/badge/Build--with-Task-blue)](https://taskfile.dev/)
+[![UV Badge](https://img.shields.io/badge/Packaged--with-uv-blue)](https://docs.astral.sh/uv/)
+[![Task Badge](https://img.shields.io/badge/Build--with-Task-blue)](https://taskfile.dev/)
+[![Mergify Badge](https://img.shields.io/badge/Managed--with-Mergify-blue)](https://mergify.com/)
 
 ## What is it?
 
