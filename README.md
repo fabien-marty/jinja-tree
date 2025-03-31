@@ -277,10 +277,10 @@ Options:
 A docker image is also available. You can use it this way:
 
 ```bash
-docker run -t -v $(pwd):/workdir --user=$(id -u) ghcr.io/fabien-marty/jinja-tree:latest /workdir
+docker run --rm -t -v $(pwd):/code --user=$(id -u) ghcr.io/fabien-marty/jinja-tree:latest /code
 ```
 
-*(we mount the current directory in the `/workdir` directory in the container and execute `jinja-tree` in this `/workdir` directory)*
+*(we mount the current directory in the `/code` directory in the container and execute `jinja-tree` in this `/code` directory)*
 
 > [!WARNING]
 > If you plan to use environment variables with the docker image, you will have to use (possibly multiple times) the `-e VAR=VALUE` option to pass them to the container. 
@@ -289,10 +289,10 @@ docker run -t -v $(pwd):/workdir --user=$(id -u) ghcr.io/fabien-marty/jinja-tree
 If you want to add some CLI options, you can add them like in this example:
 
 ```bash
-docker run -t -v $(pwd):/workdir --user=$(id -u) ghcr.io/fabien-marty/jinja-tree:latest --verbose /workdir
+docker run --rm -t -v $(pwd):/code --user=$(id -u) ghcr.io/fabien-marty/jinja-tree:latest --verbose /code
 ```
 
-*(we added `--verbose` just before the `/workdir` argument)*
+*(we added `--verbose` just before the `/code` argument)*
 
 <details>
 
@@ -300,7 +300,7 @@ docker run -t -v $(pwd):/workdir --user=$(id -u) ghcr.io/fabien-marty/jinja-tree
 
 
 ```bash
-echo "FOO {{ BAR }}" |docker run -i -v $(pwd):/workdir -e BAR=BAZ --user=$(id -u) --entrypoint jinja-stdin ghcr.io/fabien-marty/jinja-tree:latest
+echo "FOO {{ BAR }}" |docker run --rm -i -v $(pwd):/code -e BAR=BAZ --user=$(id -u) --entrypoint jinja-stdin ghcr.io/fabien-marty/jinja-tree:latest
 ```
 
 

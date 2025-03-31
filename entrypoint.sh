@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /app || exit 1
-exec ./.tmp/bin/uv run --locked --no-sync jinja-tree "$@"
+cd /code || exit 1
+exec /app/.tmp/bin/uv run /app/.venv/bin/jinja-tree "$@"
 
 

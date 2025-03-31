@@ -12,6 +12,4 @@ COPY jinja_tree /app/jinja_tree/
 COPY entrypoint.sh /app/entrypoint.sh
 RUN cd /app && export UV_SYNC_OPTS="--frozen --no-dev --verbose" && $TASK install
 
-WORKDIR /code
-
 ENTRYPOINT ["/app/entrypoint.sh"]
