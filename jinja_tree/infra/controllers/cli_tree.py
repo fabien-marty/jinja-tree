@@ -1,3 +1,5 @@
+import os
+
 import typer
 import typer.core
 
@@ -53,6 +55,8 @@ def tree(
     Process a directory tree with the Jinja / Jinja2 templating system.
 
     """
+    os.system("pwd")
+    os.system("ls -la")
     config = get_config(
         config_file_path=config_file,
         extra_search_path=extra_search_path,

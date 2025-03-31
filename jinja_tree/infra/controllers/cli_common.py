@@ -11,7 +11,11 @@ import typer
 from jinja_tree.app.config import (
     Config,
 )
-from jinja_tree.infra.utils import get_config_file_path, read_config_file_or_die
+from jinja_tree.infra.utils import (
+    get_config_file_path,
+    read_config_file_or_die,
+    setup_logger,
+)
 
 ConfigFileType = Annotated[
     Optional[str],
@@ -102,6 +106,9 @@ def get_config(
     verbose: VerboseType = False,
     log_level: LogLevelType = "INFO",
 ) -> Config:
+    if verbose:
+        # Little hack to have a DEBUG log level during the config file reading
+        setup_logger("DEBUG")
     if not config_file_path:
         config_file_path = get_config_file_path()
     config = read_config_file_or_die(config_file_path)

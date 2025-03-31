@@ -89,19 +89,23 @@ def get_config_file_path(
         return cli_option
     if cwd is None:
         cwd = os.getcwd()
+        logger.debug(f"cwd: {cwd}")
     else:
         cwd = os.path.abspath(cwd)
     path = os.path.join(cwd, ".jinja-tree.toml")
+    logger.debug(f"Try to read {path}... as config file")
     if os.path.isfile(path):
-        logger.debug(f"config file path found in: {path}")
+        logger.debug(f"Config file path found in: {path}")
         return os.path.abspath(path)
     parent_path = os.path.dirname(cwd)
     if parent_path == cwd:
         # we are done
         # let's try the system config path?
+        logger.debug(f"Try to read {SYSTEM_CONFIG_PATH}... as config file")
         if os.path.isfile(SYSTEM_CONFIG_PATH):
+            logger.debug(f"Config file path found in: {SYSTEM_CONFIG_PATH}")
             return SYSTEM_CONFIG_PATH
-        logger.debug("no config file found")
+        logger.debug("No config file found")
         return None
     return get_config_file_path(cwd=parent_path)
 
