@@ -3,7 +3,7 @@ FROM python:3.12-alpine
 ENV TASK=go-task
 ENV UV_NO_CACHE=1
 
-RUN apk update && apk upgrade && apk add go-task && rm -rf /var/cache/apk/*
+RUN apk update && apk upgrade && apk add go-task make && rm -rf /var/cache/apk/*
 RUN mkdir -p /app
 COPY .task /app/.task
 COPY Taskfile.yml README.md pyproject.toml uv.lock /app/
