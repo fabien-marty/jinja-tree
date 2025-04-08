@@ -1,0 +1,33 @@
+name: common-labels
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+env:
+  REPO: ${{ github.repository }}
+  COMMON_REPO: fabien-marty/common
+  ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  sync-labels:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Check out ${{ env.COMMON_REPO }} code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.COMMON_REPO }}
+          persist-credentials: false
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Sync labels
+        run: |
+          cd labels
+          task apply
