@@ -2,6 +2,7 @@ import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
+import tomli
 from dataclasses_json import DataClassJsonMixin, Undefined
 from dotenv import dotenv_values
 
@@ -87,3 +88,38 @@ class ConfigurationContextAdapter(ContextPort):
 
     def get_context(self) -> Dict[str, Any]:
         return self.plugin_config
+
+
+@dataclass
+class TOMLContextConfig(DataClassJsonMixin):
+    path: str = field(
+        default_factory=lambda: os.environ.get("JINJA_TREE_TOML_CONTEXT_PATH", "")
+    )
+    dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
+
+    def __post_init__(self):
+        if self.path:
+            self.path = os.path.abspath(self.path)
+
+
+class TOMLContextAdapter(ContextPort):
+    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+        self.config = config
+        self.plugin_config = TOMLContextConfig.from_dict(plugin_config)
+
+    @classmethod
+    def get_config_name(cls) -> str:
+        return "toml"
+
+    def get_context(self) -> Dict[str, Any]:
+        if not self.plugin_config.path:
+            return {}
+        try:
+            with open(self.plugin_config.path) as f:
+                content = f.read()
+        except Exception:
+            raise Exception(f"Failed to read {self.plugin_config.path}")
+        try:
+            return tomli.loads(content)
+        except Exception:
+            raise Exception(f"Failed to parse {self.plugin_config.path}")

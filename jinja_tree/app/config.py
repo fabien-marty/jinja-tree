@@ -18,6 +18,7 @@ JINJA_TREE_URL = "https://github.com/fabien-marty/jinja-tree"
 
 def make_default_context_plugins() -> List[str]:
     return [
+        "jinja_tree.infra.adapters.context.TOMLContextAdapter",
         "jinja_tree.infra.adapters.context.ConfigurationContextAdapter",
         "jinja_tree.infra.adapters.context.EnvContextAdapter",
         "jinja_tree.infra.adapters.context.DotEnvContextAdapter",
