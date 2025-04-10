@@ -166,7 +166,7 @@ disable_embedded_jinja_extensions = false
 jinja_extensions = []
 
 # Context plugin full classpaths
-context_plugins = ["jinja_tree.infra.adapters.context.ConfigurationContextAdapter", "jinja_tree.infra.adapters.context.EnvContextAdapter", "jinja_tree.infra.adapters.context.DotEnvContextAdapter"]
+context_plugins = ["jinja_tree.infra.adapters.context.TOMLContextAdapter", "jinja_tree.infra.adapters.context.ConfigurationContextAdapter", "jinja_tree.infra.adapters.context.EnvContextAdapter", "jinja_tree.infra.adapters.context.DotEnvContextAdapter"]
 
 # Generated comment template: line1 for context
 # Available placeholders: {{utcnow}}, {{absolute_path}}, {{dirname}}, {{basename}}, {{relative_filepath}}
@@ -203,6 +203,17 @@ ignores = []
 # With the ConfigurationContextAdapter plugin, you can add key/values below, they will be available in Jinja2 context
 
 # [...]
+
+[context.toml]
+
+# path to the toml file to load as context
+# If empty:
+# - we will use the content of the JINJA_TREE_TOML_CONTEXT_PATH as path
+# - if empty, the toml context will not be available (but no error will be raised)
+#
+# If not empty (or set by JINJA_TREE_TOML_CONTEXT_PATH env var), if the file does not exist,
+# or if it is not a valid toml file, an error will be raised.
+path = ""
 
 
 ##########################################  
