@@ -9,7 +9,7 @@ COPY .task /app/.task
 COPY Taskfile.yml README.md pyproject.toml uv.lock /app/
 RUN cd /app && export UV_SYNC_OPTS="--frozen --no-dev --no-install-project" && $TASK install
 COPY jinja_tree /app/jinja_tree/
-COPY entrypoint.sh /app/entrypoint.sh
+COPY entrypoint.sh entrypoint-stdin.sh /app/
 RUN cd /app && export UV_SYNC_OPTS="--frozen --no-dev --verbose" && $TASK install
 
 ENTRYPOINT ["/app/entrypoint.sh"]

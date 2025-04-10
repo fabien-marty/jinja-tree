@@ -300,7 +300,7 @@ docker run --rm -t -v $(pwd):/code --user=$(id -u) ghcr.io/fabien-marty/jinja-tr
 
 
 ```bash
-echo "FOO {{ BAR }}" |docker run --rm -i -v $(pwd):/code -e BAR=BAZ --user=$(id -u) --entrypoint jinja-stdin ghcr.io/fabien-marty/jinja-tree:latest
+echo "FOO {{ BAR }}" |docker run --rm -i -e BAR=BAZ --user=$(id -u) --entrypoint /app/entrypoint-stdin.sh ghcr.io/fabien-marty/jinja-tree:latest
 ```
 
 
