@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echoerr() { echo -e "$@" 1>&2; }
+
+if [ "${1:-}" = "" ]; then
+  MESSAGE="OK"
+else
+  MESSAGE="$*"
+fi
+
+if [ -t 2 ] && [ "$TERM" != "dumb" ]; then
+  GREEN='\x1b[32;1m'
+  RESET='\x1b[0m'
+else
+  GREEN=''
+  RESET=''
+fi
+
+echoerr "${GREEN}${MESSAGE}${RESET}"

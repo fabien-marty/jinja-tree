@@ -1,0 +1,165 @@
+version: '3'
+
+vars:
+
+  _FNM_DIR: "{{.ROOT_DIR}}/.tmp/taskfile-node-npm/fnm" 
+  _DEFAULT_FNM: "{{._FNM_DIR}}/fnm"
+
+  # Contains, the full absolute path to the "fnm" binary
+  # Can be set by children taskfiles
+  # (if not set, "fnm" will be automatically installed in a temporary directory
+  #  and this variable will be set to this temporary path) 
+  FNM: "{{.FNM|default ._DEFAULT_FNM}}" # 
+
+  _EXTERNAL_FNM:
+    sh: |
+          if [ "{{.FNM}}" = "{{._DEFAULT_FNM}}" ]; then
+            echo "0"
+          else 
+            echo "1"
+          fi
+
+  _DEFAULT_NODE: "{{.FNM}} exec node"
+
+  # Contains, the full absolute path to the "node" binary
+  # Can be set by children taskfiles
+  # (if not set, "node" will be automatically installed in a temporary directory
+  #  and this variable will be set to this temporary path) 
+  NODE: "{{.NODE|default ._DEFAULT_NODE}}"
+
+  NODE_MODULES_BIN: "{{.ROOT_DIR}}/node_modules/.bin"
+  ADD_NODE_MODULES_BIN_TO_PATH: "export PATH={{.NODE_MODULES_BIN}}:$PATH"
+
+  _EXTERNAL_NODE:
+    sh: |
+          if [ "{{.NODE}}" = "{{._DEFAULT_NODE}}" ]; then
+            echo "0"
+          else 
+            echo "1"
+          fi
+
+  _DEFAULT_NPM: "{{.FNM}} exec npm"
+
+  # Contains, the full absolute path to the "npm" binary (read-only!)
+  NPM:
+    sh: |
+          if [ "{{._EXTERNAL_NODE}}"  = "0" ]; then
+            echo "{{._DEFAULT_NPM}}"
+          else
+            echo `dirname {{.NODE}}`/npm
+          fi
+
+  _UTILS_DIR: "{{.TASKFILE_DIR}}/utils"
+  _ECHO_OK: "{{._UTILS_DIR}}/echo_ok"
+  _ECHO_RUNNING: "{{._UTILS_DIR}}/echo_running"
+  _ECHO_FAILED: "{{._UTILS_DIR}}/echo_failed"
+  _WRAP: "{{._UTILS_DIR}}/wrap"
+
+tasks:
+
+  install-fnm:
+    internal: true
+    silent: true
+    status:
+      - |
+          if [ "{{._EXTERNAL_NODE}}" = "1" ]; then
+            echo "we don't need FNM"
+            exit 0
+          else
+            if [ -x "{{.FNM}}" ]; then
+              echo "FNM already installed"
+              exit 0
+            fi
+          fi
+          exit 1
+    cmds:
+      - task: check_curl_or_die
+      - "{{._ECHO_RUNNING}} '=> Installing fnm...'"
+      - rm -Rf "{{._FNM_DIR}}"
+      - mkdir -p "{{._FNM_DIR}}"
+      - '{{._WRAP}} curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "{{._FNM_DIR}}"'
+      - '{{.FNM}} --version >/dev/null 2>&1 || {{._ECHO_FAILED}} "=> ERROR: fnm not installed"'
+      - "{{._ECHO_OK}} '=> OK: fnm installed'"
+
+  install-node:
+    internal: true
+    silent: true
+    deps: [install-fnm]
+    status:
+      - "{{.NODE}} --version >/dev/null 2>&1"
+    cmds:
+      - "{{._ECHO_RUNNING}} '=> Installing node...'"
+      - "{{._WRAP}} {{.FNM}} install"
+      - "{{._ECHO_OK}} '=> OK: node installed'"
+
+  lock:
+    deps: [install-node]
+    silent: true
+    desc: "(advanced) Lock node/npm dependencies"
+    cmds:
+      - "{{._ECHO_RUNNING}} '=> Locking node dependencies...'"
+      - "{{._WRAP}} {{.NPM}} install --package-lock-only"
+      - "{{._ECHO_OK}} '=> OK: node dependencies locked'"
+
+  sync:
+    desc: "(advanced) Sync node/npm dependencies"
+    silent: true
+    deps: [install-node]
+    status:
+      - |
+          if ! [ -f "node_modules/.hash" ]; then
+            exit 1
+          fi
+          if [ "$(md5sum package-lock.json)" != "$(cat node_modules/.hash)" ]; then
+            exit 1
+          fi
+    cmds:
+      - "{{._ECHO_RUNNING}} '=> Syncing node dependencies...'"
+      - "{{._WRAP}} {{.NPM}} install"
+      - cat package-lock.json |md5sum > node_modules/.hash
+      - "{{._ECHO_OK}} '=> OK: node dependencies synced'"
+
+  debug:
+    desc: "(advanced) Debug the node/npm environment"
+    silent: true
+    deps: [install-node]
+    cmds:
+      - 'echo "FNM_EXTERNAL: {{._EXTERNAL_FNM}}"'
+      - 'echo "NODE_EXTERNAL: {{._EXTERNAL_NODE}}"'
+      - |
+          if [ "{{._EXTERNAL_NODE}}" = "0" ]; then
+            echo "FNM: {{.FNM}}"
+          fi
+      - 'echo "NODE: {{.NODE}}"'
+      - 'echo "NPM: {{.NPM}}"'
+      - |
+          if [ "{{._EXTERNAL_NODE}}" = "0" ]; then
+            echo "FNM_VERSION: `{{.FNM}} --version |sed "s/fnm //"`"
+          fi
+      - 'echo "NODE_VERSION: `{{.NODE}} --version`"'
+      - 'echo "NPM_VERSION: `{{.NPM}} --version`"'
+
+  clean:
+    internal: true
+    silent: true
+    cmds:
+      - rm -Rf node_modules
+
+  mrproper:
+    deps: [clean]
+    internal: true
+    silent: true
+    cmds:
+      - |
+          if [ "{{._EXTERNAL_FNM}}" = "0" ]; then
+            rm -Rf {{._FNM_DIR}}
+            export DIR1=$(dirname "{{._FNM_DIR}}")
+            export DIR2=$(dirname "${DIR1}")
+            rmdir "${DIR1}" >/dev/null 2>&1 || true # only if empty
+            rmdir "${DIR2}" >/dev/null 2>&1 || true # only if empty
+          fi
+
+  check_*_or_die:
+    silent: true
+    cmds:
+      - "{{index .MATCH 0}} --help >/dev/null 2>&1 || {{.ECHO_FAILED}} 'ERROR: {{ index .MATCH 0 }} is not installed'"

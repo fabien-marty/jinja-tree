@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echoerr() { echo -e "$@" 1>&2; }
+
+if [ "${1:-}" = "" ]; then
+  MESSAGE="FAILED"
+else
+  MESSAGE="$*"
+fi
+
+if [ -t 2 ] && [ "$TERM" != "dumb" ]; then
+  RED='\x1b[31;1m'
+  RESET='\x1b[0m'
+else
+  RED=''
+  RESET=''
+fi
+
+echoerr "${RED}${MESSAGE}${RESET}"
