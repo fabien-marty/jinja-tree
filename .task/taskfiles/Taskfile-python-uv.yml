@@ -1,0 +1,318 @@
+version: '3'
+
+vars:
+
+  ##### COMMON #####
+
+  _DEFAULT_FIX: 1
+  
+  # If set to 1, try to fix automatically linting errors
+  # (can be set by children taskfiles)
+  FIX: "{{.FIX | default ._DEFAULT_FIX}}"
+
+  _DEFAULT_COVERAGE: 0
+
+  # If set to 1, run the tests with coverage
+  # (can be set by children taskfiles)
+  COVERAGE: "{{.COVERAGE | default ._DEFAULT_COVERAGE}}"
+
+  _DEFAULT_COVERAGE_PKG: ""
+
+  # If set, run the tests with coverage for this package only
+  # (can be set by children taskfiles)
+  COVERAGE_PKG: "{{.COVERAGE_PKG | default ._DEFAULT_COVERAGE_PKG}}"
+
+
+  ##### UV #####
+
+  _UV_DIR: "{{.ROOT_DIR}}/.tmp/taskfile-python-uv/uv"
+  _DEFAULT_UV: "{{._UV_DIR}}/uv"
+
+  # Contains, the full absolute path to the "uv" binary
+  # Can be set by children taskfiles
+  # (if not set, "uv" will be automatically installed in a temporary directory
+  #  and this variable will be set to this temporary path) 
+  UV: "{{.UV|default ._DEFAULT_UV}}"
+
+  _EXTERNAL_UV:
+    sh: |
+          if [ "{{.UV}}" = "{{._DEFAULT_UV}}" ]; then
+            echo "0"
+          else 
+            echo "1"
+          fi
+
+  # Contains, the full absolute path to the "uvx" binary (read-only!)
+  UVX: 
+    sh: echo "`dirname {{.UV}}`/uvx"
+
+  # Contains, the full absolute path to the virtual environment (read-only!)
+  VENV: "{{.ROOT_DIR}}/.venv"
+
+  _DEFAULT_UV_OPTS: ""
+  UV_OPTS: "{{.UV_OPTS | default ._DEFAULT_UV_OPTS}}"
+
+  _DEFAULT_UV_SYNC_OPTS: ""
+  UV_SYNC_OPTS: "{{.UV_SYNC_OPTS | default ._DEFAULT_UV_SYNC_OPTS}}"
+
+
+  ##### MYPY #####
+
+  _DEFAULT_LINT_MYPY: ""
+  LINT_MYPY:
+    sh: |
+          if [ "{{.LINT_MYPY | default .DEFAULT_LINT_MYPY}}" = "" ]; then
+            # auto-detect
+            {{.UV}} run --frozen mypy --version >/dev/null 2>&1 || { echo "0"; exit 0; }
+            echo "1"
+          else
+            echo "{{.LINT_MYPY | default .DEFAULT_LINT_MYPY}}"
+          fi
+
+  _DEFAULT_MYPY_OPTS: "--check-untyped-defs"
+  MYPY_OPTS: "{{.MYPY_OPTS | default ._DEFAULT_MYPY_OPTS}}"
+
+  _MYPY_ARGS: "."
+
+  _MYPY: "{{.UV}} run mypy"
+
+  _UTILS_DIR: "{{.TASKFILE_DIR}}/utils"
+  _ECHO_OK: "{{._UTILS_DIR}}/echo_ok"
+  _ECHO_RUNNING: "{{._UTILS_DIR}}/echo_running"
+  _ECHO_FAILED: "{{._UTILS_DIR}}/echo_failed"
+  _WRAP: "{{._UTILS_DIR}}/wrap"
+
+
+  ##### RUFF #####
+
+  _DEFAULT_LINT_RUFF: ""
+  LINT_RUFF:
+    sh: |
+          if [ "{{.LINT_RUFF | default .DEFAULT_LINT_RUFF}}" = "" ]; then
+            # auto-detect
+            {{.UV}} run --frozen ruff --version >/dev/null 2>&1 || { echo "0"; exit 0; }
+            echo "1"
+          else
+            echo "{{.LINT_RUFF | default .DEFAULT_LINT_RUFF}}"
+          fi
+
+  _DEFAULT_RUFF_OPTS: ""
+
+  # Ruff options (for all commands)
+  # (can be set by children taskfiles)
+  RUFF_OPTS: "{{.RUFF_OPTS | default ._DEFAULT_RUFF_OPTS}}"
+
+  _RUFF_ARGS: "."
+  _RUFF: "{{.UV}} run ruff"
+
+
+  # PYTEST
+  _DEFAULT_TEST_PYTEST: 1
+  TEST_PYTEST:
+    sh: |
+          if [ "{{.TEST_PYTEST | default .DEFAULT_TEST_PYTEST}}" = "" ]; then
+            # auto-detect
+            {{.UV}} run --frozen pytest --version >/dev/null 2>&1 || { echo "0"; exit 0; }
+            echo "1"
+          else
+            echo "{{.TEST_PYTEST | default .DEFAULT_TEST_PYTEST}}"
+          fi
+
+  _DEFAULT_PYTEST_COVERAGE_OPTS: "--no-cov-on-fail --cov-report=term --cov-report=html --cov-report=xml"
+  PYTEST_COVERAGE_OPTS: "{{.PYTEST_COVERAGE_OPTS | default ._DEFAULT_PYTEST_COVERAGE_OPTS}}"
+
+  _DEFAULT_PYTEST_ARGS: "tests"
+  PYTEST_ARGS: "{{.PYTEST_ARGS | default ._DEFAULT_PYTEST_ARGS}}"
+  
+  _PYTEST: "{{.UV}} run pytest"
+
+
+tasks:
+
+  install:
+    internal: true
+    status:
+      - |
+          if [ "{{._EXTERNAL_UV}}" = "1"; then
+            exit 0
+          fi
+          {{.UV}} --version >/dev/null 2>&1 && exit 0
+          exit 1
+    env:
+      UV_NO_MODIFY_PATH: 1
+      XDG_BIN_HOME: "{{._UV_DIR}}"
+      WRAP_CAPTURE_OUTPUT: 1
+    silent: true
+    cmds:
+      - task: check_wget_or_die
+      - '{{._ECHO_RUNNING}} "=> Installing uv..."'
+      - mkdir -p "{{._UV_DIR}}"
+      - wget -O install.sh https://astral.sh/uv/install.sh
+      - chmod +x install.sh
+      - "{{._WRAP}} ./install.sh"
+      - rm -f install.sh
+      - '{{.UV}} --version >/dev/null 2>&1 || {{._ECHO_FAILED}} "=> ERROR: uv not installed"'
+      - '{{._ECHO_OK}} "=> OK: uv installed in {{._UV_DIR}}"'
+
+  lock:
+    desc: "(advanced) Lock the python/uv environment"
+    silent: true
+    deps:
+      - install
+    cmds:
+      - '{{._ECHO_RUNNING}} "=> Locking uv environment..."'
+      - "{{._WRAP}} {{.UV}} lock"
+      - '{{._ECHO_OK}} "=> OK: uv environment locked"'
+
+  sync:
+    desc: "(advanced) Sync the python/uv environment"
+    silent: true
+    status:
+      - |
+          if ! [ -f "{{.VENV}}/.uv_sync_opts" ]; then
+            exit 1
+          fi
+          if [ "{{.UV_SYNC_OPTS}}" != "$(cat {{.VENV}}/.uv_sync_opts)" ]; then
+            exit 1
+          fi
+          if ! [ -f "{{.VENV}}/.uv_lock.md5" ]; then
+            exit 1
+          fi
+          if [ "$(md5sum uv.lock)" != "$(cat {{.VENV}}/.uv_lock.md5)" ]; then
+            exit 1
+          fi
+    deps: 
+      - install
+    cmds:
+      - '{{._ECHO_RUNNING}} "=> Syncing uv environment..."'
+      - "{{._WRAP}} {{.UV}} sync {{.UV_SYNC_OPTS}}"
+      - md5sum uv.lock >{{.VENV}}/.uv_lock.md5
+      - echo "{{.UV_SYNC_OPTS}}" >{{.VENV}}/.uv_sync_opts
+      - '{{._ECHO_OK}} "=> OK: uv environment synced"'
+
+  lint-ruff:
+    deps: ["sync"]
+    internal: true
+    silent: true
+    cmds:
+      - |
+          if [ "{{.LINT_RUFF}}" = "1" ]; then
+            {{._ECHO_RUNNING}} "=> Linting with ruff..."
+            if [ "{{.FIX}}" = "1" ]; then
+              {{._WRAP}} {{._RUFF}} format {{.RUFF_OPTS}} {{._RUFF_ARGS}}
+              {{._WRAP}} {{._RUFF}} check --fix {{.RUFF_OPTS}} {{._RUFF_ARGS}}
+            else
+              {{._WRAP}} {{._RUFF}} format {{.RUFF_OPTS}} --check {{._RUFF_ARGS}}
+              {{._WRAP}} {{._RUFF}} check {{.RUFF_OPTS}} {{.RUFF_ARGS}}
+            fi
+            {{._ECHO_OK}} "=> OK: ruff linting completed"
+          fi
+
+  lint-mypy:
+    deps: ["sync"]
+    internal: true
+    silent: true
+    cmds:
+      - |
+          if [ "{{.LINT_MYPY}}" = "1" ]; then
+            {{._ECHO_RUNNING}} "=> Linting with mypy..."
+            {{._WRAP}} {{._MYPY}} {{.MYPY_OPTS}} {{._MYPY_ARGS}}
+            {{._ECHO_OK}} "=> OK: mypy linting completed"
+          fi
+  lint:
+    internal: true
+    silent: true
+    cmds:
+      - task: lint-ruff
+      - task: lint-mypy
+
+  test:
+    deps:
+      - sync
+    internal: true
+    silent: true
+    cmds:
+      - |
+          if [ "{{.TEST_PYTEST}}" = "1" ]; then
+            {{._ECHO_RUNNING}} "=> Running tests..."
+            if [ "{{.COVERAGE}}" = "1" ]; then
+              if [ "{{.COVERAGE_PKG}}" != "" ]; then
+                {{._WRAP}} {{._PYTEST}} {{.PYTEST_OPTS}} {{.PYTEST_COVERAGE_OPTS}} --cov {{.COVERAGE_PKG}} {{._PYTEST_ARGS}}
+              else
+                {{._WRAP}} {{._PYTEST}} {{.PYTEST_OPTS}} {{.PYTEST_COVERAGE_OPTS}} {{._PYTEST_ARGS}}
+              fi
+            else
+              {{._WRAP}} {{._PYTEST}} {{.PYTEST_OPTS}} {{._PYTEST_ARGS}}
+            fi
+            {{._ECHO_OK}} "=> OK: tests completed"
+          fi
+
+  build:
+    internal: true
+    silent: true
+    deps:
+      - sync
+    cmds:
+      - "{{._ECHO_RUNNING}} '=> Building package...'"
+      - "{{._WRAP}} {{.UV}} build"
+      - "{{._ECHO_OK}} '=> OK: package built'"
+
+  publish:
+    internal: true
+    silent: true
+    deps:
+      - build
+    cmds:
+      - "{{._ECHO_RUNNING}} '=> Publishing package...'"
+      - "{{.UV}} publish"
+      - "{{._ECHO_OK}} '=> OK: package published'"
+
+  clean:
+    internal: true
+    silent: true
+    cmds:
+      - rm -Rf .*_cache build dist htmlcov
+      - find . -type d -name __pycache__ -exec rm -Rf {} \; 2>/dev/null || true
+      - rm -Rf {{.VENV}}
+
+  mrproper:
+    silent: true
+    deps: [clean]
+    cmds:
+      - |
+          if [ "{{._EXTERNAL_UV}}" = "0" ]; then
+            rm -Rf {{._UV_DIR}}
+            export DIR1=$(dirname "{{._UV_DIR}}")
+            export DIR2=$(dirname "${DIR1}")
+            rmdir "${DIR1}" >/dev/null 2>&1 || true # only if empty
+            rmdir "${DIR2}" >/dev/null 2>&1 || true # only if empty
+          fi
+
+  debug:
+    desc: "(advanced) Debug the python/uv environment"
+    silent: true
+    cmds:
+      - 'echo "EXTERNAL_UV: {{._EXTERNAL_UV}}"'
+      - 'echo "UV: {{.UV}}"'
+      - 'echo "VENV: {{.VENV}}"'
+      - 'echo "UV_VERSION: `{{.UV}} --version |sed "s/uv //"`"'
+      - 'echo "PYTHON_VERSION: `{{.UV}} run python --version`"'
+      - 'echo "LINT_RUFF: {{.LINT_RUFF}}"'
+      - 'echo "LINT_MYPY: {{.LINT_MYPY}}"'
+      - 'echo "TEST_PYTEST: {{.TEST_PYTEST}}"'
+      - 'echo "COVERAGE: {{.COVERAGE}}"'
+      - 'echo "FIX: {{.FIX}}"'
+      - 'echo "RUFF_OPTS: {{.RUFF_OPTS}}"'
+      - 'echo "MYPY_OPTS: {{.MYPY_OPTS}}"'
+      - 'echo "PYTEST_OPTS: {{.PYTEST_OPTS}}"'
+      - 'echo "PYTEST_COVERAGE_OPTS: {{.PYTEST_COVERAGE_OPTS}}"'
+      - 'echo "PYTEST_ARGS: {{.PYTEST_ARGS}}"'
+      - 'echo "UV_PYTHON: ${UV_PYTHON}"'
+      - 'echo "UV_MANAGED_PYTHON: ${UV_MANAGED_PYTHON}"'
+      - 'echo "UV_NO_MANAGED_PYTHON: ${UV_NO_MANAGED_PYTHON}"'
+      - 'echo "UV_PYTHON_DOWNLOADS: ${UV_PYTHON_DOWNLOADS}"'
+
+  check_*_or_die:
+    silent: true
+    cmds:
+      - "{{index .MATCH 0}} --help >/dev/null 2>&1 || {{.ECHO_FAILED}} 'ERROR: {{ index .MATCH 0 }} is not installed'"

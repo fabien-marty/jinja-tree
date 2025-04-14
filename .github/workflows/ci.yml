@@ -30,14 +30,12 @@ jobs:
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          version: "latest"
-          python-version: ${{ matrix.python-version }}
       - name: Install
         run: |
           task install
+          task uv:debug
+        env:
+          UV_PYTHON: ${{ matrix.python-version }}
       - name: Run lint
         run: |
           if [ "${{ matrix.python-version }}" = "3.8" ]; then
@@ -45,6 +43,7 @@ jobs:
             export LINT_MYPY=0
           fi
           task lint
+          task uv:debug
         env:
           FIX: 0
       - name: Run tests

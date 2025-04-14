@@ -1,0 +1,34 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+if [ "${WRAP_VERBOSE:-}" = "1" ]; then
+  "${SCRIPT_DIR}/echo_running" "=> Running $* ..."
+fi
+
+BEFORE=$(date +%s)
+if [ "${WRAP_CAPTURE_OUTPUT:-}" = "1" ]; then
+  TMPFILE=$(mktemp)
+  "$@" >"${TMPFILE}" 2>&1
+else
+  "$@"
+fi
+RESULT=$?
+AFTER=$(date +%s)
+
+if [ $RESULT -ne 0 ]; then
+    if [ "${WRAP_CAPTURE_OUTPUT:-}" = "1" ]; then
+      cat "${TMPFILE}"
+      rm -f "${TMPFILE}"
+    fi
+    "${SCRIPT_DIR}/echo_failed" "=> ERROR: execution of $* failed after $((${AFTER} - ${BEFORE})) seconds (status code: ${RESULT})"
+    exit ${RESULT}
+else
+    if [ "${WRAP_VERBOSE:-}" = "1" ]; then
+      "${SCRIPT_DIR}/echo_ok" "=> OK (after $((${AFTER} - ${BEFORE})) seconds)"
+    fi
+    if [ "${WRAP_CAPTURE_OUTPUT:-}" = "1" ]; then
+      rm -f "${TMPFILE}"
+    fi
+    exit 0
+fi

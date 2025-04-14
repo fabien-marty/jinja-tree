@@ -1,15 +1,48 @@
 version: '3'
 
+vars:
+  _UTILS_DIR: "{{.TASKFILE_DIR}}/utils"
+  _ECHO_OK: "{{._UTILS_DIR}}/echo_ok"
+  _ECHO_FAILED: "{{._UTILS_DIR}}/echo_failed"
+  _COMMON_REPO: "https://github.com/fabien-marty/common.git"
+
 tasks:
 
   no-dirty:
     desc: "Check that the repository is clean"
     silent: true
     cmds: 
+      - task: check_git_or_die
       - |
           if test -n "$(git status --porcelain)"; then
-            echo "ERROR: the repository is dirty"
+            echo "***** git status *****"
             git status
+            echo "***** git diff *****"
             git diff
+            {{._ECHO_FAILED}} "ERROR: the repository is dirty"
             exit 1
           fi
+
+  check_*_or_die:
+    silent: true
+    cmds:
+      - "{{index .MATCH 0}} --help >/dev/null 2>&1 || {{._ECHO_FAILED}} 'ERROR: {{ index .MATCH 0 }} is not installed'"
+
+  update-from-common:
+    desc: "(advanced) Update some common files from the common repository"
+    silent: true
+    cmds:
+      - task: check_git_or_die
+      - |
+          export TMPDIR=$(mktemp -d)
+          cd "$TMPDIR"
+          git clone --depth 1 "{{._COMMON_REPO}}" "common"
+          mkdir -p "{{.ROOT_DIR}}/.task/taskfiles"
+          rm -Rf "{{.ROOT_DIR}}/.task/taskfiles/utils"
+          cp -Rf "common/taskfiles/utils" "{{.ROOT_DIR}}/.task/taskfiles/"
+          for file in common/taskfiles/Taskfile-*.yml; do
+            cp -f "$file" "{{.ROOT_DIR}}/.task/taskfiles/"
+          done
+          cd
+          rm -Rf "$TMPDIR"
+          {{._ECHO_OK}} "Updated from common"

@@ -1,21 +1,27 @@
 version: '3'
 
 includes:
-  uv: .task/taskfiles/Taskfile-uv.yml
-  misc: 
-    taskfile: .task/taskfiles/Taskfile-misc.yml
-    flatten: true
+  uv: .task/taskfiles/Taskfile-python-uv.yml
+  misc: .task/taskfiles/Taskfile-misc.yml
 
 vars:
-  DEFAULT_IMAGE: 'docker.io/library/dunamai'
+  DEFAULT_IMAGE: 'docker.io/library/jinja-tree'
   IMAGE: '{{ .IMAGE | default .DEFAULT_IMAGE }}'
+  ECHO_OK: '{{ .ROOT_DIR }}/.task/taskfiles/utils/echo_ok'
 
 tasks:
 
   clean:
     desc: "Clean the repository"
-    deps:
-      - uv:clean
+    cmds:
+      - task: uv:clean
+
+  mrproper:
+    desc: "Clean the repository (including downloaded tools)"
+    deps: 
+      - clean
+    cmds:
+      - task: uv:mrproper
 
   install:
     desc: "Install the venv" 
@@ -45,6 +51,13 @@ tasks:
       - install
     cmds:
       - "docker build -t myapp ."
+
+  no-dirty:
+    desc: "Check that the repository is clean"
+    silent: true
+    cmds:
+      - task: misc:no-dirty
+      - '{{.ECHO_OK}} "Repository is clean"'
 
   publish:
     desc: "Publish the package (to pypi)"
