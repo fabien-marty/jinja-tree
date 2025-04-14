@@ -94,7 +94,7 @@ jobs:
           task doc
       - name: Publish on Pypi
         run: |
-          VERSION=$(echo "${{ github.event.release.tag_name }}" | sed -e 's/^v//')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's|refs/tags/v||')
           echo "VERSION: $VERSION"
           uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version "$VERSION"
           task publish
