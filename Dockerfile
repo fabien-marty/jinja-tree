@@ -2,6 +2,7 @@ FROM alpine:3.21
 
 ENV TASK=go-task
 ENV UV_NO_CACHE=1
+ENV UV_PYTHON_INSTALL_DIR=/app/.tmp/taskfile-python-uv
 
 RUN apk update && apk upgrade && apk add bash go-task make && rm -rf /var/cache/apk/*
 RUN mkdir -p /app
