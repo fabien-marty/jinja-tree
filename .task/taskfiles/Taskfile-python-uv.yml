@@ -16,6 +16,12 @@ vars:
   # (can be set by children taskfiles)
   COVERAGE: "{{.COVERAGE | default ._DEFAULT_COVERAGE}}"
 
+  _DEFAULT_COVERAGE_PKG: ""
+
+  # If set, run the tests with coverage for this package only
+  # (can be set by children taskfiles)
+  COVERAGE_PKG: "{{.COVERAGE_PKG | default ._DEFAULT_COVERAGE_PKG}}"
+
 
   ##### UV #####
 
@@ -112,7 +118,7 @@ vars:
             echo "{{.TEST_PYTEST | default .DEFAULT_TEST_PYTEST}}"
           fi
 
-  _DEFAULT_PYTEST_COVERAGE_OPTS: "--no-cov-on-fail --cov=jinja_tree --cov-report=term --cov-report=html --cov-report=xml"
+  _DEFAULT_PYTEST_COVERAGE_OPTS: "--no-cov-on-fail --cov-report=term --cov-report=html --cov-report=xml"
   PYTEST_COVERAGE_OPTS: "{{.PYTEST_COVERAGE_OPTS | default ._DEFAULT_PYTEST_COVERAGE_OPTS}}"
 
   _DEFAULT_PYTEST_ARGS: "tests"
@@ -190,8 +196,8 @@ tasks:
     silent: true
     cmds:
       - |
-          {{._ECHO_RUNNING}} "=> Linting with ruff..."
           if [ "{{.LINT_RUFF}}" = "1" ]; then
+            {{._ECHO_RUNNING}} "=> Linting with ruff..."
             if [ "{{.FIX}}" = "1" ]; then
               {{._WRAP}} {{._RUFF}} format {{.RUFF_OPTS}} {{._RUFF_ARGS}}
               {{._WRAP}} {{._RUFF}} check --fix {{.RUFF_OPTS}} {{._RUFF_ARGS}}
@@ -199,8 +205,8 @@ tasks:
               {{._WRAP}} {{._RUFF}} format {{.RUFF_OPTS}} --check {{._RUFF_ARGS}}
               {{._WRAP}} {{._RUFF}} check {{.RUFF_OPTS}} {{.RUFF_ARGS}}
             fi
+            {{._ECHO_OK}} "=> OK: ruff linting completed"
           fi
-          {{._ECHO_OK}} "=> OK: ruff linting completed"
 
   lint-mypy:
     deps: ["sync"]
@@ -208,11 +214,11 @@ tasks:
     silent: true
     cmds:
       - |
-          {{._ECHO_RUNNING}} "=> Linting with mypy..."
           if [ "{{.LINT_MYPY}}" = "1" ]; then
+            {{._ECHO_RUNNING}} "=> Linting with mypy..."
             {{._WRAP}} {{._MYPY}} {{.MYPY_OPTS}} {{._MYPY_ARGS}}
+            {{._ECHO_OK}} "=> OK: mypy linting completed"
           fi
-          {{._ECHO_OK}} "=> OK: mypy linting completed"
   lint:
     internal: true
     silent: true
@@ -227,15 +233,19 @@ tasks:
     silent: true
     cmds:
       - |
-          {{._ECHO_RUNNING}} "=> Running tests..."
           if [ "{{.TEST_PYTEST}}" = "1" ]; then
+            {{._ECHO_RUNNING}} "=> Running tests..."
             if [ "{{.COVERAGE}}" = "1" ]; then
-              {{._WRAP}} {{._PYTEST}} {{.PYTEST_OPTS}} {{.PYTEST_COVERAGE_OPTS}} {{._PYTEST_ARGS}}
+              if [ "{{.COVERAGE_PKG}}" != "" ]; then
+                {{._WRAP}} {{._PYTEST}} {{.PYTEST_OPTS}} {{.PYTEST_COVERAGE_OPTS}} --cov {{.COVERAGE_PKG}} {{._PYTEST_ARGS}}
+              else
+                {{._WRAP}} {{._PYTEST}} {{.PYTEST_OPTS}} {{.PYTEST_COVERAGE_OPTS}} {{._PYTEST_ARGS}}
+              fi
             else
               {{._WRAP}} {{._PYTEST}} {{.PYTEST_OPTS}} {{._PYTEST_ARGS}}
             fi
+            {{._ECHO_OK}} "=> OK: tests completed"
           fi
-          {{._ECHO_OK}} "=> OK: tests completed"
 
   build:
     internal: true
@@ -261,7 +271,7 @@ tasks:
     internal: true
     silent: true
     cmds:
-      - rm -Rf .*_cache build dist
+      - rm -Rf .*_cache build dist htmlcov
       - find . -type d -name __pycache__ -exec rm -Rf {} \; 2>/dev/null || true
       - rm -Rf {{.VENV}}
 

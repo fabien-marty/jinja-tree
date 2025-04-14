@@ -37,9 +37,12 @@ tasks:
           export TMPDIR=$(mktemp -d)
           cd "$TMPDIR"
           git clone --depth 1 "{{._COMMON_REPO}}" "common"
-          mkdir -p "{{.ROOT_DIR}}/.tmp/taskfile-misc"
-          rm -Rf "{{.ROOT_DIR}}/.tmp/taskfile-misc/taskfiles"
-          cp -Rf "common/taskfiles" "{{.ROOT_DIR}}/.tmp/taskfile-misc/"
+          mkdir -p "{{.ROOT_DIR}}/.task/taskfiles"
+          rm -Rf "{{.ROOT_DIR}}/.task/taskfiles/utils"
+          cp -Rf "common/taskfiles/utils" "{{.ROOT_DIR}}/.task/taskfiles/"
+          for file in common/taskfiles/Taskfile-*.yml; do
+            cp -f "$file" "{{.ROOT_DIR}}/.task/taskfiles/"
+          done
           cd
           rm -Rf "$TMPDIR"
           {{._ECHO_OK}} "Updated from common"
