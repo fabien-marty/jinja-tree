@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export UV="/app/.tmp/taskfile-python-uv/uv/uv"
+
 if ! test -d /code; then
   # DEPRECATED: only for smooth transition
   echo "WARNING: usage of /workdir is DEPRECATED => replace /workdir by /code"
@@ -7,6 +9,6 @@ if ! test -d /code; then
 else
   cd /code
 fi
-exec /app/.tmp/bin/uv run /app/.venv/bin/jinja-tree "$@"
+exec "${UV}" run /app/.venv/bin/jinja-tree "$@"
 
 

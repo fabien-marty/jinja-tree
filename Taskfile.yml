@@ -50,7 +50,7 @@ tasks:
     deps:
       - install
     cmds:
-      - "docker build -t myapp ."
+      - "docker build --progress plain -t myapp ."
 
   no-dirty:
     desc: "Check that the repository is clean"

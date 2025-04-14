@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export UV="/app/.tmp/taskfile-python-uv/uv/uv"
+
 if ! test -d /code; then
   if test -d /workdir; then
     # DEPRECATED: only for smooth transition
@@ -9,4 +11,4 @@ if ! test -d /code; then
 else
   cd /code
 fi
-exec /app/.tmp/bin/uv run /app/.venv/bin/jinja-stdin "$@"
+exec "${UV}" run /app/.venv/bin/jinja-stdin "$@"
