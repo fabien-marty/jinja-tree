@@ -3,6 +3,7 @@
     "baseBranches": [
         "main"
     ],
+    "dependencyDashboard": false,
     "extends": [
         "config:best-practices"
     ],
