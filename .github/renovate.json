@@ -1,0 +1,36 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "baseBranches": [
+        "main"
+    ],
+    "dependencyDashboard": false,
+    "dependencyDashboardApproval": false,
+    "extends": [
+        "config:best-practices"
+    ],
+    "labels": [
+        "Type: Changed"
+    ],
+    "prConcurrentLimit": 10,
+    "rebaseWhen": "conflicted",
+    "rangeStrategy": "update-lockfile",
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "vulnerabilityAlerts": {
+	"labels": [
+	    "Type: Security"
+	],
+        "enabled": true
+    },
+    "osvVulnerabilityAlerts": true,
+    "packageRules": [
+        {
+            "description": "Put every devDependency bump into one PR",
+            "matchDepTypes": [
+                "devDependencies"
+            ],
+            "groupName": "dev-dependencies"
+        }
+    ]
+}
