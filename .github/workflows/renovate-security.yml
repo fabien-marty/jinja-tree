@@ -18,6 +18,7 @@ jobs:
           RENOVATE_ONBOARDING: "false"
           RENOVATE_REQUIRE_CONFIG: "ignored"
           RENOVATE_CONFIG_FILE: ".github/workflows/renovate-security.json"
+          RENOVATE_DEPENDENCY_DASHBOARD: "false"
           LOG_LEVEL: 'info'
         with:
           token: ${{ secrets.PAT }}
