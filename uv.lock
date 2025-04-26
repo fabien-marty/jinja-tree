@@ -502,11 +502,11 @@ wheels = [
 
 [[package]]
 name = "stlog"
-version = "0.2.0"
+version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e5/9c/ee16f23ce16e402e68139764133853aee73ddfe07109395aa7ea1acab48b/stlog-0.2.0.tar.gz", hash = "sha256:676738755143bf4e871435feda854f386dc9bea692fd33d108afb3557862d13b", size = 19788, upload_time = "2024-01-08T13:39:38.002Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9d/61/d6ea23cf8e090c6bde0dc735ea5d67fc01406f4ae011f7f94af8aa353c6b/stlog-0.4.2.tar.gz", hash = "sha256:24c8e255a840ac575d745935f6916cb553751f4dd3ce9844076253b5ce6dc542", size = 18204, upload_time = "2025-04-13T15:39:25.119Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/98/5b0b0bffd56409131139804d35b2b627a8eb7cc824e97ae479d17620b583/stlog-0.2.0-py3-none-any.whl", hash = "sha256:8f76bdad1894cecea8e4f816aaedebe41f78eb74906ceff21b6bcc0dd1614382", size = 21434, upload_time = "2024-01-08T13:39:31.623Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/53/c150ac55cabd0b2500ff5eb6302dcb80793dedbf4c26537819ddf18b2994/stlog-0.4.2-py3-none-any.whl", hash = "sha256:4f274b805795102c1b2e8713e9a0dcd15157e975d83c956357a299bec084f549", size = 22115, upload_time = "2025-04-13T15:39:23.667Z" },
 ]
 
 [[package]]
