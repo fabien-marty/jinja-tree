@@ -9,7 +9,7 @@ def shell(eval_ctx, value, die_on_error=True, encoding="utf8", **kwargs):
     if die_on_error:
         cmd = value
     else:
-        cmd = "%s ; exit 0" % value
+        cmd = f"{value} ; exit 0"
     return subprocess.check_output(
         cmd, stderr=subprocess.STDOUT, shell=True, encoding=encoding, **kwargs
     )
