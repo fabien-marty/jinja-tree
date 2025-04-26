@@ -16,7 +16,6 @@ jobs:
         env:
           RENOVATE_REPOSITORIES: "${{ github.repository }}"
           RENOVATE_ONBOARDING: "false"
-          RENOVATE_REQUIRE_CONFIG: "ignored"
           RENOVATE_CONFIG_FILE: ".github/renovate.json"
           LOG_LEVEL: 'debug'
         with:
