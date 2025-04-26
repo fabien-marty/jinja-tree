@@ -12,6 +12,7 @@
         "Type: Changed"
     ],
     "prConcurrentLimit": 10,
+    "prHourlyLimit": 10,
     "rebaseWhen": "conflicted",
     "rangeStrategy": "update-lockfile",
     "lockFileMaintenance": {
