@@ -4,6 +4,7 @@
         "main"
     ],
     "dependencyDashboard": false,
+    "dependencyDashboardApproval": false,
     "extends": [
         "config:best-practices"
     ],
