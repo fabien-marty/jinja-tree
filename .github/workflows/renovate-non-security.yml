@@ -1,0 +1,23 @@
+name: renovate-non-security
+
+on:
+  schedule:
+    # Runs at 01:00 UTC on the 1st day of each month
+    - cron: "0 1 1 * *"
+  workflow_dispatch:
+
+jobs:
+  renovate-non-security:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: renovatebot/github-action@fdbe2b88946ea8b6fb5785a5267b46677d13a4d2 # v41.0.21
+        env:
+          RENOVATE_REPOSITORIES: "${{ github.repository }}"
+          RENOVATE_ONBOARDING: "false"
+          RENOVATE_REQUIRE_CONFIG: "ignored"
+          RENOVATE_CONFIG_FILE: ".github/workflows/renovate-non-security.json"
+          LOG_LEVEL: 'debug'
+        with:
+          token: ${{ secrets.PAT }}
