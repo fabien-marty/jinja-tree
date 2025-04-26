@@ -18,7 +18,7 @@ jobs:
           RENOVATE_ONBOARDING: "false"
           RENOVATE_REQUIRE_CONFIG: "optional"
           RENOVATE_DEPENDENCY_DASHBOARD: "false"
-          RENOVATE_EXTENDS: "github>fabien-marty/common//.github/workflows/renovate-security"
+          RENOVATE_GLOBAL_EXTENDS: "github>fabien-marty/common//.github/workflows/renovate-security"
           LOG_LEVEL: 'debug'
         with:
           token: ${{ secrets.PAT }}
