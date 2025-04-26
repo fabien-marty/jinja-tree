@@ -27,13 +27,13 @@ def test_from_json():
     )
     x = ["foo", "bar"]
     template = env.from_string(
-        "test {% set y = '" + json.dumps(x) + "'|from_json %} " "{{'bar' in y}}"
+        "test {% set y = '" + json.dumps(x) + "'|from_json %} {{'bar' in y}}"
     )
     result = template.render()
     assert result == "test  True"
     x = ["foo", "foo2"]
     template = env.from_string(
-        "test {% set y = '" + json.dumps(x) + "'|from_json %} " "{{'bar' in y}}"
+        "test {% set y = '" + json.dumps(x) + "'|from_json %} {{'bar' in y}}"
     )
     result = template.render()
     assert result == "test  False"
@@ -48,7 +48,7 @@ def test_from_toml():
 bar = "baz"
 """
     template = env.from_string(
-        "test {% set y = '" + toml + "'|from_toml %} " "{{'foo' in y}}"
+        "test {% set y = '" + toml + "'|from_toml %} {{'foo' in y}}"
     )
     result = template.render()
     assert result == "test  True"
