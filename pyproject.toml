@@ -42,7 +42,7 @@ jinja-stdin = "jinja_tree.infra.controllers.cli_stdin:app"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.1.11,<0.2",
+    "ruff>=0.11.7,<0.12",
     "mypy>=1.8.0,<2",
     "pytest>=7.4.4,<8",
     "rich>=13.7.0,<14",
