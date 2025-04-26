@@ -16,9 +16,9 @@ jobs:
         env:
           RENOVATE_REPOSITORIES: "${{ github.repository }}"
           RENOVATE_ONBOARDING: "false"
-          RENOVATE_REQUIRE_CONFIG: "ignored"
-          RENOVATE_CONFIG_FILE: ".github/workflows/renovate-security.json"
+          RENOVATE_REQUIRE_CONFIG: "optional"
           RENOVATE_DEPENDENCY_DASHBOARD: "false"
-          LOG_LEVEL: 'info'
+          RENOVATE_EXTENDS: "github>fabien-marty/common//.github/workflows/renovate-security"
+          LOG_LEVEL: 'debug'
         with:
           token: ${{ secrets.PAT }}
