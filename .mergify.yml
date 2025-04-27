@@ -32,4 +32,7 @@ queue_rules:
       - "-draft"
       - "-closed"
       - "-conflict"
+      - or:
+        - "#approved-reviews-by >= 1"
+        - "author=fabien-marty"
 
