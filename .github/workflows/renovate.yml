@@ -6,11 +6,16 @@ on:
     - cron: "0 1 * * 0"
   workflow_dispatch:
     inputs:
-      force:
+      overrideSchedule:
         description: 'Force execution (bypass scheduling)'
         required: false
         default: false
         type: boolean
+      logLevel:
+        description: "Override default log level"
+        required: false
+        default: "info"
+        type: string
 
 jobs:
   renovate:
@@ -23,7 +28,7 @@ jobs:
           RENOVATE_REPOSITORIES: "${{ github.repository }}"
           RENOVATE_ONBOARDING: "false"
           RENOVATE_CONFIG_FILE: ".github/renovate.json"
-          LOG_LEVEL: 'debug'
-          RENOVATE_FORCE: "${{ inputs.force && 'true' || 'false' }}"
+          RENOVATE_FORCE: ${{ github.event.inputs.overrideSchedule  && '{''schedule'':null}' || '' }}
+          LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
         with:
           token: ${{ secrets.PAT }}

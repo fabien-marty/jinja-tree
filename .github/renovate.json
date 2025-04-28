@@ -16,22 +16,54 @@
     "rebaseWhen": "conflicted",
     "rangeStrategy": "update-lockfile",
     "lockFileMaintenance": {
-        "enabled": true
+        "enabled": true,
+        "schedule": "* 0-3 1 * *"
     },
     "vulnerabilityAlerts": {
-	"labels": [
-	    "Type: Security"
-	],
+        "labels": [
+            "Type: Security"
+        ],
         "enabled": true
     },
+    "schedule": "* 0-3 1 * *",
     "osvVulnerabilityAlerts": true,
     "packageRules": [
         {
-            "description": "Put every devDependency bump into one PR",
-            "matchDepTypes": [
-                "devDependencies"
+            "matchManagers": [
+                "poetry"
             ],
-            "groupName": "dev-dependencies"
+            "matchDepTypes": [
+                "dev-dependencies",
+                "dev"
+            ],
+            "groupName": "python-dev-deps"
+        },
+        {
+            "matchManagers": [
+                "pipenv"
+            ],
+            "matchDepTypes": [
+                "dev-packages"
+            ],
+            "groupName": "python-dev-deps"
+        },
+        {
+            "matchManagers": [
+                "pep621"
+            ],
+            "matchDepTypes": [
+                "tool.pdm.dev-dependencies",
+                "tool.uv.dev-dependencies",
+                "tool.hatch.envs.dev"
+            ],
+            "groupName": "python-dev-deps"
+        },
+        {
+            "groupName": "patch-dependencies",
+            "matchCurrentVersion": "!/^0/",
+            "matchUpdateTypes": [
+                "patch"
+            ]
         }
     ]
 }
