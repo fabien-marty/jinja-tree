@@ -8,9 +8,12 @@ on:
     inputs:
       overrideSchedule:
         description: 'Force execution (bypass scheduling)'
-        required: false
-        default: false
-        type: boolean
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
       logLevel:
         description: "Override default log level"
         required: false
