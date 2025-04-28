@@ -8,9 +8,12 @@ on:
     inputs:
       overrideSchedule:
         description: 'Force execution (bypass scheduling)'
-        required: false
-        default: false
-        type: boolean
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
       logLevel:
         description: "Override default log level"
         required: false
@@ -20,6 +23,7 @@ on:
 jobs:
   renovate:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
       - name: Check out repository code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -28,7 +32,7 @@ jobs:
           RENOVATE_REPOSITORIES: "${{ github.repository }}"
           RENOVATE_ONBOARDING: "false"
           RENOVATE_CONFIG_FILE: ".github/renovate.json"
-          RENOVATE_FORCE: ${{ github.event.inputs.overrideSchedule  && '{''schedule'':null}' || '' }}
+          RENOVATE_FORCE: ${{ github.event.inputs.overrideSchedule == 'true' && '{''schedule'':null}' || '' }}
           LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
         with:
           token: ${{ secrets.PAT }}
