@@ -5,6 +5,12 @@ on:
     # Runs at 01:00 UTC every sunday
     - cron: "0 1 * * 0"
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force execution (bypass scheduling)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   renovate:
@@ -18,5 +24,6 @@ jobs:
           RENOVATE_ONBOARDING: "false"
           RENOVATE_CONFIG_FILE: ".github/renovate.json"
           LOG_LEVEL: 'debug'
+          RENOVATE_FORCE: "${{ inputs.force && 'true' || 'false' }}"
         with:
           token: ${{ secrets.PAT }}
