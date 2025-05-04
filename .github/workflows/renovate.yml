@@ -1,9 +1,10 @@
+
 name: renovate
 
 on:
   schedule:
-    # Runs at 01:00 UTC every sunday
-    - cron: "0 1 * * 0"
+    # Runs at 01:00 UTC every day
+    - cron: "0 1 * * *"
   workflow_dispatch:
     inputs:
       overrideSchedule:
@@ -31,7 +32,7 @@ jobs:
         env:
           RENOVATE_REPOSITORIES: "${{ github.repository }}"
           RENOVATE_ONBOARDING: "false"
-          RENOVATE_CONFIG_FILE: ".github/renovate.json"
+          RENOVATE_CONFIG_FILE: ".github/renovate.json5"
           RENOVATE_FORCE: ${{ github.event.inputs.overrideSchedule == 'true' && '{''schedule'':null}' || '' }}
           LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
         with:
