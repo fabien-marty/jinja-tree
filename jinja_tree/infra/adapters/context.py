@@ -111,6 +111,22 @@ class TOMLContextConfig(DataClassJsonMixin):
         self.paths = [os.path.abspath(x) for x in self.paths]
 
 
+def _deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+    """Recursively merge override into base, returning a new dict.
+
+    When both base and override have a dict value for the same key,
+    the dicts are merged recursively instead of the override replacing
+    the entire base value.
+    """
+    result = dict(base)
+    for key, value in override.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = _deep_merge(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+
 class TOMLContextAdapter(ContextPort):
     def __init__(self, config: Config, plugin_config: Dict[str, Any]):
         self.config = config
@@ -135,5 +151,5 @@ class TOMLContextAdapter(ContextPort):
         res: Dict[str, Any] = {}
         for path in self.plugin_config.paths:
             if path:
-                res.update(self._get_context_single_path(path))
+                res = _deep_merge(res, self._get_context_single_path(path))
         return res

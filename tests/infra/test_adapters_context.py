@@ -7,6 +7,7 @@ from jinja_tree.infra.adapters.context import (
     ConfigurationContextAdapter,
     EnvContextAdapter,
     TOMLContextAdapter,
+    _deep_merge,
 )
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -57,3 +58,40 @@ def test_toml_file_backward_compat_path():
         config, {"path": os.path.join(SCRIPT_DIR, "data", "foo.toml")}
     )
     assert x.get_context() == {"key1": "value1", "key2": "value2"}
+
+
+def test_deep_merge_nested_dicts():
+    base = {"a": 1, "nested": {"x": 10, "y": 20}}
+    override = {"b": 2, "nested": {"y": 99, "z": 30}}
+    result = _deep_merge(base, override)
+    assert result == {"a": 1, "b": 2, "nested": {"x": 10, "y": 99, "z": 30}}
+    # originals are not mutated
+    assert base == {"a": 1, "nested": {"x": 10, "y": 20}}
+
+
+def test_toml_deep_merge_multiple_files():
+    """Merging multiple TOML files should deep-merge nested tables."""
+    config = Config()
+    x = TOMLContextAdapter(
+        config,
+        {
+            "paths": [
+                os.path.join(SCRIPT_DIR, "data", "deep1.toml"),
+                os.path.join(SCRIPT_DIR, "data", "deep2.toml"),
+            ]
+        },
+    )
+    assert x.get_context() == {
+        "key1": "value1",
+        "key2": "value2",
+        "database": {
+            "host": "localhost",
+            "port": 3306,
+            "name": "mydb",
+            "options": {
+                "timeout": 30,
+                "retries": 5,
+                "verbose": True,
+            },
+        },
+    }
