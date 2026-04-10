@@ -1,0 +1,9 @@
+key1 = "value1"
+
+[database]
+host = "localhost"
+port = 5432
+
+[database.options]
+timeout = 30
+retries = 3

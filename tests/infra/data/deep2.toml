@@ -1,0 +1,9 @@
+key2 = "value2"
+
+[database]
+port = 3306
+name = "mydb"
+
+[database.options]
+retries = 5
+verbose = true
