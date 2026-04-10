@@ -80,14 +80,14 @@ ignores = []
 
 [context.toml]
 
-# path to the toml file to load as context
+# paths to the toml files to load as context (list of absolute or relative paths)
 # If empty:
-# - we will use the content of the JINJA_TREE_TOML_CONTEXT_PATH as path
+# - we will use the content of the JINJA_TREE_TOML_CONTEXT_PATHS env var (comma-separated) as paths
 # - if empty, the toml context will not be available (but no error will be raised)
 #
-# If not empty (or set by JINJA_TREE_TOML_CONTEXT_PATH env var), if the file does not exist,
+# If not empty (or set by JINJA_TREE_TOML_CONTEXT_PATHS env var), if a file does not exist,
 # or if it is not a valid toml file, an error will be raised.
-path = ""
+paths = []
 
 
 ##########################################  

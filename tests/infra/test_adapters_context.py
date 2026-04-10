@@ -39,7 +39,7 @@ def test_config_file():
 def test_toml_file():
     config = Config()
     x = TOMLContextAdapter(
-        config, {"path": os.path.join(SCRIPT_DIR, "data", "foo.toml")}
+        config, {"paths": [os.path.join(SCRIPT_DIR, "data", "foo.toml")]}
     )
     assert x.get_context() == {"key1": "value1", "key2": "value2"}
 
@@ -48,3 +48,12 @@ def test_toml_file_empty_config():
     config = Config()
     x = TOMLContextAdapter(config, {})
     assert x.get_context() == {}
+
+
+def test_toml_file_backward_compat_path():
+    """Test backward compatibility: old singular 'path' field should still work."""
+    config = Config()
+    x = TOMLContextAdapter(
+        config, {"path": os.path.join(SCRIPT_DIR, "data", "foo.toml")}
+    )
+    assert x.get_context() == {"key1": "value1", "key2": "value2"}

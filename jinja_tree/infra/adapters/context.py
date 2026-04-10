@@ -92,14 +92,23 @@ class ConfigurationContextAdapter(ContextPort):
 
 @dataclass
 class TOMLContextConfig(DataClassJsonMixin):
+    paths: list[str] = field(
+        default_factory=lambda: [
+            x.strip()
+            for x in os.environ.get("JINJA_TREE_TOML_CONTEXT_PATHS", "").split(",")
+            if x.strip()
+        ]
+    )
     path: str = field(
         default_factory=lambda: os.environ.get("JINJA_TREE_TOML_CONTEXT_PATH", "")
-    )
+    )  # deprecated, use paths instead (kept for backward compatibility)
     dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
 
     def __post_init__(self):
-        if self.path:
-            self.path = os.path.abspath(self.path)
+        if not self.paths and self.path:
+            # backward compatibility with old config files using singular "path"
+            self.paths = [self.path]
+        self.paths = [os.path.abspath(x) for x in self.paths]
 
 
 class TOMLContextAdapter(ContextPort):
@@ -111,15 +120,20 @@ class TOMLContextAdapter(ContextPort):
     def get_config_name(cls) -> str:
         return "toml"
 
-    def get_context(self) -> Dict[str, Any]:
-        if not self.plugin_config.path:
-            return {}
+    def _get_context_single_path(self, path: str) -> Dict[str, Any]:
         try:
-            with open(self.plugin_config.path) as f:
+            with open(path) as f:
                 content = f.read()
         except Exception:
-            raise Exception(f"Failed to read {self.plugin_config.path}")
+            raise Exception(f"Failed to read {path}")
         try:
             return tomli.loads(content)
         except Exception:
-            raise Exception(f"Failed to parse {self.plugin_config.path}")
+            raise Exception(f"Failed to parse {path}")
+
+    def get_context(self) -> Dict[str, Any]:
+        res: dict[str, Any] = {}
+        for path in self.plugin_config.paths:
+            if path:
+                res.update(self._get_context_single_path(path))
+        return res
