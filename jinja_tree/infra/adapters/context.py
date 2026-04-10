@@ -92,7 +92,7 @@ class ConfigurationContextAdapter(ContextPort):
 
 @dataclass
 class TOMLContextConfig(DataClassJsonMixin):
-    paths: list[str] = field(
+    paths: List[str] = field(
         default_factory=lambda: [
             x.strip()
             for x in os.environ.get("JINJA_TREE_TOML_CONTEXT_PATHS", "").split(",")
@@ -132,7 +132,7 @@ class TOMLContextAdapter(ContextPort):
             raise Exception(f"Failed to parse {path}")
 
     def get_context(self) -> Dict[str, Any]:
-        res: dict[str, Any] = {}
+        res: Dict[str, Any] = {}
         for path in self.plugin_config.paths:
             if path:
                 res.update(self._get_context_single_path(path))
