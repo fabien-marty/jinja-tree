@@ -98,7 +98,7 @@ class ContextService:
     ):
         context["JINJA_TREE"] = "1"
         try:
-            utcnow = datetime.datetime.now(datetime.UTC).isoformat()[0:19] + "Z"  # type: ignore
+            utcnow = datetime.datetime.now(datetime.UTC).isoformat()[0:19] + "Z"
         except AttributeError:
             # for python <= 3.10
             utcnow = datetime.datetime.utcnow().isoformat()[0:19] + "Z"  # type: ignore

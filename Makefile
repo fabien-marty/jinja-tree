@@ -4,7 +4,7 @@ FIX=1
 COVERAGE=0
 VERSION=$(shell $(UV_RUN) dunamai from git |sed 's/+/_/g')
 IMAGE=docker.io/library/jinja-tree
-LINT_MYPY=1
+LINT_TY=1
 
 default: help
 
@@ -24,8 +24,8 @@ else
 	$(UV_RUN) ruff check jinja_tree tests
 	$(UV_RUN) ruff format --check jinja_tree tests
 endif
-ifeq ($(LINT_MYPY), 1)
-	$(UV_RUN) mypy --check-untyped-defs jinja_tree
+ifeq ($(LINT_TY), 1)
+	$(UV_RUN) ty check jinja_tree
 endif
 
 .PHONY: test
