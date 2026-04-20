@@ -8,11 +8,6 @@ on:
       - v*
   pull_request:
 
-env:
-  POETRY_HOME: /opt/poetry
-  POETRY_CACHE: /opt/poetry_cache
-  POETRY_VERSION: 1.7.1
-
 jobs:
 
   lint_and_test:
@@ -26,15 +21,14 @@ jobs:
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - name: Install Task
-        uses: arduino/setup-task@v2
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          version: "latest"
+          python-version: ${{ matrix.python-version }}
       - name: Install
         run: |
-          task install
-          task uv:debug
+          make install
         env:
           UV_PYTHON: ${{ matrix.python-version }}
       - name: Run lint
@@ -43,29 +37,28 @@ jobs:
             # As we have mypy issues with 3.8 => let's skip
             export LINT_MYPY=0
           fi
-          task lint
-          task uv:debug
+          make lint
         env:
           FIX: 0
       - name: Run tests
         run: |
-          task test
+          make test
       - name: Run doc
         if: matrix.python-version == '3.12'
         run: |
-          task doc
+          make doc
       - name: Check modified files
         if: matrix.python-version == '3.12'
         run: |
-          task no-dirty
+          make no-dirty
       - name: Clean
         if: matrix.python-version == '3.12'
         run: |
-          task clean
+          make clean
       - name: Check modified files (after clean)
         if: matrix.python-version == '3.12'
         run: |
-          task no-dirty
+          make no-dirty
 
   publish_pypi:
     runs-on: ubuntu-latest
@@ -74,11 +67,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - name: Install Task
-        uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
@@ -86,18 +74,18 @@ jobs:
           python-version: 3.12
       - name: Install
         run: |
-          task install
+          make install
       - name: Override BASEURL in README.md
         env:
           BASEURL: https://github.com/fabien-marty/jinja-tree/blob/main/
         run: |
-          task doc
+          make doc
       - name: Publish on Pypi
         run: |
           VERSION=$(echo "${{ github.ref }}" | sed -e 's|refs/tags/v||')
           echo "VERSION: $VERSION"
           uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version "$VERSION"
-          task publish
+          make publish
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
