@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export UV="/app/.tmp/taskfile-python-uv/uv/uv"
+export UV="uv"
 
 if ! test -d /code; then
   if test -d /workdir; then
