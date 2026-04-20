@@ -3,7 +3,7 @@ name = "jinja-tree"
 version = "0.0.0"
 description = "CLI to process jinja (jinja2) templates in a directory tree"
 authors = [{ name = "Fabien MARTY", email = "fabien.marty@botify.com" }]
-requires-python = "~=3.8"
+requires-python = ">=3.8"
 readme = "README.md"
 license = "MIT"
 keywords = [
