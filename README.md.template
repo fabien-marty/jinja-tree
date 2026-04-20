@@ -171,7 +171,7 @@ jinja-tree .
 <summary>Main CLI options</summary>
 
 ```
-{{ "jinja-tree --help"|shell() }}
+{{ "TERMINAL_WIDTH=120 _TYPER_FORCE_DISABLE_TERMINAL=1 jinja-tree --help"|shell() }}
 ``` 
 
 </details>
@@ -197,7 +197,7 @@ Hello bar
 <summary>Bonus CLI options</summary>
 
 ```
-{{ "jinja-stdin --help"|shell() }}
+{{ "TERMINAL_WIDTH=120 _TYPER_FORCE_DISABLE_TERMINAL=1 jinja-stdin --help"|shell() }}
 ``` 
 
 </details>

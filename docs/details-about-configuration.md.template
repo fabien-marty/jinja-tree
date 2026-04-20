@@ -19,7 +19,7 @@ You have two options to configure the `jinja-tree`:
 <summary>CLI options reference of the `jinja-tree` CLI</summary>
 
 ```
-{{ "jinja-tree --help"|shell() }}
+{{ "TERMINAL_WIDTH=120 _TYPER_FORCE_DISABLE_TERMINAL=1 jinja-tree --help"|shell() }}
 ```
 
 </details>
@@ -29,7 +29,7 @@ You have two options to configure the `jinja-tree`:
 <summary>CLI options reference of the `jinja-stdin` bonus CLI</summary>
 
 ```
-{{ "jinja-stdin --help"|shell() }}
+{{ "TERMINAL_WIDTH=120 _TYPER_FORCE_DISABLE_TERMINAL=1 jinja-stdin --help"|shell() }}
 ```
 
 </details>
