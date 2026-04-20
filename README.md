@@ -172,45 +172,49 @@ jinja-tree .
 <summary>Main CLI options</summary>
 
 ```
-Usage: jinja-tree [OPTIONS] ROOT_DIR
+                                                                                                                        
+ Usage: jinja-tree [OPTIONS] ROOT_DIR                                                                                   
+                                                                                                                        
+ Process a directory tree with the Jinja / Jinja2 templating system.                                                    
+                                                                                                                        
+╭─ Arguments ──────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *    root_dir      PATH  root directory [required]                                                                   │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --config-file                                                               TEXT  config file path (default: first   │
+│                                                                                   '.jinja-tree.toml' file found up   │
+│                                                                                   from current working dir), can     │
+│                                                                                   also be see with                   │
+│                                                                                   JINJA_TREE_CONFIG_FILE env var     │
+│                                                                                   [env var: JINJA_TREE_CONFIG_FILE]  │
+│ --log-level                                                                 TEXT  log level (DEBUG, INFO, WARNING or │
+│                                                                                   ERROR)                             │
+│                                                                                   [default: INFO]                    │
+│ --verbose                             --no-verbose                                increase verbosity of the DEBUG    │
+│                                                                                   log level (note: this forces       │
+│                                                                                   log-level = DEBUG)                 │
+│                                                                                   [default: no-verbose]              │
+│ --extra-search-path                                                         PATH  Search path to jinja (can be used  │
+│                                                                                   multiple times)                    │
+│ --add-cwd-to-search-path              --no-add-cwd-to-search-path                 add current working directory      │
+│                                                                                   (CWD) to jinja search path         │
+│ --add-root-dir-to-search-path         --no-add-root-dir-to-search-path            add root directory to jinja search │
+│                                                                                   path                               │
+│ --jinja-extension                                                           TEXT  jinja extension to load            │
+│ --context-plugin                                                            TEXT  context plugins (full python class │
+│                                                                                   path, can be used multiple times)  │
+│ --action-plugin                                                             TEXT  action plugin (full python class   │
+│                                                                                   path, can be used multiple times)  │
+│ --strict-undefined                    --no-strict-undefined                       if set, raise an error if a        │
+│                                                                                   variable does not exist in context │
+│ --blank-run                           --no-blank-run                              if set, execute a blank run        │
+│                                                                                   (without modifying or deleting     │
+│                                                                                   anything)                          │
+│                                                                                   [default: no-blank-run]            │
+│ --disable-embedded-jinja-extensio…    --no-disable-embedded-jinja-exten…          disable embedded jinja extensions  │
+│ --help                                                                            Show this message and exit.        │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
-  Process a directory tree with the Jinja / Jinja2 templating system.
-
-Arguments:
-  ROOT_DIR  root directory  [required]
-
-Options:
-  --config-file TEXT              config file path (default: first '.jinja-
-                                  tree.toml' file found up from current
-                                  working dir), can also be see with
-                                  JINJA_TREE_CONFIG_FILE env var  [env var:
-                                  JINJA_TREE_CONFIG_FILE]
-  --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
-                                  [default: INFO]
-  --verbose / --no-verbose        increase verbosity of the DEBUG log level
-                                  (note: this forces log-level = DEBUG)
-                                  [default: no-verbose]
-  --extra-search-path PATH        Search path to jinja (can be used multiple
-                                  times)
-  --add-cwd-to-search-path / --no-add-cwd-to-search-path
-                                  add current working directory (CWD) to jinja
-                                  search path
-  --add-root-dir-to-search-path / --no-add-root-dir-to-search-path
-                                  add root directory to jinja search path
-  --jinja-extension TEXT          jinja extension to load
-  --context-plugin TEXT           context plugins (full python class path, can
-                                  be used multiple times)
-  --action-plugin TEXT            action plugin (full python class path, can
-                                  be used multiple times)
-  --strict-undefined / --no-strict-undefined
-                                  if set, raise an error if a variable does
-                                  not exist in context
-  --blank-run / --no-blank-run    if set, execute a blank run (without
-                                  modifying or deleting anything)  [default:
-                                  no-blank-run]
-  --disable-embedded-jinja-extensions / --no-disable-embedded-jinja-extensions
-                                  disable embedded jinja extensions
-  --help                          Show this message and exit.
 
 ``` 
 
@@ -237,36 +241,38 @@ Hello bar
 <summary>Bonus CLI options</summary>
 
 ```
-Usage: jinja-stdin [OPTIONS]
+                                                                                                                        
+ Usage: jinja-stdin [OPTIONS]                                                                                           
+                                                                                                                        
+ Process the standard input with Jinja templating system and return the result on the standard output.                  
+                                                                                                                        
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --config-file                                                               TEXT  config file path (default: first   │
+│                                                                                   '.jinja-tree.toml' file found up   │
+│                                                                                   from current working dir), can     │
+│                                                                                   also be see with                   │
+│                                                                                   JINJA_TREE_CONFIG_FILE env var     │
+│                                                                                   [env var: JINJA_TREE_CONFIG_FILE]  │
+│ --log-level                                                                 TEXT  log level (DEBUG, INFO, WARNING or │
+│                                                                                   ERROR)                             │
+│                                                                                   [default: INFO]                    │
+│ --verbose                             --no-verbose                                increase verbosity of the DEBUG    │
+│                                                                                   log level (note: this forces       │
+│                                                                                   log-level = DEBUG)                 │
+│                                                                                   [default: no-verbose]              │
+│ --extra-search-path                                                         PATH  Search path to jinja (can be used  │
+│                                                                                   multiple times)                    │
+│ --add-cwd-to-search-path              --no-add-cwd-to-search-path                 add current working directory      │
+│                                                                                   (CWD) to jinja search path         │
+│ --jinja-extension                                                           TEXT  jinja extension to load            │
+│ --context-plugin                                                            TEXT  context plugins (full python class │
+│                                                                                   path, can be used multiple times)  │
+│ --strict-undefined                    --no-strict-undefined                       if set, raise an error if a        │
+│                                                                                   variable does not exist in context │
+│ --disable-embedded-jinja-extensio…    --no-disable-embedded-jinja-exten…          disable embedded jinja extensions  │
+│ --help                                                                            Show this message and exit.        │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
-  Process the standard input with Jinja templating system and return the
-  result on the standard output.
-
-Options:
-  --config-file TEXT              config file path (default: first '.jinja-
-                                  tree.toml' file found up from current
-                                  working dir), can also be see with
-                                  JINJA_TREE_CONFIG_FILE env var  [env var:
-                                  JINJA_TREE_CONFIG_FILE]
-  --log-level TEXT                log level (DEBUG, INFO, WARNING or ERROR)
-                                  [default: INFO]
-  --verbose / --no-verbose        increase verbosity of the DEBUG log level
-                                  (note: this forces log-level = DEBUG)
-                                  [default: no-verbose]
-  --extra-search-path PATH        Search path to jinja (can be used multiple
-                                  times)
-  --add-cwd-to-search-path / --no-add-cwd-to-search-path
-                                  add current working directory (CWD) to jinja
-                                  search path
-  --jinja-extension TEXT          jinja extension to load
-  --context-plugin TEXT           context plugins (full python class path, can
-                                  be used multiple times)
-  --strict-undefined / --no-strict-undefined
-                                  if set, raise an error if a variable does
-                                  not exist in context
-  --disable-embedded-jinja-extensions / --no-disable-embedded-jinja-extensions
-                                  disable embedded jinja extensions
-  --help                          Show this message and exit.
 
 ``` 
 
