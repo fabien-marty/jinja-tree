@@ -152,10 +152,6 @@ See [this directory](jinja_tree/app/embedded_extensions/) for others
 > If you want to get a better readability of `jinja-tree` output (colors...), you can also use `pip install rich` to install 
 > this **optional** dependency.
 
-> [!NOTE]
-> A docker image is also available. You can use it to avoid any specific installation.
-> See at the end of the "Usage" section for more details.
-
 ## Usage
 
 ### Main CLI
@@ -275,41 +271,5 @@ Hello bar
 
 
 ``` 
-
-</details>
-
-### Docker image
-
-A docker image is also available. You can use it this way:
-
-```bash
-docker run --rm -t -v $(pwd):/code --user=$(id -u) ghcr.io/fabien-marty/jinja-tree:latest /code
-```
-
-*(we mount the current directory in the `/code` directory in the container and execute `jinja-tree` in this `/code` directory)*
-
-> [!WARNING]
-> If you plan to use environment variables with the docker image, you will have to use (possibly multiple times) the `-e VAR=VALUE` option to pass them to the container. 
-> With docker, it's more practical to use a `.env` (dotenv) file as it will be automatically mounted in the container.
-
-If you want to add some CLI options, you can add them like in this example:
-
-```bash
-docker run --rm -t -v $(pwd):/code --user=$(id -u) ghcr.io/fabien-marty/jinja-tree:latest --verbose /code
-```
-
-*(we added `--verbose` just before the `/code` argument)*
-
-<details>
-
-<summary>If you want to use the `jinja-stdin` CLI with docker?</summary>
-
-
-```bash
-echo "FOO {{ BAR }}" |docker run --rm -i -e BAR=BAZ --user=$(id -u) --entrypoint /app/entrypoint-stdin.sh ghcr.io/fabien-marty/jinja-tree:latest
-```
-
-
-*(it will output `FOO BAZ`)*
 
 </details>
