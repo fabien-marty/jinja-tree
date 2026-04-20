@@ -41,7 +41,7 @@ class ContextPort(ABC):
     """This is the abstract interface for ContextPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         """
         Construct a new ContextPort object given a configuration object
         and a plugin configuration dict.
@@ -54,7 +54,7 @@ class ContextPort(ABC):
         pass
 
     @abstractmethod
-    def get_context(self) -> Dict[str, Any]:
+    def get_context(self) -> dict[str, Any]:
         """
         Retrieve the Jinja context to apply.
 
@@ -157,7 +157,7 @@ class ActionPort(ABC):
     """This is the abstract interface for FileActionPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         """
         Construct a new FileActionPort object given a configuration object
         and a plugin configuration dict.

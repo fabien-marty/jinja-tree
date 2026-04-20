@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 import tomli
 from dataclasses_json import DataClassJsonMixin, Undefined
@@ -10,21 +10,21 @@ from jinja_tree.app.config import Config
 from jinja_tree.app.context import ContextPort
 from jinja_tree.infra.utils import is_fnmatch_ignored
 
-ENV_CONTEXT_ADAPTER_DEFAULT_IGNORES: List[str] = []
+ENV_CONTEXT_ADAPTER_DEFAULT_IGNORES: list[str] = []
 DOTENV_CONTEXT_ADAPTER_DEFAULT_PATH = ".env"
-DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES: List[str] = []
+DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES: list[str] = []
 
 
 @dataclass
 class EnvContextConfig(DataClassJsonMixin):
-    ignores: List[str] = field(
+    ignores: list[str] = field(
         default_factory=lambda: list(ENV_CONTEXT_ADAPTER_DEFAULT_IGNORES)
     )
     dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
 
 
 class EnvContextAdapter(ContextPort):
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         self.config = config
         self.plugin_config = EnvContextConfig.from_dict(plugin_config)
 
@@ -32,7 +32,7 @@ class EnvContextAdapter(ContextPort):
     def get_config_name(cls) -> str:
         return "env"
 
-    def get_context(self) -> Dict[str, Any]:
+    def get_context(self) -> dict[str, Any]:
         if self.plugin_config.ignores == ["*"]:
             return {}
         return {
@@ -45,7 +45,7 @@ class EnvContextAdapter(ContextPort):
 @dataclass
 class DotEnvContextConfig(DataClassJsonMixin):
     path: str = DOTENV_CONTEXT_ADAPTER_DEFAULT_PATH
-    ignores: List[str] = field(
+    ignores: list[str] = field(
         default_factory=lambda: list(DOTENV_CONTEXT_ADAPTER_DEFAULT_IGNORES)
     )
     dataclass_json_config = {"undefined": Undefined.RAISE}  # noqa: RUF012
@@ -55,7 +55,7 @@ class DotEnvContextConfig(DataClassJsonMixin):
 
 
 class DotEnvContextAdapter(ContextPort):
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         self.config = config
         self.plugin_config = DotEnvContextConfig.from_dict(plugin_config)
 
@@ -63,7 +63,7 @@ class DotEnvContextAdapter(ContextPort):
     def get_config_name(cls) -> str:
         return "dotenv"
 
-    def get_context(self) -> Dict[str, Any]:
+    def get_context(self) -> dict[str, Any]:
         if not self.plugin_config.path:
             return {}
         if not os.path.isfile(self.plugin_config.path):
@@ -78,7 +78,7 @@ class DotEnvContextAdapter(ContextPort):
 
 
 class ConfigurationContextAdapter(ContextPort):
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         self.config = config
         self.plugin_config = plugin_config
 
@@ -86,13 +86,13 @@ class ConfigurationContextAdapter(ContextPort):
     def get_config_name(cls) -> str:
         return "config"
 
-    def get_context(self) -> Dict[str, Any]:
+    def get_context(self) -> dict[str, Any]:
         return self.plugin_config
 
 
 @dataclass
 class TOMLContextConfig(DataClassJsonMixin):
-    paths: List[str] = field(
+    paths: list[str] = field(
         default_factory=lambda: [
             x.strip()
             for x in os.environ.get("JINJA_TREE_TOML_CONTEXT_PATHS", "").split(",")
@@ -111,7 +111,7 @@ class TOMLContextConfig(DataClassJsonMixin):
         self.paths = [os.path.abspath(x) for x in self.paths]
 
 
-def _deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
     """Recursively merge override into base, returning a new dict.
 
     When both base and override have a dict value for the same key,
@@ -128,7 +128,7 @@ def _deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any
 
 
 class TOMLContextAdapter(ContextPort):
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         self.config = config
         self.plugin_config = TOMLContextConfig.from_dict(plugin_config)
 
@@ -136,7 +136,7 @@ class TOMLContextAdapter(ContextPort):
     def get_config_name(cls) -> str:
         return "toml"
 
-    def _get_context_single_path(self, path: str) -> Dict[str, Any]:
+    def _get_context_single_path(self, path: str) -> dict[str, Any]:
         try:
             with open(path) as f:
                 content = f.read()
@@ -147,8 +147,8 @@ class TOMLContextAdapter(ContextPort):
         except Exception:
             raise Exception(f"Failed to parse {path}")
 
-    def get_context(self) -> Dict[str, Any]:
-        res: Dict[str, Any] = {}
+    def get_context(self) -> dict[str, Any]:
+        res: dict[str, Any] = {}
         for path in self.plugin_config.paths:
             if path:
                 res = _deep_merge(res, self._get_context_single_path(path))

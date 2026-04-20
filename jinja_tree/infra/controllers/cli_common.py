@@ -1,14 +1,7 @@
-import sys
 from pathlib import Path
-from typing import List, Optional
-
-if sys.version_info >= (3, 9):
-    from typing import Annotated
-else:
-    from typing_extensions import Annotated
+from typing import Annotated
 
 import typer
-from typing_extensions import TypeAlias
 
 from jinja_tree.app.config import (
     Config,
@@ -19,71 +12,71 @@ from jinja_tree.infra.utils import (
     setup_logger,
 )
 
-ConfigFileType: TypeAlias = Annotated[
-    Optional[str],
+ConfigFileType = Annotated[
+    str | None,
     typer.Option(
         help="config file path (default: first '.jinja-tree.toml' file found up from current working dir), can also be see with JINJA_TREE_CONFIG_FILE env var",
         envvar="JINJA_TREE_CONFIG_FILE",
     ),
 ]
-LogLevelType: TypeAlias = Annotated[
+LogLevelType = Annotated[
     str, typer.Option(help="log level (DEBUG, INFO, WARNING or ERROR)")
 ]
 
-ExtraSearchPathsType: TypeAlias = Annotated[
-    Optional[List[Path]],
+ExtraSearchPathsType = Annotated[
+    list[Path] | None,
     typer.Option(help="Search path to jinja (can be used multiple times)"),
 ]
 
-AddProcessedFileDirToSearchPathType: TypeAlias = Annotated[
-    Optional[bool],
+AddProcessedFileDirToSearchPathType = Annotated[
+    bool | None,
     typer.Option(help="add directory of current processed file to jinja search path"),
 ]
 
-AddRootDirToSearchPathType: TypeAlias = Annotated[
-    Optional[bool], typer.Option(help="add root directory to jinja search path")
+AddRootDirToSearchPathType = Annotated[
+    bool | None, typer.Option(help="add root directory to jinja search path")
 ]
 
-AddCwdDirToSearchPathType: TypeAlias = Annotated[
-    Optional[bool],
+AddCwdDirToSearchPathType = Annotated[
+    bool | None,
     typer.Option(help="add current working directory (CWD) to jinja search path"),
 ]
 
-ExtensionType: TypeAlias = Annotated[
-    Optional[List[str]], typer.Option(help="jinja extension to load")
+ExtensionType = Annotated[
+    list[str] | None, typer.Option(help="jinja extension to load")
 ]
 
-ContextPluginsType: TypeAlias = Annotated[
-    Optional[List[str]],
+ContextPluginsType = Annotated[
+    list[str] | None,
     typer.Option(
         help="context plugins (full python class path, can be used multiple times)"
     ),
 ]
 
-StrictUndefinedType: TypeAlias = Annotated[
-    Optional[bool],
+StrictUndefinedType = Annotated[
+    bool | None,
     typer.Option(help="if set, raise an error if a variable does not exist in context"),
 ]
 
-ActionPluginType: TypeAlias = Annotated[
-    Optional[List[str]],
+ActionPluginType = Annotated[
+    list[str] | None,
     typer.Option(
         help="action plugin (full python class path, can be used multiple times)"
     ),
 ]
 
-BlankRunType: TypeAlias = Annotated[
+BlankRunType = Annotated[
     bool,
     typer.Option(
         help="if set, execute a blank run (without modifying or deleting anything)"
     ),
 ]
 
-DisableEmbeddedExtensionsType: TypeAlias = Annotated[
-    Optional[bool], typer.Option(help="disable embedded jinja extensions")
+DisableEmbeddedExtensionsType = Annotated[
+    bool | None, typer.Option(help="disable embedded jinja extensions")
 ]
 
-VerboseType: TypeAlias = Annotated[
+VerboseType = Annotated[
     bool,
     typer.Option(
         help="increase verbosity of the DEBUG log level (note: this forces log-level = DEBUG)"
@@ -91,7 +84,7 @@ VerboseType: TypeAlias = Annotated[
 ]
 
 
-RootDirType: TypeAlias = Annotated[Path, typer.Argument(help="root directory")]
+RootDirType = Annotated[Path, typer.Argument(help="root directory")]
 
 
 def get_config(
@@ -102,7 +95,7 @@ def get_config(
     strict_undefined: StrictUndefinedType = None,
     jinja_extension: ExtensionType = None,
     disable_embedded_jinja_extensions: DisableEmbeddedExtensionsType = None,
-    root_dir: Optional[RootDirType] = None,
+    root_dir: RootDirType | None = None,
     context_plugins: ContextPluginsType = None,
     action_plugins: ActionPluginType = None,
     verbose: VerboseType = False,

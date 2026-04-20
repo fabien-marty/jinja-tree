@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 import stlog
 from jinja2 import (
@@ -30,7 +29,7 @@ class JinjaService:
         self.template_name = "__content"
         self.config = config
 
-    def render_string(self, content: str, absolute_path: Optional[str] = None) -> str:
+    def render_string(self, content: str, absolute_path: str | None = None) -> str:
         """
         Renders the given content as a Jinja template string.
 
