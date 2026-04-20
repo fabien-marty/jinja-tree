@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any
 
 import pytest
 from jinja2 import UndefinedError
@@ -9,10 +9,10 @@ from jinja_tree.app.jinja import JinjaService
 
 
 class MockContextAdapter(ContextPort):
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         pass
 
-    def get_context(self, absolute_path: Optional[str] = None) -> Dict[str, Any]:
+    def get_context(self, absolute_path: str | None = None) -> dict[str, Any]:
         return {"foo": "bar"}
 
     @classmethod

@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 import stlog
 
@@ -33,7 +33,7 @@ logger = stlog.getLogger("jinja-tree")
 
 
 class ExtensionsActionAdapter(ActionPort):
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         self.config = config
         self.plugin_config = plugin_config
         self.extensions = plugin_config.get("extensions", DEFAULT_EXTENSIONS)
@@ -64,7 +64,7 @@ class ExtensionsActionAdapter(ActionPort):
                 filename_ignores=self.filename_ignores,
             )
             return IgnoreFileAction(source_absolute_path=absolute_path)
-        target_absolute_path: Optional[str] = None
+        target_absolute_path: str | None = None
         for extension in self.extensions:
             if absolute_path.endswith(extension):
                 target_absolute_path = absolute_path[0 : -(len(extension))]

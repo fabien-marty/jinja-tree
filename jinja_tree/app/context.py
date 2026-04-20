@@ -1,7 +1,7 @@
 import datetime
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from jinja2 import Template
 
@@ -13,7 +13,7 @@ class ContextPort(ABC):
     """This is the abstract interface for ContextPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         """
         Construct a new ContextPort object given a configuration object
         and a plugin configuration dict.
@@ -26,7 +26,7 @@ class ContextPort(ABC):
         pass
 
     @abstractmethod
-    def get_context(self) -> Dict[str, Any]:
+    def get_context(self) -> dict[str, Any]:
         """
         Retrieve the Jinja context to apply.
 
@@ -85,7 +85,7 @@ class ContextService:
 
     """
 
-    def __init__(self, config: Config, adapters: List[ContextPort]):
+    def __init__(self, config: Config, adapters: list[ContextPort]):
         self.config = config
         self.adapters = adapters
         self.comment_line1_template = self.config.context_generated_comment_line1
@@ -94,7 +94,7 @@ class ContextService:
             dump("initial context", self.get_context())
 
     def add_extra_keys_to_context(
-        self, context: Dict[str, Any], absolute_path: Optional[str] = None
+        self, context: dict[str, Any], absolute_path: str | None = None
     ):
         context["JINJA_TREE"] = "1"
         try:
@@ -138,7 +138,7 @@ class ContextService:
                     [f"// {x}" for x in (comment_line1, comment_line2) if x]
                 )
 
-    def get_context(self, absolute_path: Optional[str] = None) -> Dict[str, Any]:
+    def get_context(self, absolute_path: str | None = None) -> dict[str, Any]:
         """
         Retrieve the Jinja context to apply.
 
@@ -148,7 +148,7 @@ class ContextService:
             The context dictionary.
 
         """
-        res: Dict[str, Any] = {}
+        res: dict[str, Any] = {}
         for adapter in self.adapters:
             res = {**res, **adapter.get_context()}
         self.add_extra_keys_to_context(res, absolute_path=absolute_path)

@@ -2,7 +2,6 @@ import fnmatch
 import os
 import sys
 from importlib import import_module
-from typing import List, Optional, Type
 
 import dataclasses_json
 import stlog
@@ -19,7 +18,7 @@ SYSTEM_CONFIG_PATH = "/etc/jinja-tree.toml"
 logger = stlog.getLogger("jinja_tree")
 
 
-def import_class_from_string(class_path: str) -> Type:
+def import_class_from_string(class_path: str) -> type:
     module_name, _, class_name = class_path.rpartition(".")
     klass = getattr(import_module(module_name), class_name)
     return klass
@@ -37,8 +36,8 @@ def make_action_adapter_from_config(klass, config: Config) -> ContextPort:
     return klass(config, plugin_config)
 
 
-def make_context_adapters_from_config(config: Config) -> List[ContextPort]:
-    res: List[ContextPort] = []
+def make_context_adapters_from_config(config: Config) -> list[ContextPort]:
+    res: list[ContextPort] = []
     for class_path in config.context_plugins:
         context_adapter_class = import_class_from_string(class_path)
         context_adapter = make_context_adapter_from_config(
@@ -52,8 +51,8 @@ def make_context_adapters_from_config(config: Config) -> List[ContextPort]:
     return res
 
 
-def make_action_adapters_from_config(config: Config) -> List[ActionPort]:
-    res: List[ActionPort] = []
+def make_action_adapters_from_config(config: Config) -> list[ActionPort]:
+    res: list[ActionPort] = []
     for class_path in config.action_plugins:
         context_adapter_class = import_class_from_string(class_path)
         action_adapter = make_action_adapter_from_config(context_adapter_class, config)
@@ -66,8 +65,8 @@ def make_action_adapters_from_config(config: Config) -> List[ActionPort]:
 
 
 def get_config_file_path(
-    cli_option: Optional[str] = None, cwd: Optional[str] = None
-) -> Optional[str]:
+    cli_option: str | None = None, cwd: str | None = None
+) -> str | None:
     """
     Get the path to the configuration file.
 
@@ -110,7 +109,7 @@ def get_config_file_path(
     return get_config_file_path(cwd=parent_path)
 
 
-def is_fnmatch_ignored(key: str, ignores: List[str]) -> bool:
+def is_fnmatch_ignored(key: str, ignores: list[str]) -> bool:
     """
     Check if the given key matches any of the patterns in the ignores list using fnmatch.
 
@@ -124,7 +123,7 @@ def is_fnmatch_ignored(key: str, ignores: List[str]) -> bool:
     return any(fnmatch.fnmatch(key, x) for x in ignores)
 
 
-def setup_logger(log_level: Optional[str] = None):
+def setup_logger(log_level: str | None = None):
     if log_level is None:
         log_level = "INFO"
     stlog.setup(level=log_level)
@@ -136,7 +135,7 @@ def log_error_and_die(*args, **kwargs):
     sys.exit(1)
 
 
-def read_config_file_or_die(config_file_path: Optional[str]) -> Config:
+def read_config_file_or_die(config_file_path: str | None) -> Config:
     with stlog.LogContext.bind(config_file_path=config_file_path):
         if config_file_path is not None:
             try:

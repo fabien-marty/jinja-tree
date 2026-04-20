@@ -1,7 +1,7 @@
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any
 
 import stlog
 
@@ -93,7 +93,7 @@ class ActionPort(ABC):
     """This is the abstract interface for FileActionPort adapters."""
 
     @abstractmethod
-    def __init__(self, config: Config, plugin_config: Dict[str, Any]):
+    def __init__(self, config: Config, plugin_config: dict[str, Any]):
         """
         Construct a new FileActionPort object given a configuration object
         and a plugin configuration dict.
@@ -159,7 +159,7 @@ class ActionService:
 
     """
 
-    def __init__(self, config: Config, adapters: List[ActionPort]):
+    def __init__(self, config: Config, adapters: list[ActionPort]):
         self.config = config
         self.adapters = adapters
 
