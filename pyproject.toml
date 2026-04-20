@@ -43,11 +43,11 @@ jinja-stdin = "jinja_tree.infra.controllers.cli_stdin:app"
 [dependency-groups]
 dev = [
     "ruff>=0.1.11",
-    "mypy>=1.8.0",
     "pytest>=7.4.4",
     "rich>=13.7.0",
     "pytest-cov>=4.1.0",
     "typing-extensions>=4.9.0",
+    "ty>=0.0.31",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -70,7 +70,6 @@ exclude = [
     ".git-rewrite",
     ".hg",
     ".ipynb_checkpoints",
-    ".mypy_cache",
     ".nox",
     ".pants.d",
     ".pyenv",

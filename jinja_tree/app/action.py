@@ -179,7 +179,7 @@ class ActionService:
             if isinstance(a, DEFAULT_CONCRETE_FILE_ACTION):
                 # => IgnoreFileAction, let's try next adapter
                 continue
-            target_absolute_path: str = a.target_absolute_path  # type: ignore
+            target_absolute_path: str = a.target_absolute_path
             if os.path.exists(target_absolute_path) and not os.path.isfile(
                 target_absolute_path
             ):
