@@ -29,7 +29,6 @@ jobs:
       - name: Install
         run: |
           make install
-          make debug
         env:
           UV_PYTHON: ${{ matrix.python-version }}
       - name: Run lint
@@ -39,7 +38,6 @@ jobs:
             export LINT_MYPY=0
           fi
           make lint
-          make debug
         env:
           FIX: 0
       - name: Run tests
