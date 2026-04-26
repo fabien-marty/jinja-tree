@@ -58,7 +58,7 @@ class JinjaService:
             extensions=self.config.resolved_extensions,
         )
         template = env.get_template(self.template_name)
-        template.globals = self.context_service.get_context(absolute_path)
+        template.globals.update(self.context_service.get_context(absolute_path))
         try:
             output = template.render()
         except UndefinedError:
