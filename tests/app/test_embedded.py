@@ -101,9 +101,7 @@ def test_counter_custom_start_first_call():
     env = Environment(
         extensions=["jinja_tree.app.embedded_extensions.counter.CounterExtension"]
     )
-    template = env.from_string(
-        "{{ counter(start=3) }} {{ counter() }} {{ counter() }}"
-    )
+    template = env.from_string("{{ counter(start=3) }} {{ counter() }} {{ counter() }}")
     result = template.render()
     assert result == "3 4 5"
 
