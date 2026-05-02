@@ -1,5 +1,6 @@
 import json
 
+import pytest
 from jinja2 import Environment
 
 from jinja_tree.app.config import Config
@@ -94,7 +95,7 @@ def test_counter_default_start():
     )
     template = env.from_string("{{ counter() }} {{ counter() }} {{ counter() }}")
     result = template.render()
-    assert result == "0 1 2"
+    assert result == "1 2 3"
 
 
 def test_counter_custom_start_first_call():
@@ -115,7 +116,7 @@ def test_counter_named_counters_are_independent():
         "{{ counter(name='foo') }} {{ counter(name='bar') }} {{ counter(name='bar') }}"
     )
     result = template.render()
-    assert result == "0 0 1 1 0 1"
+    assert result == "1 1 2 2 1 2"
 
 
 def test_counter_named_start_applies_per_name():
@@ -127,7 +128,7 @@ def test_counter_named_start_applies_per_name():
         "{{ counter() }} {{ counter(name='bar', start=7) }} {{ counter(name='bar') }}"
     )
     result = template.render()
-    assert result == "3 4 0 7 8"
+    assert result == "3 4 1 7 8"
 
 
 def test_counter_resets_between_renders():
@@ -139,5 +140,75 @@ def test_counter_resets_between_renders():
     first_result = jinja_service.render_string("{{ counter() }} {{ counter() }}")
     second_result = jinja_service.render_string("{{ counter() }} {{ counter() }}")
 
-    assert first_result == "0 1"
-    assert second_result == "0 1"
+    assert first_result == "1 2"
+    assert second_result == "1 2"
+
+
+def test_counter_can_store_named_value():
+    env = Environment(
+        extensions=["jinja_tree.app.embedded_extensions.counter.CounterExtension"]
+    )
+    template = env.from_string(
+        "{{ counter(name='steps', set_value_name='login') }} "
+        "{{ counter(name='steps') }} {{ counter_value('login') }}"
+    )
+
+    result = template.render()
+
+    assert result == "1 2 1"
+
+
+def test_counter_named_values_are_independent_from_counter_name():
+    env = Environment(
+        extensions=["jinja_tree.app.embedded_extensions.counter.CounterExtension"]
+    )
+    template = env.from_string(
+        "{{ counter(name='foo', set_value_name='first_foo') }} "
+        "{{ counter(name='bar', start=3, set_value_name='first_bar') }} "
+        "{{ counter_value('first_bar') }} {{ counter_value('first_foo') }}"
+    )
+
+    result = template.render()
+
+    assert result == "1 3 3 1"
+
+
+def test_counter_named_values_reset_between_renders():
+    config = Config()
+    context_adapter = MockContextAdapter(config, {})
+    context_service = ContextService(config, [context_adapter])
+    jinja_service = JinjaService(config, context_service)
+
+    first_result = jinja_service.render_string(
+        "{{ counter(set_value_name='step') }} {{ counter_value('step') }}"
+    )
+    second_result = jinja_service.render_string(
+        "{{ counter(set_value_name='step') }} {{ counter_value('step') }}"
+    )
+
+    assert first_result == "1 1"
+    assert second_result == "1 1"
+
+
+def test_counter_value_raises_for_unknown_name():
+    env = Environment(
+        extensions=["jinja_tree.app.embedded_extensions.counter.CounterExtension"]
+    )
+    template = env.from_string("{{ counter_value('missing') }}")
+
+    with pytest.raises(ValueError, match="counter value name 'missing' is not defined"):
+        template.render()
+
+
+def test_counter_raises_when_named_value_is_redefined():
+    env = Environment(
+        extensions=["jinja_tree.app.embedded_extensions.counter.CounterExtension"]
+    )
+    template = env.from_string(
+        "{{ counter(set_value_name='step') }} {{ counter(set_value_name='step') }}"
+    )
+
+    with pytest.raises(
+        ValueError, match="counter value name 'step' is already defined"
+    ):
+        template.render()
