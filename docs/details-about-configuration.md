@@ -157,6 +157,7 @@ strict_undefined = true
 
 # Disable embedded jinja extensions (if true)
 # List of embedded jinja extensions (for information only):
+# - jinja_tree.app.embedded_extensions.counter.CounterExtension
 # - jinja_tree.app.embedded_extensions.from_json.FromJsonExtension
 # - jinja_tree.app.embedded_extensions.from_toml.FromTomlExtension
 # - jinja_tree.app.embedded_extensions.shell.ShellExtension

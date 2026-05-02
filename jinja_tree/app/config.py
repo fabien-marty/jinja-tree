@@ -5,6 +5,7 @@ from typing import Any
 from dataclasses_json import DataClassJsonMixin, Undefined
 
 EMBEDDED_EXTENSIONS = [
+    "jinja_tree.app.embedded_extensions.counter.CounterExtension",
     "jinja_tree.app.embedded_extensions.from_json.FromJsonExtension",
     "jinja_tree.app.embedded_extensions.from_toml.FromTomlExtension",
     "jinja_tree.app.embedded_extensions.shell.ShellExtension",
