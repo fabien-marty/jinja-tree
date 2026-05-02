@@ -1,12 +1,12 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "github>fabien-marty/common//.github/renovate-common.json5"
+    $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+    extends: [
+        'github>fabien-marty/common//.github/renovate-common.json5',
     ],
-    "baseBranches": [
-        "main"
+    baseBranchPatterns: [
+        'main',
     ],
-    "constraints": {
-        "python": ">=3.12"
-    }
+    constraints: {
+        python: '>=3.12',
+    },
 }
